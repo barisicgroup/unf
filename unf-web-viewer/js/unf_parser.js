@@ -1,3 +1,4 @@
 export function parseUNF(fileContent) {
-    console.log("content: " + fileContent);
+    let parsedJson = JSON.parse(fileContent);
+    console.log(parsedJson);
 }

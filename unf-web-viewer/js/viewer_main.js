@@ -2,16 +2,16 @@ import * as THREE from 'https://unpkg.com/three@0.122.0/build/three.module.js';
 import { OrbitControls } from 'https://unpkg.com/three@0.122.0/examples/jsm/controls/OrbitControls.js';
 import { parseUNF } from './unf_parser.js';
 
-function viewer_main() {
+function viewerMain() {
     const canvas = document.querySelector("#mainCanvas");
     const renderer = new THREE.WebGLRenderer({ canvas });
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(60, get_curr_aspect_ratio(), 0.1, 100);
+    const camera = new THREE.PerspectiveCamera(60, getCurrAspectRatio(), 0.1, 100);
     const controls = new OrbitControls(camera, canvas);
 
-    file_reader_init();
-    camera_controls_init();
-    scene_init();
+    fileReaderInit();
+    cameraControlsInit();
+    sceneInit();
 
     requestAnimationFrame(render);
 
@@ -19,7 +19,7 @@ function viewer_main() {
         update();
 
         if (resizeRendererToDisplaySize(renderer)) {
-            camera.aspect = get_curr_aspect_ratio();
+            camera.aspect = getCurrAspectRatio();
             camera.updateProjectionMatrix();
         }
 
@@ -31,7 +31,7 @@ function viewer_main() {
         controls.update();
     }
 
-    function scene_init() {
+    function sceneInit() {
         // Add lights
         const ambientLight = new THREE.AmbientLight(0xFFE484, .1);
         const dirLight = new THREE.DirectionalLight(0xFFE484, 1);
@@ -50,7 +50,7 @@ function viewer_main() {
         scene.add(new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshPhongMaterial({ color: 'red' })));
     }
 
-    function camera_controls_init() {
+    function cameraControlsInit() {
         const camTarget = new THREE.Vector3(0, 0, 0);
 
         camera.position.set(0, 5, 5);
@@ -62,7 +62,7 @@ function viewer_main() {
         controls.update();
     }
 
-    function get_curr_aspect_ratio() {
+    function getCurrAspectRatio() {
         return renderer.domElement.clientWidth / renderer.domElement.clientHeight;
     }
 
@@ -77,19 +77,24 @@ function viewer_main() {
         return needResize;
     }
 
-    function file_reader_init() {
+    function fileReaderInit() {
         const fileSelector = document.querySelector("#inputUnfFile");
         fileSelector.addEventListener('change', (event) => {
-            file_loaded(event.target.files);
+            fileLoaded(event.target.files);
         });
     }
 
-    function file_loaded(files) {
+    function fileLoaded(files) {
         if (files.length > 0 && files[0]) {
             const reader = new FileReader();
             reader.readAsText(files[0], "UTF-8");
             reader.onload = function (evt) {
-                parseUNF(evt.target.result);
+                try {
+                    parseUNF(evt.target.result);
+                }
+                catch (e) {
+                    console.error("Parsing failed: " + files[0]);
+                }
             }
             reader.onerror = function (evt) {
                 console.error("Error when loading file.");
@@ -101,4 +106,4 @@ function viewer_main() {
     }
 }
 
-viewer_main();
+viewerMain();
