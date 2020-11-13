@@ -52,9 +52,6 @@ function viewerMain() {
         scene.add(new THREE.ArrowHelper(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0.001, 0), 1, 0x00FF00));
         scene.add(new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 0.001, 0), 1, 0xFF0000));
         scene.add(new THREE.ArrowHelper(new THREE.Vector3(0, 0, 1), new THREE.Vector3(0, 0.001, 0), 1, 0x0000FF));
-
-        // Add objects
-        scene.add(new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshPhongMaterial({ color: 'red' })));
     }
 
     function cameraControlsInit() {
@@ -97,14 +94,17 @@ function viewerMain() {
             reader.readAsText(files[0], "UTF-8");
             reader.onload = function (evt) {
                 try {
-                    parseUNF(evt.target.result);
+                    var parsedObjects = parseUNF(evt.target.result);
+                    if (parsedObjects) {
+                        parsedObjects.forEach(object => scene.add(object));
+                    }
                 }
                 catch (e) {
                     console.error("Parsing failed: " + files[0]);
                 }
             }
             reader.onerror = function (evt) {
-                console.error("Error when loading file.");
+                console.error("Error when loading file: " + evt);
             }
         }
         else {
