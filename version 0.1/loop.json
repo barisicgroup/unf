@@ -968,7 +968,7 @@
 					"prev": 1,
 					"next": 5,
 					"oxdnaConfRow": 5,
-					"pdbId": 1,
+					"pdbId": 2,
 					"e1": [
 						-1,
 						-1,
@@ -996,7 +996,7 @@
 					"prev": 3,
 					"next": 7,
 					"oxdnaConfRow": 6,
-					"pdbId": 1,
+					"pdbId": 3,
 					"e1": [
 						-1,
 						-1,
@@ -1024,7 +1024,7 @@
 					"prev": 5,
 					"next": 9,
 					"oxdnaConfRow": 7,
-					"pdbId": 1,
+					"pdbId": 4,
 					"e1": [
 						-1,
 						-1,
@@ -1052,7 +1052,7 @@
 					"prev": 7,
 					"next": 43,
 					"oxdnaConfRow": 8,
-					"pdbId": 1,
+					"pdbId": 5,
 					"e1": [
 						-1,
 						-1,
@@ -1080,7 +1080,7 @@
 					"prev": 9,
 					"next": 41,
 					"oxdnaConfRow": 9,
-					"pdbId": 1,
+					"pdbId": 6,
 					"e1": [
 						-1,
 						-1,
@@ -1108,7 +1108,7 @@
 					"prev": 43,
 					"next": 39,
 					"oxdnaConfRow": 10,
-					"pdbId": 1,
+					"pdbId": 7,
 					"e1": [
 						-1,
 						-1,
@@ -1136,7 +1136,7 @@
 					"prev": 41,
 					"next": 37,
 					"oxdnaConfRow": 11,
-					"pdbId": 1,
+					"pdbId": 8,
 					"e1": [
 						-1,
 						-1,
@@ -1164,7 +1164,7 @@
 					"prev": 39,
 					"next": 35,
 					"oxdnaConfRow": 12,
-					"pdbId": 1,
+					"pdbId": 9,
 					"e1": [
 						-1,
 						-1,
@@ -1192,7 +1192,7 @@
 					"prev": 37,
 					"next": -1,
 					"oxdnaConfRow": 13,
-					"pdbId": 1,
+					"pdbId": 10,
 					"e1": [
 						-1,
 						-1,
@@ -1228,7 +1228,7 @@
 					"prev": -1,
 					"next": 117,
 					"oxdnaConfRow": 14,
-					"pdbId": 1,
+					"pdbId": 11,
 					"e1": [
 						-1,
 						-1,
@@ -1256,7 +1256,7 @@
 					"prev": 119,
 					"next": 115,
 					"oxdnaConfRow": 15,
-					"pdbId": 1,
+					"pdbId": 12,
 					"e1": [
 						-1,
 						-1,
@@ -1284,7 +1284,7 @@
 					"prev": 117,
 					"next": 113,
 					"oxdnaConfRow": 16,
-					"pdbId": 1,
+					"pdbId": 13,
 					"e1": [
 						-1,
 						-1,
