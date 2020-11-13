@@ -4,7 +4,7 @@ import { parseUNF } from './unf_parser.js';
 
 function viewerMain() {
     const canvas = document.querySelector("#mainCanvas");
-    const renderer = new THREE.WebGLRenderer({ canvas });
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(60, getCurrAspectRatio(), 0.1, 100);
     const controls = new OrbitControls(camera, canvas);
@@ -44,7 +44,14 @@ function viewerMain() {
 
         // Set-up background color and fog
         scene.background = new THREE.Color(0xFFFFFF);
-        scene.fog = new THREE.Fog(0xFFFFFF, 2, 15);
+        scene.fog = new THREE.Fog(0xFFFFFF, 2, 30);
+
+        // Add arrows for axes, and a grid
+        scene.add(new THREE.GridHelper(100, 100, 0xcccccc, 0xdddddd));
+        // y-offset of arrow helpers below is just to prevent z-fighting with a grid
+        scene.add(new THREE.ArrowHelper(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0.001, 0), 1, 0x00FF00));
+        scene.add(new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 0.001, 0), 1, 0xFF0000));
+        scene.add(new THREE.ArrowHelper(new THREE.Vector3(0, 0, 1), new THREE.Vector3(0, 0.001, 0), 1, 0x0000FF));
 
         // Add objects
         scene.add(new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshPhongMaterial({ color: 'red' })));
