@@ -15,9 +15,16 @@
 </head>
 
 <body>
+    <div class="infoPanel">
+        <h1>UNF Web Viewer</h1>
+        <p>Simple web viewer showcasing the data stored in the Unified Nanotechnology Format (UNF).</p>
+        <label for="inputUnfFile">Load UNF file:</label>
+        <input type="file" id="inputUnfFile" name="inputUnfFile">
+    </div>
     <canvas id="mainCanvas"></canvas>
 
     <!-- Scripts -->
+    <script src="js/unf_parser.js" type="module"></script>
     <script src="js/viewer_main.js" type="module"></script>
 </body>
 
