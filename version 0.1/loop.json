@@ -933,14 +933,14 @@
 			"fivePrimeId": 1,
 			"threePrimeId": 35,
 			"pdbFile" : "./loop_cadnano.pdb",
-			"confFile": "./loop_cadnano.oxdna",
+			"confFile": ["./loop_cadnano.oxdna"],
 			"nucleotides": {
 				"1": {
 					"type": 1,
 					"pair": 0,
 					"prev": -1,
 					"next": 3,
-					"oxdnaConfRow": 4,
+					"oxdnaConfRow": 3,
 					"pdbId": 1,
 					"e1": [
 						-1,
@@ -968,7 +968,7 @@
 					"pair": 2,
 					"prev": 1,
 					"next": 5,
-					"oxdnaConfRow": 5,
+					"oxdnaConfRow": 4,
 					"pdbId": 2,
 					"e1": [
 						-1,
@@ -996,7 +996,7 @@
 					"pair": 4,
 					"prev": 3,
 					"next": 7,
-					"oxdnaConfRow": 6,
+					"oxdnaConfRow": 5,
 					"pdbId": 3,
 					"e1": [
 						-1,
@@ -1024,7 +1024,7 @@
 					"pair": 6,
 					"prev": 5,
 					"next": 9,
-					"oxdnaConfRow": 7,
+					"oxdnaConfRow": 6,
 					"pdbId": 4,
 					"e1": [
 						-1,
@@ -1052,7 +1052,7 @@
 					"pair": 8,
 					"prev": 7,
 					"next": 43,
-					"oxdnaConfRow": 8,
+					"oxdnaConfRow": 7,
 					"pdbId": 5,
 					"e1": [
 						-1,
@@ -1080,7 +1080,7 @@
 					"pair": 44,
 					"prev": 9,
 					"next": 41,
-					"oxdnaConfRow": 9,
+					"oxdnaConfRow": 8,
 					"pdbId": 6,
 					"e1": [
 						-1,
@@ -1108,7 +1108,7 @@
 					"pair": 42,
 					"prev": 43,
 					"next": 39,
-					"oxdnaConfRow": 10,
+					"oxdnaConfRow": 9,
 					"pdbId": 7,
 					"e1": [
 						-1,
@@ -1136,7 +1136,7 @@
 					"pair": 40,
 					"prev": 41,
 					"next": 37,
-					"oxdnaConfRow": 11,
+					"oxdnaConfRow": 10,
 					"pdbId": 8,
 					"e1": [
 						-1,
@@ -1164,7 +1164,7 @@
 					"pair": 38,
 					"prev": 39,
 					"next": 35,
-					"oxdnaConfRow": 12,
+					"oxdnaConfRow": 11,
 					"pdbId": 9,
 					"e1": [
 						-1,
@@ -1192,7 +1192,7 @@
 					"pair": 36,
 					"prev": 37,
 					"next": -1,
-					"oxdnaConfRow": 13,
+					"oxdnaConfRow": 12,
 					"pdbId": 10,
 					"e1": [
 						-1,
@@ -1222,13 +1222,15 @@
 			"isScaffold": true,
 			"fivePrimeId": 119,
 			"threePrimeId": 91,
+			"pdbFile" : "./loop_cadnano.pdb",
+			"confFile": ["./loop_cadnano.oxdna"],
 			"nucleotides": {
 				"119": {
 					"type": 1,
 					"pair": 120,
 					"prev": -1,
 					"next": 117,
-					"oxdnaConfRow": 14,
+					"oxdnaConfRow": 13,
 					"pdbId": 11,
 					"e1": [
 						-1,
@@ -1256,7 +1258,7 @@
 					"pair": 118,
 					"prev": 119,
 					"next": 115,
-					"oxdnaConfRow": 15,
+					"oxdnaConfRow": 14,
 					"pdbId": 12,
 					"e1": [
 						-1,
@@ -1284,7 +1286,7 @@
 					"pair": 116,
 					"prev": 117,
 					"next": 113,
-					"oxdnaConfRow": 16,
+					"oxdnaConfRow": 15,
 					"pdbId": 13,
 					"e1": [
 						-1,
@@ -2384,6 +2386,8 @@
 			"isScaffold": false,
 			"fivePrimeId": 92,
 			"threePrimeId": 90,
+			"pdbFile" : "./loop_cadnano.pdb",
+			"confFile": ["./loop_cadnano.oxdna"],
 			"nucleotides": {
 				"92": {
 					"type": 1,
