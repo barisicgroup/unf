@@ -4217,16 +4217,398 @@
 	},
 	"groups": {},
 	"proteins": [{
-		"pdbFile": "./6a5j.pdb",
-		"chains": {
-			"1": {
+		"chains": [
+			{
+				"id": 0,
+				"chainName": "A",
 				"position": [0,0,0],
 				"orientation": [-0.000000,0.707107,0.707107],
+				"pdbFile" : "./6a5j.pdb",
+				"confFile": ["./notexistingyet.oxdna"],
 				"NTerm": 0,
-				"CTerm": 12
+				"CTerm": 12,
+				"aminoAcids": [
+					{
+						"id": 0,
+						"secondary": "loop",
+						"seq": "I",
+						"prev": -1,
+						"next": 1,
+						"oxdnaConfRow": 3,
+						"pdbId": 1,
+						"e1": [
+							-1,
+							-1,
+							-1
+						],
+						"e2": [
+							-1,
+							-1,
+							-1
+						],
+						"backboneCenter": [
+							-1,
+							-1,
+							-1
+						],
+						"sidechainCenter": [
+							-1,
+							-1,
+							-1
+						]	
+					},
+					{
+						"id": 1,
+						"secondary": "loop",
+						"seq": "K",
+						"prev": 0,
+						"next": 2,
+						"oxdnaConfRow": 4,
+						"pdbId": 2,
+						"e1": [
+							-1,
+							-1,
+							-1
+						],
+						"e2": [
+							-1,
+							-1,
+							-1
+						],
+						"backboneCenter": [
+							-1,
+							-1,
+							-1
+						],
+						"sidechainCenter": [
+							-1,
+							-1,
+							-1
+						]	
+					},
+					{
+						"id": 2,
+						"secondary": "loop",
+						"seq": "K",
+						"prev": 1,
+						"next": 3,
+						"oxdnaConfRow": 5,
+						"pdbId": 3,
+						"e1": [
+							-1,
+							-1,
+							-1
+						],
+						"e2": [
+							-1,
+							-1,
+							-1
+						],
+						"backboneCenter": [
+							-1,
+							-1,
+							-1
+						],
+						"sidechainCenter": [
+							-1,
+							-1,
+							-1
+						]	
+					},
+					{
+						"id": 3,
+						"secondary": "alpha",
+						"seq": "I",
+						"prev": 2,
+						"next": 4,
+						"oxdnaConfRow": 6,
+						"pdbId": 4,
+						"e1": [
+							-1,
+							-1,
+							-1
+						],
+						"e2": [
+							-1,
+							-1,
+							-1
+						],
+						"backboneCenter": [
+							-1,
+							-1,
+							-1
+						],
+						"sidechainCenter": [
+							-1,
+							-1,
+							-1
+						]	
+					},
+					{
+						"id": 4,
+						"secondary": "alpha",
+						"seq": "L",
+						"prev": 3,
+						"next": 5,
+						"oxdnaConfRow": 7,
+						"pdbId": 5,
+						"e1": [
+							-1,
+							-1,
+							-1
+						],
+						"e2": [
+							-1,
+							-1,
+							-1
+						],
+						"backboneCenter": [
+							-1,
+							-1,
+							-1
+						],
+						"sidechainCenter": [
+							-1,
+							-1,
+							-1
+						]	
+					},
+					{
+						"id": 5,
+						"secondary": "alpha",
+						"seq": "S",
+						"prev": 4,
+						"next": 6,
+						"oxdnaConfRow": 8,
+						"pdbId": 6,
+						"e1": [
+							-1,
+							-1,
+							-1
+						],
+						"e2": [
+							-1,
+							-1,
+							-1
+						],
+						"backboneCenter": [
+							-1,
+							-1,
+							-1
+						],
+						"sidechainCenter": [
+							-1,
+							-1,
+							-1
+						]	
+					},
+					{
+						"id": 6,
+						"secondary": "alpha",
+						"seq": "K",
+						"prev": 5,
+						"next": 7,
+						"oxdnaConfRow": 9,
+						"pdbId": 7,
+						"e1": [
+							-1,
+							-1,
+							-1
+						],
+						"e2": [
+							-1,
+							-1,
+							-1
+						],
+						"backboneCenter": [
+							-1,
+							-1,
+							-1
+						],
+						"sidechainCenter": [
+							-1,
+							-1,
+							-1
+						]	
+					},
+					{
+						"id": 7,
+						"secondary": "alpha",
+						"seq": "I",
+						"prev": 6,
+						"next": 8,
+						"oxdnaConfRow": 10,
+						"pdbId": 8,
+						"e1": [
+							-1,
+							-1,
+							-1
+						],
+						"e2": [
+							-1,
+							-1,
+							-1
+						],
+						"backboneCenter": [
+							-1,
+							-1,
+							-1
+						],
+						"sidechainCenter": [
+							-1,
+							-1,
+							-1
+						]	
+					},
+					{
+						"id": 8,
+						"secondary": "alpha",
+						"seq": "K",
+						"prev": 7,
+						"next": 9,
+						"oxdnaConfRow": 11,
+						"pdbId": 9,
+						"e1": [
+							-1,
+							-1,
+							-1
+						],
+						"e2": [
+							-1,
+							-1,
+							-1
+						],
+						"backboneCenter": [
+							-1,
+							-1,
+							-1
+						],
+						"sidechainCenter": [
+							-1,
+							-1,
+							-1
+						]	
+					},
+					{
+						"id": 9,
+						"secondary": "alpha",
+						"seq": "K",
+						"prev": 8,
+						"next": 10,
+						"oxdnaConfRow": 12,
+						"pdbId": 10,
+						"e1": [
+							-1,
+							-1,
+							-1
+						],
+						"e2": [
+							-1,
+							-1,
+							-1
+						],
+						"backboneCenter": [
+							-1,
+							-1,
+							-1
+						],
+						"sidechainCenter": [
+							-1,
+							-1,
+							-1
+						]	
+					},
+					{
+						"id": 10,
+						"secondary": "alpha",
+						"seq": "L",
+						"prev": 9,
+						"next": 11,
+						"oxdnaConfRow": 13,
+						"pdbId": 11,
+						"e1": [
+							-1,
+							-1,
+							-1
+						],
+						"e2": [
+							-1,
+							-1,
+							-1
+						],
+						"backboneCenter": [
+							-1,
+							-1,
+							-1
+						],
+						"sidechainCenter": [
+							-1,
+							-1,
+							-1
+						]	
+					},
+					{
+						"id": 11,
+						"secondary": "loop",
+						"seq": "L",
+						"prev": 10,
+						"next": 12,
+						"oxdnaConfRow": 14,
+						"pdbId": 12,
+						"e1": [
+							-1,
+							-1,
+							-1
+						],
+						"e2": [
+							-1,
+							-1,
+							-1
+						],
+						"backboneCenter": [
+							-1,
+							-1,
+							-1
+						],
+						"sidechainCenter": [
+							-1,
+							-1,
+							-1
+						]	
+					},
+					{
+						"id": 12,
+						"secondary": "loop",
+						"seq": "K",
+						"prev": 11,
+						"next": -1,
+						"oxdnaConfRow": 15,
+						"pdbId": 12,
+						"e1": [
+							-1,
+							-1,
+							-1
+						],
+						"e2": [
+							-1,
+							-1,
+							-1
+						],
+						"backboneCenter": [
+							-1,
+							-1,
+							-1
+						],
+						"sidechainCenter": [
+							-1,
+							-1,
+							-1
+						]	
+					}
+					
+				]
 			}
-			
-		}
+		]
 	}
 	],
 	"molecules": {},
