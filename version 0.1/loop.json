@@ -928,11 +928,12 @@
 	},
 	"singleStrands": {
 		"1": {
-			"id": 1,
 			"chainName": "A",
 			"isScaffold": true,
 			"fivePrimeId": 1,
 			"threePrimeId": 35,
+			"pdbFile" : "./loop_cadnano.pdb",
+			"confFile": "./loop_cadnano.oxdna",
 			"nucleotides": {
 				"1": {
 					"type": 1,
@@ -4211,7 +4212,19 @@
 		}
 	},
 	"groups": {},
-	"chains": {},
+	"proteins": [{
+		"pdbFile": "./6a5j.pdb",
+		"chains": {
+			"1": {
+				"position": [0,0,0],
+				"orientation": [-0.000000,0.707107,0.707107],
+				"NTerm": 0,
+				"CTerm": 12
+			}
+			
+		}
+	}
+	],
 	"molecules": {},
 	"connections": {},
 	"modifications": {}
