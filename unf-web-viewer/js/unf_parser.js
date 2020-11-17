@@ -42,6 +42,7 @@ export function parseUNF(fileContent) {
     result.push(rescaledParent);
 
     processVirtualHelices(parsedJson, rescaledParent);
+    processSingleStrands(parsedJson, rescaledParent);
 
     return result;
 }
@@ -85,4 +86,8 @@ function processVirtualHelices(parsedJson, objectsParent) {
 
         throw new Error("Invalid grid type!");
     }
+}
+
+function processSingleStrands(parsedJson, objectsParent) {
+    // TODO
 }
