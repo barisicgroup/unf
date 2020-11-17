@@ -1574,6 +1574,16 @@
 			"isScaffold": true,
 			"fivePrimeId": 1,
 			"threePrimeId": 35,
+			"position": [
+				0,
+				0,
+				0
+			],
+			"orientation": [
+				-0.0,
+				0.707107,
+				0.707107
+			],
 			"pdbFile": "./loop_cadnano.pdb",
 			"confFile": [
 				"./loop_cadnano.oxdna"
@@ -1587,21 +1597,9 @@
 					"next": 3,
 					"oxdnaConfRow": 3,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
 					"sidechainCenter": [
 						-1,
 						-1,
@@ -1616,21 +1614,9 @@
 					"next": 5,
 					"oxdnaConfRow": 4,
 					"pdbId": 2,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
 					"sidechainCenter": [
 						-1,
 						-1,
@@ -1645,21 +1631,9 @@
 					"next": 7,
 					"oxdnaConfRow": 5,
 					"pdbId": 3,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
 					"sidechainCenter": [
 						-1,
 						-1,
@@ -1674,21 +1648,9 @@
 					"next": 9,
 					"oxdnaConfRow": 6,
 					"pdbId": 4,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
 					"sidechainCenter": [
 						-1,
 						-1,
@@ -1703,21 +1665,9 @@
 					"next": 43,
 					"oxdnaConfRow": 7,
 					"pdbId": 5,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
 					"sidechainCenter": [
 						-1,
 						-1,
@@ -1732,21 +1682,9 @@
 					"next": 41,
 					"oxdnaConfRow": 8,
 					"pdbId": 6,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
 					"sidechainCenter": [
 						-1,
 						-1,
@@ -1761,21 +1699,9 @@
 					"next": 39,
 					"oxdnaConfRow": 9,
 					"pdbId": 7,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
 					"sidechainCenter": [
 						-1,
 						-1,
@@ -1790,21 +1716,9 @@
 					"next": 37,
 					"oxdnaConfRow": 10,
 					"pdbId": 8,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
 					"sidechainCenter": [
 						-1,
 						-1,
@@ -1819,21 +1733,9 @@
 					"next": 35,
 					"oxdnaConfRow": 11,
 					"pdbId": 9,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
 					"sidechainCenter": [
 						-1,
 						-1,
@@ -1848,21 +1750,9 @@
 					"next": -1,
 					"oxdnaConfRow": 12,
 					"pdbId": 10,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
 					"sidechainCenter": [
 						-1,
 						-1,
@@ -1878,6 +1768,16 @@
 			"isScaffold": true,
 			"fivePrimeId": 119,
 			"threePrimeId": 91,
+			"position": [
+				0,
+				0,
+				0
+			],
+			"orientation": [
+				-0.0,
+				0.707107,
+				0.707107
+			],
 			"pdbFile": "./loop_cadnano.pdb",
 			"confFile": [
 				"./loop_cadnano.oxdna"
@@ -1891,21 +1791,9 @@
 					"next": 117,
 					"oxdnaConfRow": 13,
 					"pdbId": 11,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
 					"sidechainCenter": [
 						-1,
 						-1,
@@ -1920,21 +1808,9 @@
 					"next": 115,
 					"oxdnaConfRow": 14,
 					"pdbId": 12,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
 					"sidechainCenter": [
 						-1,
 						-1,
@@ -1949,21 +1825,9 @@
 					"next": 113,
 					"oxdnaConfRow": 15,
 					"pdbId": 13,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
 					"sidechainCenter": [
 						-1,
 						-1,
@@ -1978,21 +1842,9 @@
 					"next": 25,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
 					"sidechainCenter": [
 						-1,
 						-1,
@@ -2007,21 +1859,9 @@
 					"next": 27,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
 					"sidechainCenter": [
 						-1,
 						-1,
@@ -2036,21 +1876,9 @@
 					"next": 29,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
 					"sidechainCenter": [
 						-1,
 						-1,
@@ -2065,21 +1893,9 @@
 					"next": 31,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
 					"sidechainCenter": [
 						-1,
 						-1,
@@ -2094,21 +1910,9 @@
 					"next": 75,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
 					"sidechainCenter": [
 						-1,
 						-1,
@@ -2123,21 +1927,9 @@
 					"next": 73,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
 					"sidechainCenter": [
 						-1,
 						-1,
@@ -2152,21 +1944,9 @@
 					"next": 71,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
 					"sidechainCenter": [
 						-1,
 						-1,
@@ -2181,21 +1961,9 @@
 					"next": 69,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
 					"sidechainCenter": [
 						-1,
 						-1,
@@ -2210,21 +1978,9 @@
 					"next": 67,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
 					"sidechainCenter": [
 						-1,
 						-1,
@@ -2239,21 +1995,9 @@
 					"next": 65,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
 					"sidechainCenter": [
 						-1,
 						-1,
@@ -2268,21 +2012,9 @@
 					"next": 63,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
 					"sidechainCenter": [
 						-1,
 						-1,
@@ -2297,21 +2029,9 @@
 					"next": 61,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
 					"sidechainCenter": [
 						-1,
 						-1,
@@ -2326,21 +2046,9 @@
 					"next": 49,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
 					"sidechainCenter": [
 						-1,
 						-1,
@@ -2355,26 +2063,10 @@
 					"next": 51,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -2385,26 +2077,10 @@
 					"next": 53,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -2415,26 +2091,10 @@
 					"next": 54,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -2445,26 +2105,10 @@
 					"next": 55,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -2475,26 +2119,10 @@
 					"next": 52,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -2505,26 +2133,10 @@
 					"next": 47,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -2535,26 +2147,10 @@
 					"next": 45,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -2565,26 +2161,10 @@
 					"next": 11,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -2595,26 +2175,10 @@
 					"next": 13,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -2625,26 +2189,10 @@
 					"next": 15,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -2655,26 +2203,10 @@
 					"next": 17,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -2685,26 +2217,10 @@
 					"next": 19,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -2715,26 +2231,10 @@
 					"next": 21,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -2745,26 +2245,10 @@
 					"next": 23,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -2775,26 +2259,10 @@
 					"next": 111,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -2805,26 +2273,10 @@
 					"next": 109,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -2835,26 +2287,10 @@
 					"next": 107,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -2865,26 +2301,10 @@
 					"next": 105,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -2895,26 +2315,10 @@
 					"next": 103,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -2925,26 +2329,10 @@
 					"next": 101,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -2955,26 +2343,10 @@
 					"next": 99,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -2985,26 +2357,10 @@
 					"next": 97,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -3015,26 +2371,10 @@
 					"next": 95,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -3045,26 +2385,10 @@
 					"next": 93,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -3075,26 +2399,10 @@
 					"next": 91,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -3105,26 +2413,10 @@
 					"next": -1,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				}
 			]
@@ -3136,6 +2428,16 @@
 			"isScaffold": false,
 			"fivePrimeId": 92,
 			"threePrimeId": 90,
+			"position": [
+				0,
+				0,
+				0
+			],
+			"orientation": [
+				-0.0,
+				0.707107,
+				0.707107
+			],
 			"pdbFile": "./loop_cadnano.pdb",
 			"confFile": [
 				"./loop_cadnano.oxdna"
@@ -3149,26 +2451,10 @@
 					"next": 94,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -3179,26 +2465,10 @@
 					"next": 96,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -3209,26 +2479,10 @@
 					"next": 98,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -3239,26 +2493,10 @@
 					"next": 100,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -3269,26 +2507,10 @@
 					"next": 102,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -3299,26 +2521,10 @@
 					"next": 12,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -3329,26 +2535,10 @@
 					"next": 10,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -3359,26 +2549,10 @@
 					"next": 8,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -3389,26 +2563,10 @@
 					"next": 6,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -3419,26 +2577,10 @@
 					"next": 4,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -3449,26 +2591,10 @@
 					"next": 2,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -3479,26 +2605,10 @@
 					"next": 0,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -3509,21 +2619,9 @@
 					"next": 36,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -3534,21 +2632,9 @@
 					"next": 38,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
 					"sidechainCenter": [
 						-1,
 						-1,
@@ -3563,26 +2649,10 @@
 					"next": 40,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -3593,26 +2663,10 @@
 					"next": 42,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -3623,26 +2677,10 @@
 					"next": 44,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -3653,26 +2691,10 @@
 					"next": 46,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -3683,26 +2705,10 @@
 					"next": 48,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -3713,26 +2719,10 @@
 					"next": 50,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -3743,26 +2733,10 @@
 					"next": 57,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -3773,26 +2747,10 @@
 					"next": 58,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -3803,26 +2761,10 @@
 					"next": 59,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -3833,26 +2775,10 @@
 					"next": 60,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -3863,26 +2789,10 @@
 					"next": 56,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -3893,26 +2803,10 @@
 					"next": 62,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -3923,26 +2817,10 @@
 					"next": 64,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -3953,26 +2831,10 @@
 					"next": 66,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -3983,26 +2845,10 @@
 					"next": 68,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -4013,26 +2859,10 @@
 					"next": 70,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -4043,26 +2873,10 @@
 					"next": 72,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -4073,26 +2887,10 @@
 					"next": 74,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -4103,26 +2901,10 @@
 					"next": 76,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -4133,26 +2915,10 @@
 					"next": 77,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -4163,26 +2929,10 @@
 					"next": 78,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -4193,26 +2943,10 @@
 					"next": 79,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -4223,26 +2957,10 @@
 					"next": 80,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -4253,26 +2971,10 @@
 					"next": 81,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -4283,26 +2985,10 @@
 					"next": 82,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -4313,26 +2999,10 @@
 					"next": 83,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -4343,26 +3013,10 @@
 					"next": 84,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -4373,26 +3027,10 @@
 					"next": 85,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -4403,26 +3041,10 @@
 					"next": 86,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -4433,26 +3055,10 @@
 					"next": 87,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -4463,26 +3069,10 @@
 					"next": 88,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -4493,26 +3083,10 @@
 					"next": 89,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -4523,26 +3097,10 @@
 					"next": 90,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -4553,26 +3111,10 @@
 					"next": -1,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				}
 			]
@@ -4584,6 +3126,20 @@
 			"isScaffold": false,
 			"fivePrimeId": 34,
 			"threePrimeId": 120,
+			"position": [
+				0,
+				0,
+				0
+			],
+			"orientation": [
+				-0.0,
+				0.707107,
+				0.707107
+			],
+			"pdbFile": "./loop_cadnano.pdb",
+			"confFile": [
+				"./loop_cadnano.oxdna"
+			],
 			"nucleotides": [
 				{
 					"id": -1,
@@ -4593,26 +3149,10 @@
 					"next": 33,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -4623,26 +3163,10 @@
 					"next": 32,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -4653,26 +3177,10 @@
 					"next": 30,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -4683,26 +3191,10 @@
 					"next": 28,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -4713,26 +3205,10 @@
 					"next": 26,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -4743,26 +3219,10 @@
 					"next": 24,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -4773,26 +3233,10 @@
 					"next": 22,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -4803,26 +3247,10 @@
 					"next": 20,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -4833,26 +3261,10 @@
 					"next": 18,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -4863,26 +3275,10 @@
 					"next": 16,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -4893,26 +3289,10 @@
 					"next": 14,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -4923,26 +3303,10 @@
 					"next": 104,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -4953,26 +3317,10 @@
 					"next": 106,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -4983,26 +3331,10 @@
 					"next": 108,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -5013,26 +3345,10 @@
 					"next": 110,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -5043,26 +3359,10 @@
 					"next": 112,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -5073,26 +3373,10 @@
 					"next": 114,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -5103,26 +3387,10 @@
 					"next": 116,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -5133,26 +3401,10 @@
 					"next": 118,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -5163,26 +3415,10 @@
 					"next": 120,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				},
 				{
@@ -5193,26 +3429,10 @@
 					"next": -1,
 					"oxdnaConfRow": 4,
 					"pdbId": 1,
-					"e1": [
-						-1,
-						-1,
-						-1
-					],
-					"e2": [
-						-1,
-						-1,
-						-1
-					],
-					"backboneCenter": [
-						-1,
-						-1,
-						-1
-					],
-					"sidechainCenter": [
-						-1,
-						-1,
-						-1
-					],
+					
+					
+					
+					
 					"tag": -1
 				}
 			]
@@ -5249,27 +3469,7 @@
 							"prev": -1,
 							"next": 1,
 							"oxdnaConfRow": 3,
-							"pdbId": 1,
-							"e1": [
-								-1,
-								-1,
-								-1
-							],
-							"e2": [
-								-1,
-								-1,
-								-1
-							],
-							"backboneCenter": [
-								-1,
-								-1,
-								-1
-							],
-							"sidechainCenter": [
-								-1,
-								-1,
-								-1
-							]
+							"pdbId": 1
 						},
 						{
 							"id": 1,
@@ -5278,27 +3478,7 @@
 							"prev": 0,
 							"next": 2,
 							"oxdnaConfRow": 4,
-							"pdbId": 2,
-							"e1": [
-								-1,
-								-1,
-								-1
-							],
-							"e2": [
-								-1,
-								-1,
-								-1
-							],
-							"backboneCenter": [
-								-1,
-								-1,
-								-1
-							],
-							"sidechainCenter": [
-								-1,
-								-1,
-								-1
-							]
+							"pdbId": 2
 						},
 						{
 							"id": 2,
@@ -5307,27 +3487,7 @@
 							"prev": 1,
 							"next": 3,
 							"oxdnaConfRow": 5,
-							"pdbId": 3,
-							"e1": [
-								-1,
-								-1,
-								-1
-							],
-							"e2": [
-								-1,
-								-1,
-								-1
-							],
-							"backboneCenter": [
-								-1,
-								-1,
-								-1
-							],
-							"sidechainCenter": [
-								-1,
-								-1,
-								-1
-							]
+							"pdbId": 3
 						},
 						{
 							"id": 3,
@@ -5336,27 +3496,7 @@
 							"prev": 2,
 							"next": 4,
 							"oxdnaConfRow": 6,
-							"pdbId": 4,
-							"e1": [
-								-1,
-								-1,
-								-1
-							],
-							"e2": [
-								-1,
-								-1,
-								-1
-							],
-							"backboneCenter": [
-								-1,
-								-1,
-								-1
-							],
-							"sidechainCenter": [
-								-1,
-								-1,
-								-1
-							]
+							"pdbId": 4
 						},
 						{
 							"id": 4,
@@ -5365,27 +3505,7 @@
 							"prev": 3,
 							"next": 5,
 							"oxdnaConfRow": 7,
-							"pdbId": 5,
-							"e1": [
-								-1,
-								-1,
-								-1
-							],
-							"e2": [
-								-1,
-								-1,
-								-1
-							],
-							"backboneCenter": [
-								-1,
-								-1,
-								-1
-							],
-							"sidechainCenter": [
-								-1,
-								-1,
-								-1
-							]
+							"pdbId": 5
 						},
 						{
 							"id": 5,
@@ -5394,27 +3514,7 @@
 							"prev": 4,
 							"next": 6,
 							"oxdnaConfRow": 8,
-							"pdbId": 6,
-							"e1": [
-								-1,
-								-1,
-								-1
-							],
-							"e2": [
-								-1,
-								-1,
-								-1
-							],
-							"backboneCenter": [
-								-1,
-								-1,
-								-1
-							],
-							"sidechainCenter": [
-								-1,
-								-1,
-								-1
-							]
+							"pdbId": 6
 						},
 						{
 							"id": 6,
@@ -5423,27 +3523,7 @@
 							"prev": 5,
 							"next": 7,
 							"oxdnaConfRow": 9,
-							"pdbId": 7,
-							"e1": [
-								-1,
-								-1,
-								-1
-							],
-							"e2": [
-								-1,
-								-1,
-								-1
-							],
-							"backboneCenter": [
-								-1,
-								-1,
-								-1
-							],
-							"sidechainCenter": [
-								-1,
-								-1,
-								-1
-							]
+							"pdbId": 7
 						},
 						{
 							"id": 7,
@@ -5452,27 +3532,7 @@
 							"prev": 6,
 							"next": 8,
 							"oxdnaConfRow": 10,
-							"pdbId": 8,
-							"e1": [
-								-1,
-								-1,
-								-1
-							],
-							"e2": [
-								-1,
-								-1,
-								-1
-							],
-							"backboneCenter": [
-								-1,
-								-1,
-								-1
-							],
-							"sidechainCenter": [
-								-1,
-								-1,
-								-1
-							]
+							"pdbId": 8
 						},
 						{
 							"id": 8,
@@ -5481,27 +3541,7 @@
 							"prev": 7,
 							"next": 9,
 							"oxdnaConfRow": 11,
-							"pdbId": 9,
-							"e1": [
-								-1,
-								-1,
-								-1
-							],
-							"e2": [
-								-1,
-								-1,
-								-1
-							],
-							"backboneCenter": [
-								-1,
-								-1,
-								-1
-							],
-							"sidechainCenter": [
-								-1,
-								-1,
-								-1
-							]
+							"pdbId": 9
 						},
 						{
 							"id": 9,
@@ -5510,27 +3550,7 @@
 							"prev": 8,
 							"next": 10,
 							"oxdnaConfRow": 12,
-							"pdbId": 10,
-							"e1": [
-								-1,
-								-1,
-								-1
-							],
-							"e2": [
-								-1,
-								-1,
-								-1
-							],
-							"backboneCenter": [
-								-1,
-								-1,
-								-1
-							],
-							"sidechainCenter": [
-								-1,
-								-1,
-								-1
-							]
+							"pdbId": 10
 						},
 						{
 							"id": 10,
@@ -5539,27 +3559,7 @@
 							"prev": 9,
 							"next": 11,
 							"oxdnaConfRow": 13,
-							"pdbId": 11,
-							"e1": [
-								-1,
-								-1,
-								-1
-							],
-							"e2": [
-								-1,
-								-1,
-								-1
-							],
-							"backboneCenter": [
-								-1,
-								-1,
-								-1
-							],
-							"sidechainCenter": [
-								-1,
-								-1,
-								-1
-							]
+							"pdbId": 11
 						},
 						{
 							"id": 11,
@@ -5568,27 +3568,7 @@
 							"prev": 10,
 							"next": 12,
 							"oxdnaConfRow": 14,
-							"pdbId": 12,
-							"e1": [
-								-1,
-								-1,
-								-1
-							],
-							"e2": [
-								-1,
-								-1,
-								-1
-							],
-							"backboneCenter": [
-								-1,
-								-1,
-								-1
-							],
-							"sidechainCenter": [
-								-1,
-								-1,
-								-1
-							]
+							"pdbId": 12
 						},
 						{
 							"id": 12,
@@ -5597,27 +3577,7 @@
 							"prev": 11,
 							"next": -1,
 							"oxdnaConfRow": 15,
-							"pdbId": 12,
-							"e1": [
-								-1,
-								-1,
-								-1
-							],
-							"e2": [
-								-1,
-								-1,
-								-1
-							],
-							"backboneCenter": [
-								-1,
-								-1,
-								-1
-							],
-							"sidechainCenter": [
-								-1,
-								-1,
-								-1
-							]
+							"pdbId": 12
 						}
 					]
 				}
