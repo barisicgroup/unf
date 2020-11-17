@@ -1570,6 +1570,7 @@
 		{
 			"id": 0,
 			"chainName": "A",
+			"color": "#0066cc",
 			"isScaffold": true,
 			"fivePrimeId": 1,
 			"threePrimeId": 35,
@@ -1873,6 +1874,7 @@
 		{
 			"id": 1,
 			"chainName": "B",
+			"color": "#0066cc",
 			"isScaffold": true,
 			"fivePrimeId": 119,
 			"threePrimeId": 91,
@@ -3130,6 +3132,7 @@
 		{
 			"id": 2,
 			"chainName": "C",
+			"color": "#0066cc",
 			"isScaffold": false,
 			"fivePrimeId": 92,
 			"threePrimeId": 90,
@@ -4577,6 +4580,7 @@
 		{
 			"id": 3,
 			"chainName": "D",
+			"color": "#0066cc",
 			"isScaffold": false,
 			"fivePrimeId": 34,
 			"threePrimeId": 120,
@@ -5620,7 +5624,29 @@
 			]
 		}
 	],
-	"molecules": {},
-	"connections": {},
-	"modifications": {}
+	"molecules": {
+		"pdbFile": "1bna.pdb",
+		"orientation": [
+			-0.0,
+			0.707107,
+			0.707107
+		],
+		"position": [
+			0.0,
+			27712.812921,
+			29500.0
+		]
+	},
+	"connections": [
+		{
+			"left": [0, 0],
+			"right": [0, 0]
+		}
+],
+	"modifications": [
+		{
+			"location":[3, 4],
+			"idtText": "/5Biosg/"
+		}
+]
 }
