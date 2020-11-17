@@ -17,6 +17,10 @@ var ParserUtils = {
 
     unitsToAngs(units) {
         return units * ParserConstants.AngstromsPerUnit;
+    },
+
+    pmToAngs(pms) {
+        return pms * 0.01;
     }
 }
 
@@ -32,8 +36,8 @@ export function parseUNF(fileContent) {
 
     var rescaledParent = new THREE.Object3D();
     rescaledParent.scale.set(
-        1 / ParserConstants.AngstromsPerUnit, 
-        1 / ParserConstants.AngstromsPerUnit, 
+        1 / ParserConstants.AngstromsPerUnit,
+        1 / ParserConstants.AngstromsPerUnit,
         1 / ParserConstants.AngstromsPerUnit);
     result.push(rescaledParent);
 
@@ -43,20 +47,25 @@ export function parseUNF(fileContent) {
 }
 
 function processVirtualHelices(parsedJson, objectsParent) {
-    const geometry = new THREE.CylinderBufferGeometry(
-        ParserConstants.VHelixRadius, ParserConstants.VHelixRadius, 1, 32, 32);
-    const material = new THREE.MeshPhongMaterial({ color: 0xff4444 });
+    const cylinderGeometry = new THREE.CylinderBufferGeometry(
+        ParserConstants.VHelixRadius * 0.5, ParserConstants.VHelixRadius * 0.5, 1, 32, 32);
+    const cylinderTranspMaterial = new THREE.MeshBasicMaterial({ color: 0xff4444, opacity: 0.3, transparent: true });
 
     var vHelices = parsedJson.virtualHelices;
-    for (const [key, value] of Object.entries(vHelices)) {
-        const newMesh = new THREE.Mesh(geometry, material);
-        newMesh.position.copy(getPositionForIndex(value.gridPosition[0], value.gridPosition[1], parsedJson.grid));
-        newMesh.position.z -= value.lastActiveCell * ParserConstants.BasePairRise * 0.5;
-        newMesh.scale.set(1, value.lastActiveCell * ParserConstants.BasePairRise, 1);
-        newMesh.rotation.set(THREE.MathUtils.degToRad(90), 0, 0);
-        objectsParent.add(newMesh);
-    }
-   
+    vHelices.forEach(helix => {
+        helix.cells.forEach(cell => {
+            cylinderTranspMaterial.color.setHex(Math.random() * 0xffffff);
+            const newMesh = new THREE.Mesh(cylinderGeometry, new THREE.MeshBasicMaterial(cylinderTranspMaterial));
+            newMesh.position.set(
+                ParserUtils.pmToAngs(cell.position[1]),
+                ParserUtils.pmToAngs(cell.position[2]),
+                ParserUtils.pmToAngs(cell.position[0]));
+            newMesh.scale.set(1, ParserConstants.BasePairRise, 1);
+            newMesh.rotation.set(THREE.MathUtils.degToRad(90), 0, 0);
+            objectsParent.add(newMesh);
+        });
+    });
+
     function getPositionForIndex(x, y, gridType) {
         const vHelixDiameter = ParserConstants.VHelixRadius * 2;
 
