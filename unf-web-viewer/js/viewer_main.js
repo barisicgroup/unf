@@ -100,11 +100,11 @@ function viewerMain() {
                     }
                 }
                 catch (e) {
-                    console.error("Parsing failed: " + files[0]);
+                    alert("Parsing failed: " + files[0]);
                 }
             }
             reader.onerror = function (evt) {
-                console.error("Error when loading file: " + evt);
+                alert("Error when loading file: " + evt);
             }
         }
         else {

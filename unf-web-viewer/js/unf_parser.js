@@ -1,6 +1,7 @@
 import * as THREE from 'https://unpkg.com/three@0.122.0/build/three.module.js';
 
 var ParserConstants = {
+    SupportedFormatVersion: .1,
     HoneycombGridName: "honeycomb",
     SquareGridName: "square",
     VHelixRadius: .1,
@@ -10,6 +11,10 @@ var ParserConstants = {
 export function parseUNF(fileContent) {
     let parsedJson = JSON.parse(fileContent);
     console.log(parsedJson); // Output to log for verification purposes
+
+    if(parsedJson.version !== ParserConstants.SupportedFormatVersion) {
+        alert("Unsupported format version!");
+    }
 
     let result = [];
     const geometry = new THREE.CylinderBufferGeometry(
