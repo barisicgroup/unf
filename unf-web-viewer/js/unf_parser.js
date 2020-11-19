@@ -99,10 +99,15 @@ function processVirtualHelices(parsedJson, objectsParent) {
 }
 
 function processSingleStrands(parsedJson, objectsParent, relatedFilesList) {
+    // PDB file is now ignored 
+    // Due to the asynchronicity of the loading, it will be necessary to chain the file loading later on somehow
+    // Generally, there are tons of same records so it might be necessary to process the provided files first and then
+    // just use the parsed data
+
     parsedJson.singleStrands.forEach(strand => {
         var oxFile = relatedFilesList.find(x => x.name == ParserUtils.fileNameFromPath(strand.confFile[0]));
         if (oxFile !== undefined) {
-            OxDnaUtils.parseOxConfFile(oxFile, x => singleStrandsOxDnaConfigLoaded(parsedJson, objectsParent, x));
+            OxDnaUtils.parseOxConfFile(oxFile, x => singleStrandsOxDnaConfigLoaded(strand, parsedJson, objectsParent, x));
         }
         else {
             console.log("No oxDNA configuration file included");
@@ -111,16 +116,14 @@ function processSingleStrands(parsedJson, objectsParent, relatedFilesList) {
     });
 }
 
-function singleStrandsOxDnaConfigLoaded(parsedJson, objectsParent, parsedData) {
+function singleStrandsOxDnaConfigLoaded(strand, parsedJson, objectsParent, parsedData) {
     const sphereGeometry = new THREE.SphereGeometry(7, 16, 16);
+    const material = new THREE.MeshPhongMaterial({ color: strand.color });
 
-    parsedJson.singleStrands.forEach(strand => {
-        const material = new THREE.MeshPhongMaterial({ color: strand.color });
-
-        strand.nucleotides.forEach(nucleotide => {
-            let atoms =
-                console.log(nucleotide);
-        });
+    strand.nucleotides.forEach(nucleotide => {
+        let mesh = new THREE.Mesh(sphereGeometry, material);
+        mesh.position.copy(parsedData[nucleotide.oxdnaConfRow].position);
+        objectsParent.add(mesh);
     });
 }
 
