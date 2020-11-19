@@ -5,11 +5,12 @@ export function getRemotePathToPdb(pdbName) {
     return "http://files.rcsb.org/download/" + pdbName;
 }
 
-export function loadPdb(pdbName, position, eulerRotation, parentObject) {
+export function loadPdb(pdbName, position, eulerRotation, parentObject, atomPredicate = x => true) {
     const loader = new PDBLoader();
 
     loader.load(
         pdbName,
+        atomPredicate,
         function (pdb) { pdbFileLoaded(pdb, position, eulerRotation, parentObject); },
         function (xhr) { }, // Called when loading is in progresses
         function (error) {

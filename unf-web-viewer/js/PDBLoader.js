@@ -21,7 +21,7 @@ PDBLoader.prototype = Object.assign(Object.create(Loader.prototype), {
 
 	constructor: PDBLoader,
 
-	load: function (url, onLoad, onProgress, onError) {
+	load: function (url, atomPredicate, onLoad, onProgress, onError) {
 
 		var scope = this;
 
@@ -33,7 +33,7 @@ PDBLoader.prototype = Object.assign(Object.create(Loader.prototype), {
 
 			try {
 
-				onLoad(scope.parse(text));
+				onLoad(scope.parse(text, atomPredicate));
 
 			} catch (e) {
 
@@ -57,7 +57,7 @@ PDBLoader.prototype = Object.assign(Object.create(Loader.prototype), {
 
 	// Based on CanvasMol PDB parser
 
-	parse: function (text) {
+	parse: function (text, atomPredicate) {
 
 		function trim(text) {
 
@@ -144,7 +144,8 @@ PDBLoader.prototype = Object.assign(Object.create(Loader.prototype), {
 			}
 
 			// bonds
-
+			// TODO When the code was updated to support more PDB properties, some of the minor changes (aka atomPredicate)
+			// were not updated in bonds-related code so this part of code might not be fully working.
 			for (i = 0, l = _bonds.length; i < l; i++) {
 
 				var bond = _bonds[i];
@@ -204,7 +205,7 @@ PDBLoader.prototype = Object.assign(Object.create(Loader.prototype), {
 				const chainIdentifier = trim(lines[i].substr(21, 1));
 				const residueSeqNum = parseInt(lines[i].substr(22, 4));
 				const residueName = trim(lines[i].substr(17, 3));
-				
+
 				const elementSymbol = trim(lines[i].substr(76, 2)).toLowerCase();
 
 				if (elementSymbol === '') {
@@ -217,9 +218,11 @@ PDBLoader.prototype = Object.assign(Object.create(Loader.prototype), {
 				let atomData = {
 					x, y, z, serialNumber, atomName, chainIdentifier, residueSeqNum, residueName, color: CPK[elementSymbol]
 				};
-				
-				atoms.push(atomData);
-				_atomMap[serialNumber] = atomData;
+
+				if (atomPredicate(atomData)) {
+					atoms.push(atomData);
+					_atomMap[serialNumber] = atomData;
+				}
 
 			} else if (lines[i].substr(0, 6) === 'CONECT') {
 
