@@ -103,5 +103,16 @@ function processMolecules(parsedJson, objectsParent, relatedFilesList) {
     const moleculePath = relatedFilesList.includes(parsedJson.molecules.pdbFile) ?
         parsedJson.molecules.pdbFile : PdbUtils.getRemotePathToPdb(parsedJson.molecules.pdbFile);
     
-    PdbUtils.loadPdb(moleculePath, objectsParent);
+    const position = new THREE.Vector3(
+        ParserUtils.pmToAngs(parsedJson.molecules.position[1]), 
+        ParserUtils.pmToAngs(parsedJson.molecules.position[2]),
+        ParserUtils.pmToAngs(parsedJson.molecules.position[0]));
+
+    const rotation = new THREE.Vector3(
+        parsedJson.molecules.orientation[1],
+        parsedJson.molecules.orientation[2],
+        parsedJson.molecules.orientation[0]
+    );
+
+    PdbUtils.loadPdb(moleculePath, position, rotation, objectsParent);
 }
