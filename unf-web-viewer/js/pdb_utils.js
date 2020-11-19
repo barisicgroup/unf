@@ -5,13 +5,13 @@ export function getRemotePathToPdb(pdbName) {
     return "http://files.rcsb.org/download/" + pdbName;
 }
 
-export function loadPdb(pdbName, position, eulerRotation, parentObject, atomPredicate = x => true) {
+export function loadPdb(pdbName, onLoaded, atomPredicate = x => true) {
     const loader = new PDBLoader();
 
     loader.load(
         pdbName,
         atomPredicate,
-        function (pdb) { pdbFileLoaded(pdb, position, eulerRotation, parentObject); },
+        onLoaded,
         function (xhr) { }, // Called when loading is in progresses
         function (error) {
             console.error("PDB loading failed: " + error);
@@ -19,13 +19,17 @@ export function loadPdb(pdbName, position, eulerRotation, parentObject, atomPred
     );
 }
 
-function pdbFileLoaded(pdb, objPosition, eulerRotation, parentObject) {
+export function loadAndSpawnPdb(pdbName, position, eulerRotation, parentObject, atomPredicate = x => true) {
+    loadPdb(pdbName, function (pdb) { spawnPdbData(pdb, position, eulerRotation, parentObject); }, atomPredicate);
+}
+
+export function spawnPdbData(pdbData, objPosition, eulerRotation, parentObject) {
     // Modified code from https://github.com/mrdoob/three.js/blob/master/examples/webgl_loader_pdb.html
 
-    const geometryAtoms = pdb.geometryAtoms;
+    const geometryAtoms = pdbData.geometryAtoms;
     const offset = new THREE.Vector3();
     const moleculeObject = new THREE.Object3D();
-    
+
     const sphereGeometry = new THREE.IcosahedronBufferGeometry(1, 3);
 
     geometryAtoms.computeBoundingBox();

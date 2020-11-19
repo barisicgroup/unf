@@ -99,15 +99,29 @@ function processVirtualHelices(parsedJson, objectsParent) {
 }
 
 function processSingleStrands(parsedJson, objectsParent, relatedFilesList) {
-    // TEST CODE
-    var oxFile = relatedFilesList.find(x => x.name == ParserUtils.fileNameFromPath(parsedJson.singleStrands[0].confFile[0]));
-    if(oxFile !== undefined){
-        OxDnaUtils.parseOxConfFile(oxFile, (parsedData) => console.log(parsedData));
-    }
-    else {
-        console.log("No ox file included");
-    }
-    // TODO
+    parsedJson.singleStrands.forEach(strand => {
+        var oxFile = relatedFilesList.find(x => x.name == ParserUtils.fileNameFromPath(strand.confFile[0]));
+        if (oxFile !== undefined) {
+            OxDnaUtils.parseOxConfFile(oxFile, x => singleStrandsOxDnaConfigLoaded(parsedJson, objectsParent, x));
+        }
+        else {
+            console.log("No oxDNA configuration file included");
+        }
+
+    });
+}
+
+function singleStrandsOxDnaConfigLoaded(parsedJson, objectsParent, parsedData) {
+    const sphereGeometry = new THREE.SphereGeometry(7, 16, 16);
+
+    parsedJson.singleStrands.forEach(strand => {
+        const material = new THREE.MeshPhongMaterial({ color: strand.color });
+
+        strand.nucleotides.forEach(nucleotide => {
+            let atoms =
+                console.log(nucleotide);
+        });
+    });
 }
 
 function processMolecules(parsedJson, objectsParent, relatedFilesList) {
@@ -115,9 +129,9 @@ function processMolecules(parsedJson, objectsParent, relatedFilesList) {
 
     const moleculePath = relatedFilesList.includes(ParserUtils.fileNameFromPath(parsedJson.molecules.pdbFile)) ?
         parsedJson.molecules.pdbFile : PdbUtils.getRemotePathToPdb(ParserUtils.fileNameFromPath(parsedJson.molecules.pdbFile));
-    
+
     const position = new THREE.Vector3(
-        ParserUtils.pmToAngs(parsedJson.molecules.position[1]), 
+        ParserUtils.pmToAngs(parsedJson.molecules.position[1]),
         ParserUtils.pmToAngs(parsedJson.molecules.position[2]),
         ParserUtils.pmToAngs(parsedJson.molecules.position[0]));
 
@@ -127,5 +141,5 @@ function processMolecules(parsedJson, objectsParent, relatedFilesList) {
         parsedJson.molecules.orientation[0]
     );
 
-    PdbUtils.loadPdb(moleculePath, position, rotation, objectsParent);
+    PdbUtils.loadAndSpawnPdb(moleculePath, position, rotation, objectsParent);
 }
