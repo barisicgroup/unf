@@ -63,6 +63,7 @@ function viewerMain() {
 
         controls.target.copy(camTarget);
         controls.enableDamping = true;
+        controls.dampingFactor = 0.07;
         controls.update();
     }
 
