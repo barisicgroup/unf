@@ -1,4 +1,5 @@
-import * as THREE from 'https://unpkg.com/three@0.122.0/build/three.module.js';
+import * as THREE from "https://unpkg.com/three@0.122.0/build/three.module.js";
+//import { PDBLoader } from "https://unpkg.com/three@0.122.0/examples/jsm/loaders/PDBLoader.js";
 
 var ParserConstants = {
     SupportedFormatVersion: .1,
@@ -24,8 +25,8 @@ var ParserUtils = {
     }
 }
 
-export function parseUNF(fileContent) {
-    const parsedJson = JSON.parse(fileContent);
+export function parseUNF(unfFileContent, relatedFilesList) {
+    const parsedJson = JSON.parse(unfFileContent);
     console.log(parsedJson); // Output to log for verification purposes
 
     if (parsedJson.version !== ParserConstants.SupportedFormatVersion) {
@@ -91,3 +92,24 @@ function processVirtualHelices(parsedJson, objectsParent) {
 function processSingleStrands(parsedJson, objectsParent) {
     // TODO
 }
+
+/*function pdbFileLoaded(pdb) {
+    const geometryAtoms = pdb.geometryAtoms;
+    const geometryBonds = pdb.geometryBonds;
+    const json = pdb.json;
+
+    console.log("This molecule has " + json.atoms.length + " atoms");
+}
+
+function startPdbLoading(pathToPdb) {
+    const loader = new PDBLoader();
+
+    loader.load(
+        pathToPdb,
+        pdbFileLoaded,
+        function (xhr) { }, // Called when loading is in progresses
+        function (error) {
+            console.error("PDB loading failed.");
+        }
+    );
+}*/

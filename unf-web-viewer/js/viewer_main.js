@@ -1,6 +1,6 @@
-import * as THREE from 'https://unpkg.com/three@0.122.0/build/three.module.js';
-import { OrbitControls } from 'https://unpkg.com/three@0.122.0/examples/jsm/controls/OrbitControls.js';
-import { parseUNF } from './unf_parser.js';
+import * as THREE from "https://unpkg.com/three@0.122.0/build/three.module.js";
+import { OrbitControls } from "https://unpkg.com/three@0.122.0/examples/jsm/controls/OrbitControls.js";
+import { parseUNF } from "./unf_parser.js";
 
 function viewerMain() {
     const canvas = document.querySelector("#mainCanvas");
@@ -83,24 +83,33 @@ function viewerMain() {
 
     function fileReaderInit() {
         const fileSelector = document.querySelector("#inputUnfFile");
-        fileSelector.addEventListener('change', (event) => {
+        fileSelector.addEventListener("change", (event) => {
             fileLoaded(event.target.files);
         });
     }
 
     function fileLoaded(files) {
-        if (files.length > 0 && files[0]) {
+        const selectedFiles = Array.from(files);
+        const unfFile = selectedFiles.find(x => { 
+            let extension = x.name.split('.').pop();
+            return extension === "unf" || extension === "json";
+        });
+        selectedFiles.splice(selectedFiles.indexOf(unfFile), 1);
+
+        if (unfFile !== undefined) {
+            // Only UNF file is fully read into the memory
+            // Remaining files are forwared only as references
             const reader = new FileReader();
-            reader.readAsText(files[0], "UTF-8");
+            reader.readAsText(unfFile, "UTF-8");
             reader.onload = function (evt) {
                 try {
-                    var parsedObjects = parseUNF(evt.target.result);
+                    var parsedObjects = parseUNF(evt.target.result, selectedFiles);
                     if (parsedObjects) {
                         parsedObjects.forEach(object => scene.add(object));
                     }
                 }
                 catch (e) {
-                    alert("Parsing failed: " + files[0]);
+                    alert("Parsing failed: " + unfFile + ". " + e);
                 }
             }
             reader.onerror = function (evt) {
@@ -108,7 +117,7 @@ function viewerMain() {
             }
         }
         else {
-            console.log("No file to be loaded.");
+            console.log("No UNF file to be loaded.");
         }
     }
 }
