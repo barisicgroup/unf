@@ -101,7 +101,7 @@ function viewerMain() {
             // Only UNF file is fully read into the memory
             // Remaining files are forwared only as references
             const reader = new FileReader();
-            reader.readAsText(unfFile, "UTF-8");
+            
             reader.onload = function (evt) {
                 try {
                     var parsedObjects = parseUNF(evt.target.result, selectedFiles);
@@ -113,9 +113,12 @@ function viewerMain() {
                     alert("Parsing failed: " + unfFile + ". " + e);
                 }
             }
+            
             reader.onerror = function (evt) {
                 alert("Error when loading file: " + evt);
             }
+
+            reader.readAsText(unfFile, "UTF-8");
         }
         else {
             console.log("No UNF file to be loaded.");

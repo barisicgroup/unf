@@ -1,5 +1,6 @@
 import * as THREE from "https://unpkg.com/three@0.122.0/build/three.module.js";
 import * as PdbUtils from "./pdb_utils.js"
+import * as OxDnaUtils from "./oxdna_utils.js";
 
 var ParserConstants = {
     SupportedFormatVersion: .1,
@@ -22,6 +23,10 @@ var ParserUtils = {
 
     pmToAngs(pms) {
         return pms * 0.01;
+    },
+
+    fileNameFromPath(path) {
+        return path.replace(/^.*[\\\/]/, '');
     }
 }
 
@@ -43,7 +48,7 @@ export function parseUNF(unfFileContent, relatedFilesList) {
     result.push(rescaledParent);
 
     processVirtualHelices(parsedJson, rescaledParent);
-    processSingleStrands(parsedJson, rescaledParent);
+    processSingleStrands(parsedJson, rescaledParent, relatedFilesList);
     processMolecules(parsedJson, rescaledParent, relatedFilesList);
 
     return result;
@@ -93,15 +98,23 @@ function processVirtualHelices(parsedJson, objectsParent) {
     }
 }
 
-function processSingleStrands(parsedJson, objectsParent) {
+function processSingleStrands(parsedJson, objectsParent, relatedFilesList) {
+    // TEST CODE
+    var oxFile = relatedFilesList.find(x => x.name == ParserUtils.fileNameFromPath(parsedJson.singleStrands[0].confFile[0]));
+    if(oxFile !== undefined){
+        OxDnaUtils.parseOxConfFile(oxFile, (parsedData) => console.log(parsedData));
+    }
+    else {
+        console.log("No ox file included");
+    }
     // TODO
 }
 
 function processMolecules(parsedJson, objectsParent, relatedFilesList) {
     // Right now, "molecules" field is an object, not an array (in UNF)
 
-    const moleculePath = relatedFilesList.includes(parsedJson.molecules.pdbFile) ?
-        parsedJson.molecules.pdbFile : PdbUtils.getRemotePathToPdb(parsedJson.molecules.pdbFile);
+    const moleculePath = relatedFilesList.includes(ParserUtils.fileNameFromPath(parsedJson.molecules.pdbFile)) ?
+        parsedJson.molecules.pdbFile : PdbUtils.getRemotePathToPdb(ParserUtils.fileNameFromPath(parsedJson.molecules.pdbFile));
     
     const position = new THREE.Vector3(
         ParserUtils.pmToAngs(parsedJson.molecules.position[1]), 
