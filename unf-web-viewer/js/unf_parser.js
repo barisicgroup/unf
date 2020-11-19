@@ -98,7 +98,7 @@ function processSingleStrands(parsedJson, objectsParent) {
 }
 
 function processMolecules(parsedJson, objectsParent, relatedFilesList) {
-    // Right now, molecules is an object, not an array
+    // Right now, "molecules" field is an object, not an array (in UNF)
 
     const moleculePath = relatedFilesList.includes(parsedJson.molecules.pdbFile) ?
         parsedJson.molecules.pdbFile : PdbUtils.getRemotePathToPdb(parsedJson.molecules.pdbFile);

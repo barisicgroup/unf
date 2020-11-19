@@ -22,10 +22,9 @@ function pdbFileLoaded(pdb, objPosition, eulerRotation, parentObject) {
     // Modified code from https://github.com/mrdoob/three.js/blob/master/examples/webgl_loader_pdb.html
 
     const geometryAtoms = pdb.geometryAtoms;
-    const json = pdb.json;
     const offset = new THREE.Vector3();
     const moleculeObject = new THREE.Object3D();
-
+    
     const sphereGeometry = new THREE.IcosahedronBufferGeometry(1, 3);
 
     geometryAtoms.computeBoundingBox();
@@ -58,6 +57,5 @@ function pdbFileLoaded(pdb, objPosition, eulerRotation, parentObject) {
 
     moleculeObject.position.copy(objPosition);
     moleculeObject.rotation.copy(eulerRotation);
-    console.log(eulerRotation);
     parentObject.add(moleculeObject);
 }

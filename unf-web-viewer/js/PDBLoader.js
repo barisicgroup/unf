@@ -129,15 +129,15 @@ PDBLoader.prototype = Object.assign(Object.create(Loader.prototype), {
 
 				var atom = atoms[i];
 
-				x = atom[0];
-				y = atom[1];
-				z = atom[2];
+				x = atom.x;
+				y = atom.y;
+				z = atom.z;
 
 				verticesAtoms.push(x, y, z);
 
-				var r = atom[3][0] / 255;
-				var g = atom[3][1] / 255;
-				var b = atom[3][2] / 255;
+				var r = atom.color[0] / 255;
+				var g = atom.color[1] / 255;
+				var b = atom.color[2] / 255;
 
 				colorsAtoms.push(r, g, b);
 
@@ -155,15 +155,15 @@ PDBLoader.prototype = Object.assign(Object.create(Loader.prototype), {
 				var startAtom = _atomMap[start];
 				var endAtom = _atomMap[end];
 
-				x = startAtom[0];
-				y = startAtom[1];
-				z = startAtom[2];
+				x = startAtom.x;
+				y = startAtom.y;
+				z = startAtom.z;
 
 				verticesBonds.push(x, y, z);
 
-				x = endAtom[0];
-				y = endAtom[1];
-				z = endAtom[2];
+				x = endAtom.x;
+				y = endAtom.y;
+				z = endAtom.z;
 
 				verticesBonds.push(x, y, z);
 
@@ -188,8 +188,6 @@ PDBLoader.prototype = Object.assign(Object.create(Loader.prototype), {
 		var _bhash = {};
 		var _atomMap = {};
 
-		var x, y, z, index, e;
-
 		// parse
 
 		var lines = text.split('\n');
@@ -198,23 +196,30 @@ PDBLoader.prototype = Object.assign(Object.create(Loader.prototype), {
 
 			if (lines[i].substr(0, 4) === 'ATOM' || lines[i].substr(0, 6) === 'HETATM') {
 
-				x = parseFloat(lines[i].substr(30, 7));
-				y = parseFloat(lines[i].substr(38, 7));
-				z = parseFloat(lines[i].substr(46, 7));
-				index = parseInt(lines[i].substr(6, 5)) - 1;
+				const x = parseFloat(lines[i].substr(30, 8));
+				const y = parseFloat(lines[i].substr(38, 8));
+				const z = parseFloat(lines[i].substr(46, 8));
+				const serialNumber = parseInt(lines[i].substr(6, 5));
+				const atomName = trim(lines[i].substr(12, 4));
+				const chainIdentifier = trim(lines[i].substr(21, 1));
+				const residueSeqNum = parseInt(lines[i].substr(22, 4));
+				const residueName = trim(lines[i].substr(17, 3));
+				
+				const elementSymbol = trim(lines[i].substr(76, 2)).toLowerCase();
 
-				e = trim(lines[i].substr(76, 2)).toLowerCase();
+				if (elementSymbol === '') {
 
-				if (e === '') {
-
-					e = trim(lines[i].substr(12, 2)).toLowerCase();
-
+					elementSymbol = trim(lines[i].substr(12, 2)).toLowerCase();
 				}
 
-				var atomData = [x, y, z, CPK[e], capitalize(e)];
+				//var atomData = [x, y, z, CPK[elementSymbol], capitalize(elementSymbol)];
 
+				let atomData = {
+					x, y, z, serialNumber, atomName, chainIdentifier, residueSeqNum, residueName, color: CPK[elementSymbol]
+				};
+				
 				atoms.push(atomData);
-				_atomMap[index] = atomData;
+				_atomMap[serialNumber] = atomData;
 
 			} else if (lines[i].substr(0, 6) === 'CONECT') {
 
