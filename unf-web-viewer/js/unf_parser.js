@@ -1,5 +1,5 @@
 import * as THREE from "https://unpkg.com/three@0.122.0/build/three.module.js";
-//import { PDBLoader } from "https://unpkg.com/three@0.122.0/examples/jsm/loaders/PDBLoader.js";
+import * as PdbUtils from "./pdb_utils.js"
 
 var ParserConstants = {
     SupportedFormatVersion: .1,
@@ -44,11 +44,14 @@ export function parseUNF(unfFileContent, relatedFilesList) {
 
     processVirtualHelices(parsedJson, rescaledParent);
     processSingleStrands(parsedJson, rescaledParent);
+    processMolecules(parsedJson, rescaledParent, relatedFilesList);
 
     return result;
 }
 
 function processVirtualHelices(parsedJson, objectsParent) {
+    // At the moment, this functions processes all virtualHelices.cells records
+    // and draws a single cylinder at the cell.position
     const cylinderGeometry = new THREE.CylinderBufferGeometry(
         ParserConstants.VHelixRadius * 0.5, ParserConstants.VHelixRadius * 0.5, 1, 32, 32);
     const cylinderTranspMaterial = new THREE.MeshBasicMaterial({ color: 0xff4444, opacity: 0.3, transparent: true });
@@ -59,6 +62,7 @@ function processVirtualHelices(parsedJson, objectsParent) {
             cylinderTranspMaterial.color.setHex(Math.random() * 0xffffff);
             const newMesh = new THREE.Mesh(cylinderGeometry, new THREE.MeshBasicMaterial(cylinderTranspMaterial));
             newMesh.position.set(
+                // UNF now stores positions as z/x/y
                 ParserUtils.pmToAngs(cell.position[1]),
                 ParserUtils.pmToAngs(cell.position[2]),
                 ParserUtils.pmToAngs(cell.position[0]));
@@ -93,23 +97,11 @@ function processSingleStrands(parsedJson, objectsParent) {
     // TODO
 }
 
-/*function pdbFileLoaded(pdb) {
-    const geometryAtoms = pdb.geometryAtoms;
-    const geometryBonds = pdb.geometryBonds;
-    const json = pdb.json;
+function processMolecules(parsedJson, objectsParent, relatedFilesList) {
+    // Right now, molecules is an object, not an array
 
-    console.log("This molecule has " + json.atoms.length + " atoms");
+    const moleculePath = relatedFilesList.includes(parsedJson.molecules.pdbFile) ?
+        parsedJson.molecules.pdbFile : PdbUtils.getRemotePathToPdb(parsedJson.molecules.pdbFile);
+    
+    PdbUtils.loadPdb(moleculePath, objectsParent);
 }
-
-function startPdbLoading(pathToPdb) {
-    const loader = new PDBLoader();
-
-    loader.load(
-        pathToPdb,
-        pdbFileLoaded,
-        function (xhr) { }, // Called when loading is in progresses
-        function (error) {
-            console.error("PDB loading failed.");
-        }
-    );
-}*/
