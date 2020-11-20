@@ -29,8 +29,8 @@ function processOxConfFileContent(content) {
     for(let i = 3; i < allLines.length; ++i) {
         var splittedLine = allLines[i].split(/[ ,]+/);
 
-        if(splittedLine.length > 0 && splittedLine.length < 15) {
-            console.warn("Invalid line in conf file: '" + splittedLine + "'");
+        if(splittedLine.length < 15) {
+            console.warn("Ignored line in oxdna conf file: '" + splittedLine + "'");
             continue;
         }
 

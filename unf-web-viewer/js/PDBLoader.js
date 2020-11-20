@@ -213,8 +213,6 @@ PDBLoader.prototype = Object.assign(Object.create(Loader.prototype), {
 					elementSymbol = trim(lines[i].substr(12, 2)).toLowerCase();
 				}
 
-				//var atomData = [x, y, z, CPK[elementSymbol], capitalize(elementSymbol)];
-
 				let atomData = {
 					x, y, z, serialNumber, atomName, chainIdentifier, residueSeqNum, residueName, color: CPK[elementSymbol]
 				};

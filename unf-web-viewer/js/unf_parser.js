@@ -27,6 +27,10 @@ var ParserUtils = {
 
     fileNameFromPath(path) {
         return path.replace(/^.*[\\\/]/, '');
+    },
+
+    extensionFromFileName(fileName) {
+        return fileName.split('.').pop();
     }
 }
 
@@ -37,7 +41,6 @@ export function parseUNF(unfFileContent, relatedFilesList) {
     if (parsedJson.version !== ParserConstants.SupportedFormatVersion) {
         alert("Unsupported format version!");
     }
-
     let result = [];
 
     var rescaledParent = new THREE.Object3D();
@@ -47,11 +50,58 @@ export function parseUNF(unfFileContent, relatedFilesList) {
         1 / ParserConstants.AngstromsPerUnit);
     result.push(rescaledParent);
 
+    // Virtual helices are not refering to any external files 
+    // so they can be processed instantly
     processVirtualHelices(parsedJson, rescaledParent);
+
+    // The rest may depend on external files so they need to be first processed
+    // and after this is done, UNF parsing can continue
+    // ---
+    // This will be actually asynchronous so this function will return immediately
+    // but not everything will be processed atm
+    processExternalFilesAndContinueParsing(parsedJson, rescaledParent, relatedFilesList);
+
+    return result;
+}
+
+function processExternalFilesAndContinueParsing(parsedJson, rescaledParent, relatedFilesList) {
+    // The values in the Map are actually different objects (i.e., of different data type)
+    // so it is necessary to know what kind of data you are accessing
+    let nameToFileDataMap = new Map();
+    let uniqueFileNamesSet = getUniqueFileNamesFromUNF();
+
+    uniqueFileNamesSet.forEach(fileName => {
+        if(relatedFilesList.find(x => x.name == fileName)) {
+            console.log("To process: " + fileName);
+        }
+        else {
+            console.log("Not uploaded: " + fileName);
+        }
+    });
+
     processSingleStrands(parsedJson, rescaledParent, relatedFilesList);
     processMolecules(parsedJson, rescaledParent, relatedFilesList);
 
-    return result;
+    function getUniqueFileNamesFromUNF() {
+        let result = new Set();
+
+        parsedJson.singleStrands.forEach(strand => {
+            result.add(ParserUtils.fileNameFromPath(strand.pdbFile));
+            strand.confFile.forEach(cfile => {
+                result.add(ParserUtils.fileNameFromPath(cfile));
+            });
+        });
+
+        parsedJson.proteins.forEach(protein => {
+            protein.chains.forEach(chain => {
+                result.add(ParserUtils.fileNameFromPath(chain.pdbFile));
+            });
+        });
+
+        result.add(parsedJson.molecules.pdbFile);
+
+        return result;
+    }
 }
 
 function processVirtualHelices(parsedJson, objectsParent) {
