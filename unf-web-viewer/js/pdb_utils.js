@@ -23,7 +23,7 @@ export function loadAndSpawnPdb(pdbName, position, eulerRotation, parentObject, 
     loadPdb(pdbName, function (pdb) { spawnPdbData(pdb, position, eulerRotation, parentObject); }, atomPredicate);
 }
 
-export function spawnPdbData(pdbData, objPosition, eulerRotation, parentObject) {
+export function spawnPdbData(pdbData, objPosition, eulerRotation, parentObject, atomPredicate = x => true) {
     // Modified code from https://github.com/mrdoob/three.js/blob/master/examples/webgl_loader_pdb.html
 
     const geometryAtoms = pdbData.geometryAtoms;
@@ -44,6 +44,9 @@ export function spawnPdbData(pdbData, objPosition, eulerRotation, parentObject) 
     const color = new THREE.Color();
 
     for (let i = 0; i < positions.count; ++i) {
+        if (!atomPredicate(pdbData.json.atoms[i])) {
+            continue;
+        }
 
         position.x = positions.getX(i);
         position.y = positions.getY(i);

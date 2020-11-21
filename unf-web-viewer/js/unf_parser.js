@@ -212,18 +212,27 @@ function processSingleStrands(parsedJson, objectsParent, nameToFileDataMap) {
 
     parsedJson.singleStrands.forEach(strand => {
         const confFileName = ParserUtils.fileNameFromPath(strand.confFile[0]);
-        const material = new THREE.MeshPhongMaterial({ color: strand.color });
+        const pdbFileName = ParserUtils.fileNameFromPath(strand.pdbFile);
+        const material = new THREE.MeshPhongMaterial({ color: strand.color, opacity: 0.3, transparent: true });
         if (nameToFileDataMap.has(confFileName)) {
             let parsedData = nameToFileDataMap.get(confFileName);
             strand.nucleotides.forEach(nucleotide => {
+                // Spawn sphere for each nucleotide
                 let mesh = new THREE.Mesh(sphereGeometry, material);
                 let nmPos = parsedData[nucleotide.oxdnaConfRow].position;
-                mesh.position.set(
+                nmPos = new THREE.Vector3(
                     ParserUtils.nmToAngs(nmPos.x),
                     ParserUtils.nmToAngs(nmPos.y),
-                    ParserUtils.nmToAngs(nmPos.z),                    
-                );
+                    ParserUtils.nmToAngs(nmPos.z));
+                mesh.position.copy(nmPos);
                 objectsParent.add(mesh);
+
+                // Spawn individual atoms
+                if (nameToFileDataMap.has(pdbFileName)) {
+                    PdbUtils.spawnPdbData(nameToFileDataMap.get(pdbFileName), nmPos, new THREE.Vector3(0, 0, 0), objectsParent, atom => {
+                        return atom.chainIdentifier === strand.chainName && atom.residueSeqNum == nucleotide.pdbId;
+                    });
+                }
             });
         }
         else {
