@@ -74,14 +74,17 @@ function processExternalFilesAndContinueParsing(parsedJson, rescaledParent, rela
     uniqueFileNamesSet.forEach(fileName => {
         const uploadedFile = relatedFilesList.find(x => x.name === fileName);
         const extension = ParserUtils.extensionFromFileName(fileName);
+        let necessaryToRevokeObjURL = false;
         let uploadedFileName = uploadedFile ? uploadedFile.name : undefined;
 
         if (extension === "pdb") {
             if (uploadedFile) {
                 // PDB Loader is using FileLoader class from three.js accepting 
-                // URLs. For this reason, it is necessary to create unique object URL
-                // for each PDB file in order to feed it into the loader
+                // URLs only (if provided with only file name, it will look for it on the server which is incorrect). 
+                // For this reason, it is necessary to create unique object URL for each
+                // PDB file in order to feed it into the loader.
                 uploadedFileName = window.URL.createObjectURL(uploadedFile);
+                necessaryToRevokeObjURL = true;
             }
             else {
                 // File was not found in the user-uploaded ones so let's try to download it
@@ -92,7 +95,7 @@ function processExternalFilesAndContinueParsing(parsedJson, rescaledParent, rela
 
         if (uploadedFileName) {
             if (extension === "pdb") {
-                promises.push(processPdbAndAddToMap(fileName, uploadedFileName));
+                promises.push(processPdbAndAddToMap(fileName, uploadedFileName, necessaryToRevokeObjURL));
             }
             else if (extension === "oxdna") {
                 promises.push(processOxCfgAndAddToMap(uploadedFile));
@@ -138,10 +141,13 @@ function processExternalFilesAndContinueParsing(parsedJson, rescaledParent, rela
         return result;
     }
 
-    function processPdbAndAddToMap(fileName, pdbPath) {
+    function processPdbAndAddToMap(fileName, pdbPath, necessaryToRevokeObjURL) {
         return new Promise(function (resolve) {
             PdbUtils.loadPdb(pdbPath, pdbData => {
                 nameToFileDataMap.set(fileName, pdbData);
+                if (necessaryToRevokeObjURL) {
+                    window.URL.revokeObjectURL(pdbPath);
+                }
                 resolve();
             })
         });
