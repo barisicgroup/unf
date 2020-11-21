@@ -25,6 +25,10 @@ var ParserUtils = {
         return pms * 0.01;
     },
 
+    nmToAngs(nm) {
+        return nm * 10;
+    },
+
     fileNameFromPath(path) {
         return path.replace(/^.*[\\\/]/, '');
     },
@@ -204,7 +208,7 @@ function processVirtualHelices(parsedJson, objectsParent) {
 }
 
 function processSingleStrands(parsedJson, objectsParent, nameToFileDataMap) {
-    const sphereGeometry = new THREE.SphereGeometry(7, 16, 16);
+    const sphereGeometry = new THREE.SphereGeometry(3.5, 16, 16);
 
     parsedJson.singleStrands.forEach(strand => {
         const confFileName = ParserUtils.fileNameFromPath(strand.confFile[0]);
@@ -213,7 +217,12 @@ function processSingleStrands(parsedJson, objectsParent, nameToFileDataMap) {
             let parsedData = nameToFileDataMap.get(confFileName);
             strand.nucleotides.forEach(nucleotide => {
                 let mesh = new THREE.Mesh(sphereGeometry, material);
-                mesh.position.copy(parsedData[nucleotide.oxdnaConfRow].position);
+                let nmPos = parsedData[nucleotide.oxdnaConfRow].position;
+                mesh.position.set(
+                    ParserUtils.nmToAngs(nmPos.x),
+                    ParserUtils.nmToAngs(nmPos.y),
+                    ParserUtils.nmToAngs(nmPos.z),                    
+                );
                 objectsParent.add(mesh);
             });
         }
