@@ -95,29 +95,25 @@ function processExternalFilesAndContinueParsing(parsedJson, rescaledParent, rela
 
         if (uploadedFileName) {
             if (extension === "pdb") {
-                promises.push(processPdbAndAddToMap(fileName, uploadedFileName, necessaryToRevokeObjURL));
+                promises.push(() => processPdbAndAddToMap(fileName, uploadedFileName, nameToFileDataMap, necessaryToRevokeObjURL));
             }
             else if (extension === "oxdna") {
-                promises.push(processOxCfgAndAddToMap(uploadedFile));
+                promises.push(() => processOxCfgAndAddToMap(uploadedFile, nameToFileDataMap));
             }
             else {
                 console.warn("No parser for this file (unsupported extension): ", file);
             }
         } else {
             console.log("UNF-referenced file not found: ", fileName);
-            nameToFileDataMap.set(fileName, null);
         }
-
     });
-
+    
     promises.reduce(function (curr, next) {
         return curr.then(next);
     }, Promise.resolve()).then(function () {
-        console.log(nameToFileDataMap);
+        processSingleStrands(parsedJson, rescaledParent, nameToFileDataMap);
+        processMolecules(parsedJson, rescaledParent, nameToFileDataMap);
     });
-
-    processSingleStrands(parsedJson, rescaledParent, relatedFilesList);
-    processMolecules(parsedJson, rescaledParent, relatedFilesList);
 
     // Helper functions
     function getUniqueFileNamesFromUNF() {
@@ -141,7 +137,7 @@ function processExternalFilesAndContinueParsing(parsedJson, rescaledParent, rela
         return result;
     }
 
-    function processPdbAndAddToMap(fileName, pdbPath, necessaryToRevokeObjURL) {
+    function processPdbAndAddToMap(fileName, pdbPath, nameToFileDataMap, necessaryToRevokeObjURL) {
         return new Promise(function (resolve) {
             PdbUtils.loadPdb(pdbPath, pdbData => {
                 nameToFileDataMap.set(fileName, pdbData);
@@ -153,7 +149,7 @@ function processExternalFilesAndContinueParsing(parsedJson, rescaledParent, rela
         });
     }
 
-    function processOxCfgAndAddToMap(oxFile) {
+    function processOxCfgAndAddToMap(oxFile, nameToFileDataMap) {
         return new Promise(function (resolve) {
             OxDnaUtils.parseOxConfFile(oxFile, oxData => {
                 nameToFileDataMap.set(oxFile.name, oxData);
@@ -207,39 +203,30 @@ function processVirtualHelices(parsedJson, objectsParent) {
     }
 }
 
-function processSingleStrands(parsedJson, objectsParent, relatedFilesList) {
-    // PDB file is now ignored 
-    // Due to the asynchronicity of the loading, it will be necessary to chain the file loading later on somehow
-    // Generally, there are tons of same records so it might be necessary to process the provided files first and then
-    // just use the parsed data
+function processSingleStrands(parsedJson, objectsParent, nameToFileDataMap) {
+    const sphereGeometry = new THREE.SphereGeometry(7, 16, 16);
 
     parsedJson.singleStrands.forEach(strand => {
-        var oxFile = relatedFilesList.find(x => x.name == ParserUtils.fileNameFromPath(strand.confFile[0]));
-        if (oxFile !== undefined) {
-            OxDnaUtils.parseOxConfFile(oxFile, x => singleStrandsOxDnaConfigLoaded(strand, parsedJson, objectsParent, x));
+        const confFileName = ParserUtils.fileNameFromPath(strand.confFile[0]);
+        const material = new THREE.MeshPhongMaterial({ color: strand.color });
+        if (nameToFileDataMap.has(confFileName)) {
+            let parsedData = nameToFileDataMap.get(confFileName);
+            strand.nucleotides.forEach(nucleotide => {
+                let mesh = new THREE.Mesh(sphereGeometry, material);
+                mesh.position.copy(parsedData[nucleotide.oxdnaConfRow].position);
+                objectsParent.add(mesh);
+            });
         }
         else {
-            console.log("No oxDNA configuration file included");
+            console.warn(confFileName + " file not provided. Skipping appropriate records.");
         }
-
     });
 }
 
-function singleStrandsOxDnaConfigLoaded(strand, parsedJson, objectsParent, parsedData) {
-    const sphereGeometry = new THREE.SphereGeometry(7, 16, 16);
-    const material = new THREE.MeshPhongMaterial({ color: strand.color });
-
-    strand.nucleotides.forEach(nucleotide => {
-        let mesh = new THREE.Mesh(sphereGeometry, material);
-        mesh.position.copy(parsedData[nucleotide.oxdnaConfRow].position);
-        objectsParent.add(mesh);
-    });
-}
-
-function processMolecules(parsedJson, objectsParent, relatedFilesList) {
+function processMolecules(parsedJson, objectsParent, nameToFileDataMap) {
     // Right now, "molecules" field is an object, not an array (in UNF)
 
-    const moleculePath = relatedFilesList.includes(ParserUtils.fileNameFromPath(parsedJson.molecules.pdbFile)) ?
+    const moleculePath = nameToFileDataMap.includes(ParserUtils.fileNameFromPath(parsedJson.molecules.pdbFile)) ?
         parsedJson.molecules.pdbFile : PdbUtils.getRemotePathToPdb(ParserUtils.fileNameFromPath(parsedJson.molecules.pdbFile));
 
     const position = new THREE.Vector3(
