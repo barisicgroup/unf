@@ -14,7 +14,7 @@ export function loadPdb(pdbName, onLoaded, atomPredicate = x => true) {
         onLoaded,
         function (xhr) { }, // Called when loading is in progresses
         function (error) {
-            console.error("PDB loading failed: " + error);
+            console.error("PDB loading failed: ", pdbName, error);
         }
     );
 }

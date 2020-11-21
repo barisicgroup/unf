@@ -110,12 +110,12 @@ function viewerMain() {
                     }
                 }
                 catch (e) {
-                    alert("Parsing failed: " + unfFile + ". " + e);
+                    alert("Parsing failed: " + unfFile + ". ", e);
                 }
             }
-            
+
             reader.onerror = function (evt) {
-                alert("Error when loading file: " + evt);
+                alert("Error when loading file: ", evt);
             }
 
             reader.readAsText(unfFile, "UTF-8");

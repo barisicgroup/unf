@@ -69,19 +69,54 @@ function processExternalFilesAndContinueParsing(parsedJson, rescaledParent, rela
     // so it is necessary to know what kind of data you are accessing
     let nameToFileDataMap = new Map();
     let uniqueFileNamesSet = getUniqueFileNamesFromUNF();
+    let promises = [];
 
     uniqueFileNamesSet.forEach(fileName => {
-        if(relatedFilesList.find(x => x.name == fileName)) {
-            console.log("To process: " + fileName);
+        const uploadedFile = relatedFilesList.find(x => x.name === fileName);
+        const extension = ParserUtils.extensionFromFileName(fileName);
+        let uploadedFileName = uploadedFile ? uploadedFile.name : undefined;
+
+        if (extension === "pdb") {
+            if (uploadedFile) {
+                // PDB Loader is using FileLoader class from three.js accepting 
+                // URLs. For this reason, it is necessary to create unique object URL
+                // for each PDB file in order to feed it into the loader
+                uploadedFileName = window.URL.createObjectURL(uploadedFile);
+            }
+            else {
+                // File was not found in the user-uploaded ones so let's try to download it
+                // from the protein data bank
+                uploadedFileName = PdbUtils.getRemotePathToPdb(fileName);
+            }
         }
-        else {
-            console.log("Not uploaded: " + fileName);
+
+        if (uploadedFileName) {
+            if (extension === "pdb") {
+                promises.push(processPdbAndAddToMap(fileName, uploadedFileName));
+            }
+            else if (extension === "oxdna") {
+                promises.push(processOxCfgAndAddToMap(uploadedFile));
+            }
+            else {
+                console.warn("No parser for this file (unsupported extension): ", file);
+            }
+        } else {
+            console.log("UNF-referenced file not found: ", fileName);
+            nameToFileDataMap.set(fileName, null);
         }
+
+    });
+
+    promises.reduce(function (curr, next) {
+        return curr.then(next);
+    }, Promise.resolve()).then(function () {
+        console.log(nameToFileDataMap);
     });
 
     processSingleStrands(parsedJson, rescaledParent, relatedFilesList);
     processMolecules(parsedJson, rescaledParent, relatedFilesList);
 
+    // Helper functions
     function getUniqueFileNamesFromUNF() {
         let result = new Set();
 
@@ -101,6 +136,24 @@ function processExternalFilesAndContinueParsing(parsedJson, rescaledParent, rela
         result.add(parsedJson.molecules.pdbFile);
 
         return result;
+    }
+
+    function processPdbAndAddToMap(fileName, pdbPath) {
+        return new Promise(function (resolve) {
+            PdbUtils.loadPdb(pdbPath, pdbData => {
+                nameToFileDataMap.set(fileName, pdbData);
+                resolve();
+            })
+        });
+    }
+
+    function processOxCfgAndAddToMap(oxFile) {
+        return new Promise(function (resolve) {
+            OxDnaUtils.parseOxConfFile(oxFile, oxData => {
+                nameToFileDataMap.set(oxFile.name, oxData);
+                resolve();
+            })
+        });
     }
 }
 

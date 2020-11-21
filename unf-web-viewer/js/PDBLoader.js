@@ -124,7 +124,7 @@ PDBLoader.prototype = Object.assign(Object.create(Loader.prototype), {
 			var verticesBonds = [];
 
 			// atoms
-
+			
 			for (i = 0, l = atoms.length; i < l; i++) {
 
 				var atom = atoms[i];
@@ -206,15 +206,17 @@ PDBLoader.prototype = Object.assign(Object.create(Loader.prototype), {
 				const residueSeqNum = parseInt(lines[i].substr(22, 4));
 				const residueName = trim(lines[i].substr(17, 3));
 
-				const elementSymbol = trim(lines[i].substr(76, 2)).toLowerCase();
+				let elementSymbol = trim(lines[i].substr(76, 2)).toLowerCase();
 
 				if (elementSymbol === '') {
 
 					elementSymbol = trim(lines[i].substr(12, 2)).toLowerCase();
 				}
 
+				const color = elementSymbol in CPK ? CPK[elementSymbol] : [255, 20, 147];
+
 				let atomData = {
-					x, y, z, serialNumber, atomName, chainIdentifier, residueSeqNum, residueName, color: CPK[elementSymbol]
+					x, y, z, serialNumber, atomName, chainIdentifier, residueSeqNum, residueName, color
 				};
 
 				if (atomPredicate(atomData)) {

@@ -8,13 +8,13 @@ export function parseOxConfFile(oxFile, onFileParsed) {
             onFileParsed(processOxConfFileContent(evt.target.result));
         }
         catch (e) {
-            alert("Parsing failed: " + oxFile.name + ". " + e);
+            alert("Parsing failed: " + oxFile.name + ".", e);
         }
     }
 
     reader.onerror = function (evt) {
         parsedData = [];
-        alert("Error when loading oxDNA configuration file: " + evt);
+        alert("Error when loading oxDNA configuration file: ", evt);
     }
 
     reader.readAsText(oxFile, "UTF-8");
