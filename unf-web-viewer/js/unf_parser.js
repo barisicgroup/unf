@@ -107,7 +107,7 @@ function processExternalFilesAndContinueParsing(parsedJson, rescaledParent, rela
             console.log("UNF-referenced file not found: ", fileName);
         }
     });
-    
+
     promises.reduce(function (curr, next) {
         return curr.then(next);
     }, Promise.resolve()).then(function () {
@@ -226,8 +226,7 @@ function processSingleStrands(parsedJson, objectsParent, nameToFileDataMap) {
 function processMolecules(parsedJson, objectsParent, nameToFileDataMap) {
     // Right now, "molecules" field is an object, not an array (in UNF)
 
-    const moleculePath = nameToFileDataMap.includes(ParserUtils.fileNameFromPath(parsedJson.molecules.pdbFile)) ?
-        parsedJson.molecules.pdbFile : PdbUtils.getRemotePathToPdb(ParserUtils.fileNameFromPath(parsedJson.molecules.pdbFile));
+    const requestedPdbName = ParserUtils.fileNameFromPath(parsedJson.molecules.pdbFile);
 
     const position = new THREE.Vector3(
         ParserUtils.pmToAngs(parsedJson.molecules.position[1]),
@@ -240,5 +239,10 @@ function processMolecules(parsedJson, objectsParent, nameToFileDataMap) {
         parsedJson.molecules.orientation[0]
     );
 
-    PdbUtils.loadAndSpawnPdb(moleculePath, position, rotation, objectsParent);
+    if (nameToFileDataMap.has(requestedPdbName)) {
+        PdbUtils.spawnPdbData(nameToFileDataMap.get(requestedPdbName), position, rotation, objectsParent);
+    }
+    else {
+        console.error("Molecule PDB not found: " + requestedPdbName);
+    }
 }
