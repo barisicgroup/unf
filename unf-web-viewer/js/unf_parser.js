@@ -63,12 +63,16 @@ export function parseUNF(unfFileContent, relatedFilesList) {
     // ---
     // This will be actually asynchronous so this function will return immediately
     // but not everything will be processed atm
-    processExternalFilesAndContinueParsing(parsedJson, rescaledParent, relatedFilesList);
+    processExternalFiles(parsedJson, rescaledParent, relatedFilesList,
+        function (nameToFileDataMap) {
+            processSingleStrands(parsedJson, rescaledParent, nameToFileDataMap);
+            processMolecules(parsedJson, rescaledParent, nameToFileDataMap);
+        });
 
     return result;
 }
 
-function processExternalFilesAndContinueParsing(parsedJson, rescaledParent, relatedFilesList) {
+function processExternalFiles(parsedJson, rescaledParent, relatedFilesList, onProcessed) {
     // The values in the Map are actually different objects (i.e., of different data type)
     // so it is necessary to know what kind of data you are accessing
     let nameToFileDataMap = new Map();
@@ -115,8 +119,7 @@ function processExternalFilesAndContinueParsing(parsedJson, rescaledParent, rela
     promises.reduce(function (curr, next) {
         return curr.then(next);
     }, Promise.resolve()).then(function () {
-        processSingleStrands(parsedJson, rescaledParent, nameToFileDataMap);
-        processMolecules(parsedJson, rescaledParent, nameToFileDataMap);
+        onProcessed(nameToFileDataMap);
     });
 
     // Helper functions
