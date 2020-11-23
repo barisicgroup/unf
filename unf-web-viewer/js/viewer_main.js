@@ -33,8 +33,8 @@ function viewerMain() {
 
     function sceneInit() {
         // Add lights
-        const ambientLight = new THREE.AmbientLight(0xFFE484, .1);
-        const dirLight = new THREE.DirectionalLight(0xFFE484, 1);
+        const ambientLight = new THREE.AmbientLight(0xFFE484, .3);
+        const dirLight = new THREE.DirectionalLight(0xFFE484, .7);
         dirLight.position.set(1, 2, 4);
         dirLight.target.position.set(0, 0, 0);
 
