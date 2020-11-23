@@ -24,27 +24,40 @@ export function loadAndSpawnPdb(pdbName, position, eulerRotation, parentObject, 
 }
 
 export function spawnPdbData(pdbData, objPosition, eulerRotation, parentObject, atomPredicate = x => true) {
-    // Modified code from https://github.com/mrdoob/three.js/blob/master/examples/webgl_loader_pdb.html
+    // Based on code from https://github.com/mrdoob/three.js/blob/master/examples/webgl_loader_pdb.html
 
     const geometryAtoms = pdbData.geometryAtoms;
-    const offset = new THREE.Vector3();
-    const moleculeObject = new THREE.Object3D();
-
-    const sphereGeometry = new THREE.IcosahedronBufferGeometry(1, 3);
-
-    geometryAtoms.computeBoundingBox();
-    geometryAtoms.boundingBox.getCenter(offset).negate();
-
-    geometryAtoms.translate(offset.x, offset.y, offset.z);
-
-    let positions = geometryAtoms.getAttribute("position");
+    const atoms = pdbData.json.atoms;
+    
+    const positions = geometryAtoms.getAttribute("position");
     const colors = geometryAtoms.getAttribute("color");
 
-    const position = new THREE.Vector3();
-    const color = new THREE.Color();
+    const moleculeObject = new THREE.Object3D();
+    const sphereGeometry = new THREE.SphereGeometry(1, 16, 16);
+    const aabb = new THREE.Box3();
+    
+    // First, geometric center of selected atoms is computed 
+    // to be able to position them at the desired location properly
+    for(let i = 0; i < atoms.length; ++i) {
+        if (atomPredicate(atoms[i])) {
+            aabb.expandByPoint(new THREE.Vector3(
+                positions.getX(i),
+                positions.getY(i),
+                positions.getZ(i),
+            ));
+        }
+    }
 
+    let offset = new THREE.Vector3();
+    aabb.getCenter(offset).negate();
+    geometryAtoms.translate(offset.x, offset.y, offset.z);
+   
+    let position = new THREE.Vector3();
+    let color = new THREE.Color();
+
+    // Second, individual atoms positions are selected and meshes are rendered
     for (let i = 0; i < positions.count; ++i) {
-        if (!atomPredicate(pdbData.json.atoms[i])) {
+        if (!atomPredicate(atoms[i])) {
             continue;
         }
 
@@ -64,6 +77,6 @@ export function spawnPdbData(pdbData, objPosition, eulerRotation, parentObject, 
     }
 
     moleculeObject.position.copy(objPosition);
-    moleculeObject.rotation.copy(eulerRotation);
+    moleculeObject.rotation.setFromVector3(eulerRotation);
     parentObject.add(moleculeObject);
 }
