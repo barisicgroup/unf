@@ -3,7 +3,7 @@ import * as PdbUtils from "./pdb_utils.js"
 import * as OxDnaUtils from "./oxdna_utils.js";
 
 var ParserConstants = {
-    SupportedFormatVersion: .1,
+    SupportedFormatVersion: .2,
     AngstromsPerUnit: 256,
     VHelixRadius: 20,
     BasePairRise: 3.32,
