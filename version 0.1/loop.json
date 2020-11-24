@@ -1,10 +1,28 @@
 {
 	"version": 0.1,
 	"name": "loop",
-	"grid": "honeycomb",
+	"externalFiles": [
+		{
+			"path": "./loop_cadnano.pdb",
+			"id": 0 
+		},
+		{
+			"path": "./loop_cadnano.oxdna",
+			"id": 1 
+		},
+		{
+			"path": "./6a5j.pdb",
+			"id": 2 
+		},
+		{
+			"path": "1bna.pdb",
+			"id": 3 
+		}
+	],
 	"virtualHelices": [
 		{
 			"id": 0,
+			"grid": "honeycomb",
 			"gridPosition": [
 				16,
 				10
@@ -527,6 +545,7 @@
 		},
 		{
 			"id": 1,
+			"grid": "honeycomb",
 			"gridPosition": [
 				15,
 				10
@@ -1057,6 +1076,7 @@
 		},
 		{
 			"id": 2,
+			"grid": "honeycomb",
 			"gridPosition": [
 				17,
 				10
@@ -1584,9 +1604,9 @@
 				0.707107,
 				0.707107
 			],
-			"pdbFile": "./loop_cadnano.pdb",
-			"confFile": [
-				"./loop_cadnano.oxdna"
+			"pdbFileId": 0,
+			"confFilesIds": [
+				1
 			],
 			"nucleotides": [
 				{
@@ -1778,9 +1798,9 @@
 				0.707107,
 				0.707107
 			],
-			"pdbFile": "./loop_cadnano.pdb",
-			"confFile": [
-				"./loop_cadnano.oxdna"
+			"pdbFileId": 0,
+			"confFilesIds": [
+				1
 			],
 			"nucleotides": [
 				{
@@ -2438,9 +2458,9 @@
 				0.707107,
 				0.707107
 			],
-			"pdbFile": "./loop_cadnano.pdb",
-			"confFile": [
-				"./loop_cadnano.oxdna"
+			"pdbFileId": 0,
+			"confFilesIds": [
+				1
 			],
 			"nucleotides": [
 				{
@@ -3136,9 +3156,9 @@
 				0.707107,
 				0.707107
 			],
-			"pdbFile": "./loop_cadnano.pdb",
-			"confFile": [
-				"./loop_cadnano.oxdna"
+			"pdbFileId": 0,
+			"confFilesIds": [
+				1
 			],
 			"nucleotides": [
 				{
@@ -3455,9 +3475,8 @@
 						0.707107,
 						0.707107
 					],
-					"pdbFile": "./6a5j.pdb",
-					"confFile": [
-						"./notexistingyet.oxdna"
+					"pdbFileId": 2,
+					"confFilesIds": [
 					],
 					"NTerm": 0,
 					"CTerm": 12,
@@ -3584,8 +3603,9 @@
 			]
 		}
 	],
-	"molecules": {
-		"pdbFile": "1bna.pdb",
+	"molecules": [
+		{
+		"pdbFileId": 3,
 		"orientation": [
 			-0.0,
 			0.707107,
@@ -3595,8 +3615,8 @@
 			0.0,
 			27712.812921,
 			29500.0
-		]
-	},
+		]}
+	],
 	"connections": [
 		{
 			"left": [0, 0],
