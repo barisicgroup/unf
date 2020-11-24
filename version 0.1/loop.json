@@ -1594,16 +1594,6 @@
 			"isScaffold": true,
 			"fivePrimeId": 1,
 			"threePrimeId": 35,
-			"position": [
-				0,
-				0,
-				0
-			],
-			"orientation": [
-				-0.0,
-				0.707107,
-				0.707107
-			],
 			"pdbFileId": 0,
 			"confFilesIds": [
 				1
@@ -1788,16 +1778,6 @@
 			"isScaffold": true,
 			"fivePrimeId": 119,
 			"threePrimeId": 91,
-			"position": [
-				0,
-				0,
-				0
-			],
-			"orientation": [
-				-0.0,
-				0.707107,
-				0.707107
-			],
 			"pdbFileId": 0,
 			"confFilesIds": [
 				1
@@ -2448,16 +2428,6 @@
 			"isScaffold": false,
 			"fivePrimeId": 92,
 			"threePrimeId": 90,
-			"position": [
-				0,
-				0,
-				0
-			],
-			"orientation": [
-				-0.0,
-				0.707107,
-				0.707107
-			],
 			"pdbFileId": 0,
 			"confFilesIds": [
 				1
@@ -3146,16 +3116,6 @@
 			"isScaffold": false,
 			"fivePrimeId": 34,
 			"threePrimeId": 120,
-			"position": [
-				0,
-				0,
-				0
-			],
-			"orientation": [
-				-0.0,
-				0.707107,
-				0.707107
-			],
 			"pdbFileId": 0,
 			"confFilesIds": [
 				1
