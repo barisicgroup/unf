@@ -3425,16 +3425,6 @@
 				{
 					"id": 0,
 					"chainName": "A",
-					"position": [
-						0,
-						0,
-						0
-					],
-					"orientation": [
-						-0.0,
-						0.707107,
-						0.707107
-					],
 					"pdbFileId": 2,
 					"confFilesIds": [
 					],
