@@ -64,9 +64,9 @@ export function parseUNF(unfFileContent, relatedFilesList) {
     // This will be actually asynchronous so this function will return immediately
     // but not everything will be processed atm
     processExternalFiles(parsedJson, rescaledParent, relatedFilesList,
-        function (nameToFileDataMap) {
-            processSingleStrands(parsedJson, rescaledParent, nameToFileDataMap);
-            processMolecules(parsedJson, rescaledParent, nameToFileDataMap);
+        function (fileIdToFileDataMap) {
+            processSingleStrands(parsedJson, rescaledParent, fileIdToFileDataMap);
+            processMolecules(parsedJson, rescaledParent, fileIdToFileDataMap);
         });
 
     return result;
@@ -75,11 +75,12 @@ export function parseUNF(unfFileContent, relatedFilesList) {
 function processExternalFiles(parsedJson, rescaledParent, relatedFilesList, onProcessed) {
     // The values in the Map are actually different objects (i.e., of different data type)
     // so it is necessary to know what kind of data you are accessing
-    let nameToFileDataMap = new Map();
-    let uniqueFileNamesSet = getUniqueFileNamesFromUNF();
+    let fileIdToFileDataMap = new Map();
+    let externalFilesList = parsedJson.externalFiles;
     let promises = [];
 
-    uniqueFileNamesSet.forEach(fileName => {
+    externalFilesList.forEach(fileRecord => {
+        const fileName = ParserUtils.fileNameFromPath(fileRecord.path);
         const uploadedFile = relatedFilesList.find(x => x.name === fileName);
         const extension = ParserUtils.extensionFromFileName(fileName);
         let necessaryToRevokeObjURL = false;
@@ -103,10 +104,10 @@ function processExternalFiles(parsedJson, rescaledParent, relatedFilesList, onPr
 
         if (uploadedFileName) {
             if (extension === "pdb") {
-                promises.push(() => processPdbAndAddToMap(fileName, uploadedFileName, nameToFileDataMap, necessaryToRevokeObjURL));
+                promises.push(() => processPdbAndAddToMap(fileRecord.id, uploadedFileName, fileIdToFileDataMap, necessaryToRevokeObjURL));
             }
             else if (extension === "oxdna") {
-                promises.push(() => processOxCfgAndAddToMap(uploadedFile, nameToFileDataMap));
+                promises.push(() => processOxCfgAndAddToMap(uploadedFile, fileRecord.id, fileIdToFileDataMap));
             }
             else {
                 console.warn("No parser for this file (unsupported extension): ", file);
@@ -119,35 +120,14 @@ function processExternalFiles(parsedJson, rescaledParent, relatedFilesList, onPr
     promises.reduce(function (curr, next) {
         return curr.then(next);
     }, Promise.resolve()).then(function () {
-        onProcessed(nameToFileDataMap);
+        onProcessed(fileIdToFileDataMap);
     });
 
     // Helper functions
-    function getUniqueFileNamesFromUNF() {
-        let result = new Set();
-
-        parsedJson.singleStrands.forEach(strand => {
-            result.add(ParserUtils.fileNameFromPath(strand.pdbFile));
-            strand.confFile.forEach(cfile => {
-                result.add(ParserUtils.fileNameFromPath(cfile));
-            });
-        });
-
-        parsedJson.proteins.forEach(protein => {
-            protein.chains.forEach(chain => {
-                result.add(ParserUtils.fileNameFromPath(chain.pdbFile));
-            });
-        });
-
-        result.add(parsedJson.molecules.pdbFile);
-
-        return result;
-    }
-
-    function processPdbAndAddToMap(fileName, pdbPath, nameToFileDataMap, necessaryToRevokeObjURL) {
+    function processPdbAndAddToMap(fileId, pdbPath, fileIdToFileDataMap, necessaryToRevokeObjURL) {
         return new Promise(function (resolve) {
             PdbUtils.loadPdb(pdbPath, pdbData => {
-                nameToFileDataMap.set(fileName, pdbData);
+                fileIdToFileDataMap.set(fileId, pdbData);
                 if (necessaryToRevokeObjURL) {
                     window.URL.revokeObjectURL(pdbPath);
                 }
@@ -156,10 +136,10 @@ function processExternalFiles(parsedJson, rescaledParent, relatedFilesList, onPr
         });
     }
 
-    function processOxCfgAndAddToMap(oxFile, nameToFileDataMap) {
+    function processOxCfgAndAddToMap(oxFile, fileId, fileIdToFileDataMap) {
         return new Promise(function (resolve) {
             OxDnaUtils.parseOxConfFile(oxFile, oxData => {
-                nameToFileDataMap.set(oxFile.name, oxData);
+                fileIdToFileDataMap.set(fileId, oxData);
                 resolve();
             })
         });
@@ -210,15 +190,15 @@ function processVirtualHelices(parsedJson, objectsParent) {
     }
 }
 
-function processSingleStrands(parsedJson, objectsParent, nameToFileDataMap) {
+function processSingleStrands(parsedJson, objectsParent, fileIdToFileDataMap) {
     const sphereGeometry = new THREE.SphereGeometry(3.5, 16, 16);
 
     parsedJson.singleStrands.forEach(strand => {
-        const confFileName = ParserUtils.fileNameFromPath(strand.confFile[0]);
-        const pdbFileName = ParserUtils.fileNameFromPath(strand.pdbFile);
+        const confFileId = strand.confFilesIds[0];
+        const pdbFileId = strand.pdbFileId;
         const material = new THREE.MeshPhongMaterial({ color: strand.color, opacity: 0.3, transparent: true });
-        if (nameToFileDataMap.has(confFileName)) {
-            let parsedData = nameToFileDataMap.get(confFileName);
+        if (fileIdToFileDataMap.has(confFileId)) {
+            let parsedData = fileIdToFileDataMap.get(confFileId);
             strand.nucleotides.forEach(nucleotide => {
                 // Spawn sphere for each nucleotide
                 let mesh = new THREE.Mesh(sphereGeometry, material);
@@ -231,39 +211,39 @@ function processSingleStrands(parsedJson, objectsParent, nameToFileDataMap) {
                 objectsParent.add(mesh);
 
                 // Spawn individual atoms
-                if (nameToFileDataMap.has(pdbFileName)) {
-                    PdbUtils.spawnPdbData(nameToFileDataMap.get(pdbFileName), nmPos, new THREE.Vector3(0, 0, 0), objectsParent, atom => {
+                if (fileIdToFileDataMap.has(pdbFileId)) {
+                    PdbUtils.spawnPdbData(fileIdToFileDataMap.get(pdbFileId), nmPos, new THREE.Vector3(0, 0, 0), objectsParent, atom => {
                         return atom.chainIdentifier === strand.chainName && atom.residueSeqNum == nucleotide.pdbId;
                     });
                 }
             });
         }
         else {
-            console.warn(confFileName + " file not provided. Skipping appropriate records.");
+            console.warn("File with id " + confFileId + " not provided. Skipping appropriate records.");
         }
     });
 }
 
-function processMolecules(parsedJson, objectsParent, nameToFileDataMap) {
-    // Right now, "molecules" field is an object, not an array (in UNF)
+function processMolecules(parsedJson, objectsParent, fileIdToFileDataMap) {
+    parsedJson.molecules.forEach(molecule => {
+        const requestedPdbId = molecule.pdbFileId;
 
-    const requestedPdbName = ParserUtils.fileNameFromPath(parsedJson.molecules.pdbFile);
+        const position = new THREE.Vector3(
+            ParserUtils.pmToAngs(molecule.position[1]),
+            ParserUtils.pmToAngs(molecule.position[2]),
+            ParserUtils.pmToAngs(molecule.position[0]));
 
-    const position = new THREE.Vector3(
-        ParserUtils.pmToAngs(parsedJson.molecules.position[1]),
-        ParserUtils.pmToAngs(parsedJson.molecules.position[2]),
-        ParserUtils.pmToAngs(parsedJson.molecules.position[0]));
+        const rotation = new THREE.Vector3(
+            molecule.orientation[1],
+            molecule.orientation[2],
+            molecule.orientation[0]
+        );
 
-    const rotation = new THREE.Vector3(
-        parsedJson.molecules.orientation[1],
-        parsedJson.molecules.orientation[2],
-        parsedJson.molecules.orientation[0]
-    );
-
-    if (nameToFileDataMap.has(requestedPdbName)) {
-        PdbUtils.spawnPdbData(nameToFileDataMap.get(requestedPdbName), position, rotation, objectsParent);
-    }
-    else {
-        console.error("Molecule PDB not found: " + requestedPdbName);
-    }
+        if (fileIdToFileDataMap.has(requestedPdbId)) {
+            PdbUtils.spawnPdbData(fileIdToFileDataMap.get(requestedPdbId), position, rotation, objectsParent);
+        }
+        else {
+            console.error("Molecule PDB not found, file ID: " + requestedPdbId);
+        }
+    });
 }
