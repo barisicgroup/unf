@@ -117,10 +117,10 @@ function processExternalFiles(parsedJson, rescaledParent, relatedFilesList, onPr
 
         if (uploadedFileName) {
             if (extension === "pdb") {
-                promises.push(() => processPdbAndAddToMap(fileRecord.id, uploadedFileName, fileIdToFileDataMap, necessaryToRevokeObjURL));
+                promises.push(() => processPdbAndAddToMap(fileRecord.id, fileRecord.hash, uploadedFileName, fileIdToFileDataMap, necessaryToRevokeObjURL));
             }
             else if (extension === "oxdna") {
-                promises.push(() => processOxCfgAndAddToMap(uploadedFile, fileRecord.id, fileIdToFileDataMap));
+                promises.push(() => processOxCfgAndAddToMap(uploadedFile, fileRecord.id, fileRecord.hash, fileIdToFileDataMap));
             }
             else {
                 console.warn("No parser for this file (unsupported extension): ", file);
@@ -137,10 +137,15 @@ function processExternalFiles(parsedJson, rescaledParent, relatedFilesList, onPr
     });
 
     // Helper functions
-    function processPdbAndAddToMap(fileId, pdbPath, fileIdToFileDataMap, necessaryToRevokeObjURL) {
+    function processPdbAndAddToMap(fileId, expectedFileHash, pdbPath, fileIdToFileDataMap, necessaryToRevokeObjURL) {
         return new Promise(function (resolve) {
             PdbUtils.loadPdb(pdbPath, (fileContent, pdbData) => {
-                console.log(fileId + ": " + ParserUtils.getStringHash(fileContent));
+                const fileHash = ParserUtils.getStringHash(fileContent);
+                console.log("File id " + fileId + ": hash " + fileHash + ", expected " + expectedFileHash);
+                if (fileHash !== expectedFileHash) {
+                    alert("File (id " + fileId + ") hash not matching.");
+                }
+
                 fileIdToFileDataMap.set(fileId, pdbData);
                 if (necessaryToRevokeObjURL) {
                     window.URL.revokeObjectURL(pdbPath);
@@ -150,10 +155,15 @@ function processExternalFiles(parsedJson, rescaledParent, relatedFilesList, onPr
         });
     }
 
-    function processOxCfgAndAddToMap(oxFile, fileId, fileIdToFileDataMap) {
+    function processOxCfgAndAddToMap(oxFile, fileId, expectedFileHash, fileIdToFileDataMap) {
         return new Promise(function (resolve) {
             OxDnaUtils.parseOxConfFile(oxFile, (fileContent, oxData) => {
-                console.log(fileId + ": " + ParserUtils.getStringHash(fileContent));
+                const fileHash = ParserUtils.getStringHash(fileContent);
+                console.log("File id " + fileId + ": hash " + fileHash + ", expected " + expectedFileHash);
+                if (fileHash !== expectedFileHash) {
+                    alert("File (id " + fileId + ") hash not matching.");
+                }
+
                 fileIdToFileDataMap.set(fileId, oxData);
                 resolve();
             })

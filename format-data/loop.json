@@ -4,19 +4,23 @@
 	"externalFiles": [
 		{
 			"path": "./loop_cadnano.pdb",
-			"id": 0 
+			"id": 0,
+			"hash": 33724496794635790
 		},
 		{
 			"path": "./loop_cadnano.oxdna",
-			"id": 1 
+			"id": 1 ,
+			"hash": 33828799829324516
 		},
 		{
 			"path": "./6a5j.pdb",
-			"id": 2 
+			"id": 2, 
+			"hash": 23345101453763664
 		},
 		{
 			"path": "1bna.pdb",
-			"id": 3 
+			"id": 3, 
+			"hash": -4119760183522336
 		}
 	],
 	"virtualHelices": [
