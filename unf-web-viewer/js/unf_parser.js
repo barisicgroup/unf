@@ -35,6 +35,19 @@ var ParserUtils = {
 
     extensionFromFileName(fileName) {
         return fileName.split('.').pop();
+    },
+
+    // FNV-1a based hashing function
+    getStringHash(stringContent) {
+        const fnvPrime = 0x01000193;
+        let hash = 0x811c9dc5;
+
+        for (let i = 0; i < stringContent.length; ++i) {
+            hash ^= stringContent[i];
+            hash *= fnvPrime;
+        }
+
+        return hash;
     }
 }
 
@@ -127,7 +140,7 @@ function processExternalFiles(parsedJson, rescaledParent, relatedFilesList, onPr
     function processPdbAndAddToMap(fileId, pdbPath, fileIdToFileDataMap, necessaryToRevokeObjURL) {
         return new Promise(function (resolve) {
             PdbUtils.loadPdb(pdbPath, (fileContent, pdbData) => {
-                
+                console.log(fileId + ": " + ParserUtils.getStringHash(fileContent));
                 fileIdToFileDataMap.set(fileId, pdbData);
                 if (necessaryToRevokeObjURL) {
                     window.URL.revokeObjectURL(pdbPath);
@@ -140,7 +153,7 @@ function processExternalFiles(parsedJson, rescaledParent, relatedFilesList, onPr
     function processOxCfgAndAddToMap(oxFile, fileId, fileIdToFileDataMap) {
         return new Promise(function (resolve) {
             OxDnaUtils.parseOxConfFile(oxFile, (fileContent, oxData) => {
-                
+                console.log(fileId + ": " + ParserUtils.getStringHash(fileContent));
                 fileIdToFileDataMap.set(fileId, oxData);
                 resolve();
             })
