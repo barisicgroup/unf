@@ -33,7 +33,7 @@ PDBLoader.prototype = Object.assign(Object.create(Loader.prototype), {
 
 			try {
 
-				onLoad(scope.parse(text, atomPredicate));
+				onLoad(text, scope.parse(text, atomPredicate));
 
 			} catch (e) {
 

@@ -5,13 +5,13 @@ export function getRemotePathToPdb(pdbName) {
     return "http://files.rcsb.org/download/" + pdbName;
 }
 
-export function loadPdb(pdbName, onLoaded, atomPredicate = x => true) {
+export function loadPdb(pdbName, onFileParsed, atomPredicate = x => true) {
     const loader = new PDBLoader();
 
     loader.load(
         pdbName,
         atomPredicate,
-        onLoaded,
+        onFileParsed,
         function (xhr) { }, // Called when loading is in progresses
         function (error) {
             console.error("PDB loading failed: ", pdbName, error);

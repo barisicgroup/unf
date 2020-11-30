@@ -5,7 +5,7 @@ export function parseOxConfFile(oxFile, onFileParsed) {
 
     reader.onload = function (evt) {
         try {
-            onFileParsed(processOxConfFileContent(evt.target.result));
+            onFileParsed(evt.target.result, processOxConfFileContent(evt.target.result));
         }
         catch (e) {
             alert("Parsing failed: " + oxFile.name + ".", e);

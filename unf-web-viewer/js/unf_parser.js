@@ -126,7 +126,8 @@ function processExternalFiles(parsedJson, rescaledParent, relatedFilesList, onPr
     // Helper functions
     function processPdbAndAddToMap(fileId, pdbPath, fileIdToFileDataMap, necessaryToRevokeObjURL) {
         return new Promise(function (resolve) {
-            PdbUtils.loadPdb(pdbPath, pdbData => {
+            PdbUtils.loadPdb(pdbPath, (fileContent, pdbData) => {
+                
                 fileIdToFileDataMap.set(fileId, pdbData);
                 if (necessaryToRevokeObjURL) {
                     window.URL.revokeObjectURL(pdbPath);
@@ -138,7 +139,8 @@ function processExternalFiles(parsedJson, rescaledParent, relatedFilesList, onPr
 
     function processOxCfgAndAddToMap(oxFile, fileId, fileIdToFileDataMap) {
         return new Promise(function (resolve) {
-            OxDnaUtils.parseOxConfFile(oxFile, oxData => {
+            OxDnaUtils.parseOxConfFile(oxFile, (fileContent, oxData) => {
+                
                 fileIdToFileDataMap.set(fileId, oxData);
                 resolve();
             })
