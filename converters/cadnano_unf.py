@@ -76,7 +76,7 @@ def process_cadnano_file(file_path, lattice_type):
             if isValidRecord:
                 allScaffoldRecords.append(StrandPart(vstr['num'], idx, scaf[0], scaf[1], scaf[2], scaf[3]))
             lastCell = max(lastCell, idx)
-            firstActiveCell = min(firstActiveCell, idx if isValidRecord else firstActiveCell)
+            firstActiveCell = min(firstActiveCell, idx if isValidRecord else firstActiveCell) # TODO UNF expects these (first|last)ActiveCell values to be increasing for every vhelix ... thus right now, they are incorrect
             lastActiveCell = max(lastActiveCell, idx if isValidRecord else lastActiveCell)
 
         for idx, stap in enumerate(vstr['stap']):
@@ -105,15 +105,48 @@ def process_cadnano_file(file_path, lattice_type):
 
     return (processedVhelices, individualScaffoldStrands, individualStapleStrands)
 
-def convert_data_to_unf_file((vhelices, scaffoldStrands, stapleStrands)):
-    print len(vhelices)
+def initialize_unf_file_data_object():
+    unfFileData = {}
+
+    unfFileData['version'] = 0.2
+    unfFileData['name'] = "cadnano_converted_structure" # TODO add real structure name
+    unfFileData['externalFiles'] = []
+    unfFileData['virtualHelices'] = []
+    unfFileData['singleStrands'] = []
+    unfFileData['groups'] = {}
+    unfFileData['proteins'] = []
+    unfFileData['molecules'] = []
+    unfFileData['connections'] = []
+    unfFileData['modifications'] = []
+
+    return unfFileData
+
+def convert_data_to_unf_file(vhelices, scaffoldStrands, stapleStrands):
+    unfFileData = initialize_unf_file_data_object()
+
+    for vhelix in vhelices:
+        outputVhelix = {}
+        outputVhelix['id'] = vhelix.id
+        outputVhelix['firstActiveCell'] = vhelix.firstActiveCell
+        outputVhelix['lastActiveCell'] = vhelix.lastActiveCell
+        outputVhelix['lastCell'] = vhelix.lastCell
+        outputVhelix['gridPosition'] = [vhelix.col, vhelix.row]
+        outputVhelix['orientation'] = [0, 0, 0]
+
+        unfFileData['virtualHelices'].append(outputVhelix)
+
+
+
+    with open(OUTPUT_FILE_NAME, 'w') as outfile:
+        json.dump(unfFileData, outfile)
+
 
 def main():
     if len(sys.argv) != 3 or sys.argv[1] == "-h" or (sys.argv[2] != LATTICE_SQUARE and sys.argv[2] != LATTICE_HONEYCOMB):
         print "usage: cadnano_unf.py <file_path> <lattice_type>"
         print "lattice_type = square|honeycomb"
         sys.exit(1)
-    convert_data_to_unf_file(process_cadnano_file(sys.argv[1], sys.argv[2]))
+    convert_data_to_unf_file(*process_cadnano_file(sys.argv[1], sys.argv[2]))
 
 if __name__ == '__main__':
   main()
