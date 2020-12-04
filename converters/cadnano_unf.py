@@ -9,7 +9,8 @@ LATTICE_HONEYCOMB = "honeycomb"
 OUTPUT_FILE_NAME = "output.json"
 
 class StrandPart:
-    def __init__(self, vhelixId, baseId, prevVid, prevBid, nextVid, nextBid):
+    def __init__(self, globalId, vhelixId, baseId, prevVid, prevBid, nextVid, nextBid):
+        self.globalId = globalId
         self.vhelixId = vhelixId
         self.baseId = baseId
         self.prevVid = prevVid
@@ -65,6 +66,7 @@ def process_cadnano_file(file_path, lattice_type):
     processedVhelices = []
     allScaffoldRecords = []
     allStapleRecords = []
+    spId = 0
 
     for vstr in parsedData['vstrands']: 
         firstActiveCell = len(vstr['scaf'])
@@ -74,7 +76,8 @@ def process_cadnano_file(file_path, lattice_type):
         for idx, scaf in enumerate(vstr['scaf']):
             isValidRecord = scaf[0] >= 0 or scaf[2] >= 0
             if isValidRecord:
-                allScaffoldRecords.append(StrandPart(vstr['num'], idx, scaf[0], scaf[1], scaf[2], scaf[3]))
+                allScaffoldRecords.append(StrandPart(spId, vstr['num'], idx, scaf[0], scaf[1], scaf[2], scaf[3]))
+                spId += 1
             lastCell = max(lastCell, idx)
             firstActiveCell = min(firstActiveCell, idx if isValidRecord else firstActiveCell) # TODO UNF expects these (first|last)ActiveCell values to be increasing for every vhelix ... thus right now, they are incorrect
             lastActiveCell = max(lastActiveCell, idx if isValidRecord else lastActiveCell)
@@ -82,7 +85,8 @@ def process_cadnano_file(file_path, lattice_type):
         for idx, stap in enumerate(vstr['stap']):
             isValidRecord = stap[0] >= 0 or stap[2] >= 0
             if isValidRecord:
-                allStapleRecords.append(StrandPart(vstr['num'], idx, stap[0], stap[1], stap[2], stap[3]))
+                allStapleRecords.append(StrandPart(spId, vstr['num'], idx, stap[0], stap[1], stap[2], stap[3]))
+                spId += 1
             lastCell = max(lastCell, idx)
             firstActiveCell = min(firstActiveCell, idx if isValidRecord else firstActiveCell)
             lastActiveCell = max(lastActiveCell, idx if isValidRecord else lastActiveCell)
@@ -123,6 +127,8 @@ def initialize_unf_file_data_object():
 
 def convert_data_to_unf_file(vhelices, scaffoldStrands, stapleStrands):
     unfFileData = initialize_unf_file_data_object()
+    cellsId = 0
+    allStrandParts = scaffoldStrands + stapleStrands
 
     for vhelix in vhelices:
         outputVhelix = {}
@@ -132,7 +138,32 @@ def convert_data_to_unf_file(vhelices, scaffoldStrands, stapleStrands):
         outputVhelix['lastCell'] = vhelix.lastCell
         outputVhelix['gridPosition'] = [vhelix.col, vhelix.row]
         outputVhelix['orientation'] = [0, 0, 0]
+        
+        cells = []
+        for i in range(vhelix.lastActiveCell + 1):
+            newCell = {}
+            newCell['id'] = cellsId
+            cellsId += 1
+            newCell['number'] = i
+            newCell['position'] = [0, 0, 0]
+            newCell['type'] = 0
+            
+            leftNucl =  next((x for y in allStrandParts for x in y if x.vhelixId == vhelix.id and x.baseId == i and (x.nextBid >= x.baseId or x.prevBid <= x.baseId)), None)
+            if leftNucl is not None:
+                newCell['left'] = leftNucl.globalId
+            else:
+                newCell['left'] = -1
 
+            rightNucl =  next((x for y in allStrandParts for x in y if x.vhelixId == vhelix.id and x.baseId == i and (x.nextBid <= x.baseId or x.prevBid >= x.baseId)), None)
+            if rightNucl is not None:
+                newCell['right'] = rightNucl.globalId
+            else:
+                newCell['right'] = -1
+
+            cells.append(newCell)
+
+
+        outputVhelix['cells'] = cells
         unfFileData['virtualHelices'].append(outputVhelix)
 
 
