@@ -145,7 +145,7 @@ def convert_data_to_unf_file(vhelices, scaffoldStrands, stapleStrands):
             newCell['id'] = cellsId
             cellsId += 1
             newCell['number'] = i
-            newCell['position'] = [0, 0, 0]
+            newCell['position'] = []
             newCell['type'] = 0
             
             leftNucl =  next((x for y in allStrandParts for x in y if x.vhelixId == vhelix.id and x.baseId == i and (x.nextBid >= x.baseId or x.prevBid <= x.baseId)), None)
