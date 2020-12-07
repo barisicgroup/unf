@@ -231,8 +231,47 @@ function processSingleStrands(parsedJson, objectsParent, fileIdToFileDataMap) {
     const sphereGeometry = new THREE.SphereGeometry(3.5, 16, 16);
 
     parsedJson.singleStrands.forEach(strand => {
-        if (strand.confFilesIds.length === 0 || strand.pdbFileId < 0) {
+        // If no references to files with positions are provided, strands will be positioned
+        // according to the virtual helices' cells
+        if (strand.confFilesIds.length === 0) {
+            const material = new THREE.LineBasicMaterial({ color: strand.color });
 
+            let points = [];
+
+            let currNucleotide = strand.nucleotides.find(x => x.id === strand.fivePrimeId);
+            do {
+                let position = null;
+                parsedJson.virtualHelices.forEach(helix => {
+                    helix.cells.forEach(cell => {
+                        if (cell.left === currNucleotide.id) {
+                            position = getGridPositionForIndex(helix.gridPosition[0], helix.gridPosition[1], cell.number, helix.grid)
+                                .add(new THREE.Vector3(0, 3, 0));
+                        }
+                        else if (cell.right === currNucleotide.id) {
+                            position = getGridPositionForIndex(helix.gridPosition[0], helix.gridPosition[1], cell.number, helix.grid)
+                                .add(new THREE.Vector3(0, -3, 0));
+                        }
+                    });
+                });
+
+                if (position === null) {
+                    console.error("Invalid nucleotide position: ", currNucleotide);
+                }
+                else {
+                    points.push(position);
+                }
+
+                currNucleotide = strand.nucleotides.find(x => x.id === currNucleotide.next);
+            }
+            while (currNucleotide !== undefined);
+
+            if (points.length > 0) {
+                const geometry = new THREE.BufferGeometry().setFromPoints(points);
+                const strandLine = new THREE.Line(geometry, material);
+                objectsParent.add(strandLine);
+            }
+
+            // Otherwise, they will be located at the locations retrieved from configuration file
         } else {
             const confFileId = strand.confFilesIds[0];
             const pdbFileId = strand.pdbFileId;
