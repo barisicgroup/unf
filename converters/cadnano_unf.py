@@ -125,6 +125,41 @@ def initialize_unf_file_data_object():
 
     return unfFileData
 
+def strands_to_unf_data(idStart, unfFileData, strandsList, allStrandParts, areScaffolds):
+    resultingObjects = []
+    
+    for strand in strandsList:
+        strandObject = {}
+
+        strandObject['id'] = idStart
+        idStart += 1
+        strandObject['chainName'] = "NULL"
+        strandObject['color'] = "#0000FF"
+        strandObject['isScaffold'] = "true" if areScaffolds else "false"
+        strandObject['pdbFileId'] = -1
+        strandObject['fivePrimeId'] = strand[0].globalId
+        strandObject['threePrimeId'] = strand[-1].globalId
+        strandObject['confFilesIds'] = []
+
+        nucleotides = []
+        for strandPart in strand:
+            newNucl = {}
+            newNucl['id'] = strandPart.globalId
+            newNucl['type'] = 1
+            newNucl['pair'] = next((x.globalId for y in allStrandParts for x in y if x.vhelixId == strandPart.vhelixId and x.baseId == strandPart.baseId and x.globalId != strandPart.globalId), -1)
+            newNucl['prev'] = strandPart.prevPart.globalId if strandPart.prevPart is not None else -1
+            newNucl['next'] = strandPart.nextPart.globalId if strandPart.nextPart is not None else -1
+            newNucl['oxdnaConfRow'] = -1
+            newNucl['pdbId'] = -1
+            newNucl['sidechainCenter'] = []
+
+            nucleotides.append(newNucl)
+
+        strandObject['nucleotides'] = nucleotides
+        resultingObjects.append(strandObject)
+
+    unfFileData['singleStrands'] += resultingObjects
+
 def convert_data_to_unf_file(vhelices, scaffoldStrands, stapleStrands):
     unfFileData = initialize_unf_file_data_object()
     cellsId = 0
@@ -165,9 +200,10 @@ def convert_data_to_unf_file(vhelices, scaffoldStrands, stapleStrands):
 
         outputVhelix['cells'] = cells
         unfFileData['virtualHelices'].append(outputVhelix)
-
-
-
+    
+    strands_to_unf_data(0, unfFileData, scaffoldStrands, allStrandParts, True)
+    strands_to_unf_data(len(scaffoldStrands), unfFileData, stapleStrands, allStrandParts, False)
+    
     with open(OUTPUT_FILE_NAME, 'w') as outfile:
         json.dump(unfFileData, outfile)
 
