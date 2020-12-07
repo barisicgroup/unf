@@ -231,6 +231,9 @@ function processSingleStrands(parsedJson, objectsParent, fileIdToFileDataMap) {
     const sphereGeometry = new THREE.SphereGeometry(3.5, 16, 16);
 
     parsedJson.singleStrands.forEach(strand => {
+        if(strand.confFilesIds.length === 0 || strand.pdbFileId < 0) {
+            return;
+        }
         const confFileId = strand.confFilesIds[0];
         const pdbFileId = strand.pdbFileId;
         const material = new THREE.MeshPhongMaterial({ color: strand.color, opacity: 0.3, transparent: true });
