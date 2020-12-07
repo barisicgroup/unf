@@ -199,67 +199,68 @@ function processVirtualHelices(parsedJson, objectsParent) {
         vHelices.forEach(helix => {
             cylinderTranspMaterial.color.setHex(Math.random() * 0xffffff);
             const newMesh = new THREE.Mesh(cylinderGeometry, new THREE.MeshBasicMaterial(cylinderTranspMaterial));
-            newMesh.position.copy(getPositionForIndex(helix.gridPosition[0], helix.gridPosition[1], helix.grid));
+            newMesh.position.copy(getGridPositionForIndex(helix.gridPosition[0], helix.gridPosition[1], 0, helix.grid));
             newMesh.scale.set(1, ParserConstants.BasePairRise * helix.lastCell, 1);
             newMesh.rotation.set(THREE.MathUtils.degToRad(90), 0, 0);
             objectsParent.add(newMesh);
         });
     }
+}
 
-    function getPositionForIndex(x, y, gridType) {
-        const vHelixDiameter = ParserConstants.VHelixRadius * 2;
+function getGridPositionForIndex(x, y, z, gridType) {
+    const vHelixDiameter = ParserConstants.VHelixRadius * 2;
 
-        if (gridType === ParserConstants.HoneycombGridName) {
-            return new THREE.Vector3(
-                x * ParserConstants.VHelixRadius * 1.7320508 + ParserConstants.VHelixRadius,
-                (y + Math.floor((y + 1 - x % 2) / 2)) * vHelixDiameter + vHelixDiameter * (0.5 + (x % 2) * 0.5),
-                0);
+    if (gridType === ParserConstants.HoneycombGridName) {
+        return new THREE.Vector3(
+            x * ParserConstants.VHelixRadius * 1.7320508 + ParserConstants.VHelixRadius,
+            (y + Math.floor((y + 1 - x % 2) / 2)) * vHelixDiameter + vHelixDiameter * (0.5 + (x % 2) * 0.5),
+            z * ParserConstants.BasePairRise);
 
-        }
-        else if (ParserConstants.gridType === SquareGridName) {
-            return new THREE.Vector3(
-                x * vHelixDiameter + ParserConstants.VHelixRadius,
-                y * vHelixDiameter + ParserConstants.VHelixRadius,
-                0);
-        }
-
-        throw new Error("Invalid grid type!");
     }
+    else if (ParserConstants.gridType === SquareGridName) {
+        return new THREE.Vector3(
+            x * vHelixDiameter + ParserConstants.VHelixRadius,
+            y * vHelixDiameter + ParserConstants.VHelixRadius,
+            z * ParserConstants.BasePairRise);
+    }
+
+    throw new Error("Invalid grid type!");
 }
 
 function processSingleStrands(parsedJson, objectsParent, fileIdToFileDataMap) {
     const sphereGeometry = new THREE.SphereGeometry(3.5, 16, 16);
 
     parsedJson.singleStrands.forEach(strand => {
-        if(strand.confFilesIds.length === 0 || strand.pdbFileId < 0) {
-            return;
-        }
-        const confFileId = strand.confFilesIds[0];
-        const pdbFileId = strand.pdbFileId;
-        const material = new THREE.MeshPhongMaterial({ color: strand.color, opacity: 0.3, transparent: true });
-        if (fileIdToFileDataMap.has(confFileId)) {
-            let parsedData = fileIdToFileDataMap.get(confFileId);
-            strand.nucleotides.forEach(nucleotide => {
-                // Spawn sphere for each nucleotide
-                let mesh = new THREE.Mesh(sphereGeometry, material);
-                let nmPos = parsedData[nucleotide.oxdnaConfRow].position;
-                nmPos = new THREE.Vector3(
-                    ParserUtils.nmToAngs(nmPos.x),
-                    ParserUtils.nmToAngs(nmPos.y),
-                    ParserUtils.nmToAngs(nmPos.z));
-                mesh.position.copy(nmPos);
-                objectsParent.add(mesh);
+        if (strand.confFilesIds.length === 0 || strand.pdbFileId < 0) {
 
-                // Spawn individual atoms
-                if (fileIdToFileDataMap.has(pdbFileId)) {
-                    PdbUtils.spawnPdbData(fileIdToFileDataMap.get(pdbFileId), nmPos, new THREE.Vector3(0, 0, 0), objectsParent, atom => {
-                        return atom.chainIdentifier === strand.chainName && atom.residueSeqNum == nucleotide.pdbId;
-                    });
-                }
-            });
-        }
-        else {
-            console.warn("File with id " + confFileId + " not provided. Skipping appropriate records.");
+        } else {
+            const confFileId = strand.confFilesIds[0];
+            const pdbFileId = strand.pdbFileId;
+            const material = new THREE.MeshPhongMaterial({ color: strand.color, opacity: 0.3, transparent: true });
+            if (fileIdToFileDataMap.has(confFileId)) {
+                let parsedData = fileIdToFileDataMap.get(confFileId);
+                strand.nucleotides.forEach(nucleotide => {
+                    // Spawn sphere for each nucleotide
+                    let mesh = new THREE.Mesh(sphereGeometry, material);
+                    let nmPos = parsedData[nucleotide.oxdnaConfRow].position;
+                    nmPos = new THREE.Vector3(
+                        ParserUtils.nmToAngs(nmPos.x),
+                        ParserUtils.nmToAngs(nmPos.y),
+                        ParserUtils.nmToAngs(nmPos.z));
+                    mesh.position.copy(nmPos);
+                    objectsParent.add(mesh);
+
+                    // Spawn individual atoms
+                    if (fileIdToFileDataMap.has(pdbFileId)) {
+                        PdbUtils.spawnPdbData(fileIdToFileDataMap.get(pdbFileId), nmPos, new THREE.Vector3(0, 0, 0), objectsParent, atom => {
+                            return atom.chainIdentifier === strand.chainName && atom.residueSeqNum == nucleotide.pdbId;
+                        });
+                    }
+                });
+            }
+            else {
+                console.warn("File with id " + confFileId + " not provided. Skipping appropriate records.");
+            }
         }
     });
 }
