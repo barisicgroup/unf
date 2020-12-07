@@ -199,7 +199,8 @@ function processVirtualHelices(parsedJson, objectsParent) {
         vHelices.forEach(helix => {
             cylinderTranspMaterial.color.setHex(Math.random() * 0xffffff);
             const newMesh = new THREE.Mesh(cylinderGeometry, new THREE.MeshBasicMaterial(cylinderTranspMaterial));
-            newMesh.position.copy(getGridPositionForIndex(helix.gridPosition[0], helix.gridPosition[1], 0, helix.grid));
+            newMesh.position.copy(getGridPositionForIndex(helix.gridPosition[0], helix.gridPosition[1], 0, helix.grid)
+                .add(new THREE.Vector3(0, 0, ParserConstants.BasePairRise * helix.lastCell * 0.5)));
             newMesh.scale.set(1, ParserConstants.BasePairRise * helix.lastCell, 1);
             newMesh.rotation.set(THREE.MathUtils.degToRad(90), 0, 0);
             objectsParent.add(newMesh);
