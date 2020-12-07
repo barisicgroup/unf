@@ -172,27 +172,39 @@ function processExternalFiles(parsedJson, rescaledParent, relatedFilesList, onPr
 }
 
 function processVirtualHelices(parsedJson, objectsParent) {
-    // At the moment, this functions processes all virtualHelices.cells records
-    // and draws a single cylinder at the cell.position
     const cylinderGeometry = new THREE.CylinderBufferGeometry(
-        ParserConstants.VHelixRadius * 0.5, ParserConstants.VHelixRadius * 0.5, 1, 32, 32);
+        ParserConstants.VHelixRadius, ParserConstants.VHelixRadius, 1, 32, 32);
     const cylinderTranspMaterial = new THREE.MeshBasicMaterial({ color: 0xff4444, opacity: 0.3, transparent: true });
 
-    var vHelices = parsedJson.virtualHelices;
-    vHelices.forEach(helix => {
-        helix.cells.forEach(cell => {
+    let vHelices = parsedJson.virtualHelices;
+    let usePositionFromCells = !vHelices.some(vhelix => vhelix.cells.some(cell => cell.position.length != 3));
+
+    if (usePositionFromCells) {
+        vHelices.forEach(helix => {
+            helix.cells.forEach(cell => {
+                cylinderTranspMaterial.color.setHex(Math.random() * 0xffffff);
+                const newMesh = new THREE.Mesh(cylinderGeometry, new THREE.MeshBasicMaterial(cylinderTranspMaterial));
+                newMesh.position.set(
+                    // UNF now stores positions as z/x/y
+                    ParserUtils.pmToAngs(cell.position[1]),
+                    ParserUtils.pmToAngs(cell.position[2]),
+                    ParserUtils.pmToAngs(cell.position[0]));
+                newMesh.scale.set(.5, ParserConstants.BasePairRise, .5); // TODO The .5 here is possibly because of invalid values in test json file?
+                newMesh.rotation.set(THREE.MathUtils.degToRad(90), 0, 0);
+                objectsParent.add(newMesh);
+            });
+        });
+    }
+    else {
+        vHelices.forEach(helix => {
             cylinderTranspMaterial.color.setHex(Math.random() * 0xffffff);
             const newMesh = new THREE.Mesh(cylinderGeometry, new THREE.MeshBasicMaterial(cylinderTranspMaterial));
-            newMesh.position.set(
-                // UNF now stores positions as z/x/y
-                ParserUtils.pmToAngs(cell.position[1]),
-                ParserUtils.pmToAngs(cell.position[2]),
-                ParserUtils.pmToAngs(cell.position[0]));
-            newMesh.scale.set(1, ParserConstants.BasePairRise, 1);
+            newMesh.position.copy(getPositionForIndex(helix.gridPosition[0], helix.gridPosition[1], helix.grid));
+            newMesh.scale.set(1, ParserConstants.BasePairRise * helix.lastCell, 1);
             newMesh.rotation.set(THREE.MathUtils.degToRad(90), 0, 0);
             objectsParent.add(newMesh);
         });
-    });
+    }
 
     function getPositionForIndex(x, y, gridType) {
         const vHelixDiameter = ParserConstants.VHelixRadius * 2;
