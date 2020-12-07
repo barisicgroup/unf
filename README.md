@@ -31,6 +31,23 @@ JSON
     - **left:** ID of the left (5'3' direction) nucleotide
     - **right:** ID of the right (3'5' direction) nucleotide
 - **singleStrands:** array of individual single strands and their nucleotides
+  - **id:** unique ID of this strand
+  - **isScaffold:** boolean determining whether this is a scaffold strand or a staple strand
+  - **color:** hex string storing the color for this strand
+  - **fivePrimeId:** ID of the 5' nucleotide
+  - **threePrimeId:** ID of the 3' nucleotide
+  - **pdbFileId:** ID of the relevant external PDB file
+  - **chainName:** name of the chain in the referenced PDB
+  - **confFilesIds:** array of IDs referencing oxDNA configuration files used for retrieving nucleotides' positional information. By default, zeroth config file is used but it is up to an application to decide which one to use if there are more (e.g., to show dynamics animation).
+  - **nucleotides:** array of nucleotides of this strand
+      - **id:** unique ID of this nucleotide
+      - **type:** number determining nucleobase type (A/T/C/G)
+      - **pair:** ID of the complementary nucleotide
+      - **prev:** ID of the preceding nucleotide in the strand
+      - **next:** ID of the following nucleotide in the strand
+      - **oxDnaConfRow:** row in the referenced oxDNA config file relevant to this nucleotide (to load position)
+      - **pdbId:** identification of the relevant residue in the PDB file (to load atoms)
+      - :question: **sidechainCenter:** -
 - **proteins:** array of proteins (their chains, amino acids, etc.)
 - **molecules:** array of arbitrary molecules which have some position in space but we do not care about their modifications or individual parts (i.e., PDB is enough)
 - :question: **groups:** object with user-defined groups of particular objects (should be probably changed to array in v0.3)
