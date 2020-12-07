@@ -6,6 +6,10 @@
 ## Format type
 JSON
 
+## General notes
+Position is typically in z/x/y order (might be changed in v0.3)  
+Units are picometers
+
 ## Core structure
 *Note: :question: sign marks fields which are strongly "prototypical"*
 - **version:** format version number
@@ -65,9 +69,14 @@ JSON
       - **oxDnaConfRow:** row in the referenced oxDNA config file relevant to this AA (to load position)
       - **pdbId:** identification of the relevant residue in the PDB file (to load atoms)
 - **molecules:** array of arbitrary molecules which have some position in space but we do not care about their modifications or individual parts (i.e., PDB is enough)
+  - **pdbFileId:** ID of the relevant external PDB file
+  - **orientation:** orientation in space
+  - **position:** position in space
 - :question: **groups:** object with user-defined groups of particular objects (should be probably changed to array in v0.3)
--  :question: **connections:** array of connections between structures (namely, nucleotides and amino acids)
--  :question: **modifications:** array of modifications
+- :question: **connections:** array of connections between structures (namely, nucleotides and amino acids)
+- :question: **modifications:** array of modifications
+  - **location:** array of nucleotide/AA IDs to be modified
+  - **idtText:** string describing type of modification
 
 # UNF Viewer documentation
 
