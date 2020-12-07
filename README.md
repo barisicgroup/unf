@@ -79,11 +79,11 @@ Units are picometers
   - **idtText:** string describing type of modification
 
 # UNF Viewer documentation
-The UNF Viewer is written in JavaScript and Three.js library.  
+The UNF Viewer is written in JavaScript and Three.js library.    
 It enables to visualize UNF files by selecting a desired file from the file dialog.  
-To run it, clone the repository and use e.g. live server to host the viewer application.  
-Since it is written in JavaScript, it cannot search your hard drive; in other words, you need to upload not just the UNF file but also all files referenced in the "externalFiles" field. If PDB file is not uploaded, the viewer automatically tries to download it from RCSB.
-The application serves mainly for UNF development purpose, it is therefore recommended to have a dev console open to see the console logs.
+To run it, clone the repository and use e.g. live server to host the viewer application.    
+Since it is written in JavaScript, it cannot search your hard drive; in other words, you need to upload not just the UNF file but also all files referenced in the "externalFiles" field. If PDB file is not uploaded, the viewer automatically tries to download it from RCSB.  
+The application serves mainly for UNF development purpose, it is therefore recommended to have a dev console open to see the console logs.  
 
 # Converters documentation
 - **Cadnano to UNF converter (Python)**
