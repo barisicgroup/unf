@@ -137,7 +137,7 @@ def strands_to_unf_data(idStart, unfFileData, strandsList, allStrandParts, areSc
         strandObject['id'] = idStart
         idStart += 1
         strandObject['chainName'] = "NULL"
-        strandObject['color'] = "#0000FF"
+        strandObject['color'] = "#0000FF" if areScaffolds else "#FF0000"
         strandObject['isScaffold'] = "true" if areScaffolds else "false"
         strandObject['pdbFileId'] = -1
         strandObject['fivePrimeId'] = strand[0].globalId
