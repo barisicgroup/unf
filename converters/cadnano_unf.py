@@ -1,6 +1,8 @@
  #!/usr/bin/env python
 # Code is using Python 2
 
+# TODO The converter currently ignores advanced functions like loops and skips
+
 import sys
 import json
 
