@@ -28,10 +28,11 @@ class StrandPart:
         self.nextPart = nextPart
 
 class Vhelix:
-    def __init__(self, id, row, col, firstActiveCell, lastActiveCell, lastCell):
+    def __init__(self, id, row, col, latticeType, firstActiveCell, lastActiveCell, lastCell):
         self.id = id
         self.row = row
         self.col = col
+        self.latticeType = latticeType
         self.firstActiveCell = firstActiveCell
         self.lastActiveCell = lastActiveCell
         self.lastCell = lastCell
@@ -93,7 +94,7 @@ def process_cadnano_file(file_path, lattice_type):
             firstActiveCell = min(firstActiveCell, idx if isValidRecord else firstActiveCell)
             lastActiveCell = max(lastActiveCell, idx if isValidRecord else lastActiveCell)
         
-        processedVhelices.append(Vhelix(vstr['num'], vstr['row'], vstr['col'], firstActiveCell, lastActiveCell, lastCell))
+        processedVhelices.append(Vhelix(vstr['num'], vstr['row'], vstr['col'], lattice_type, firstActiveCell, lastActiveCell, lastCell))
 
     individualScaffoldStrands = create_strand_components(allScaffoldRecords)
     individualStapleStrands = create_strand_components(allStapleRecords)
@@ -175,6 +176,7 @@ def convert_data_to_unf_file(vhelices, scaffoldStrands, stapleStrands):
         outputVhelix['lastCell'] = vhelix.lastCell
         outputVhelix['gridPosition'] = [vhelix.col, vhelix.row]
         outputVhelix['orientation'] = [0, 0, 0]
+        outputVhelix['grid'] = vhelix.latticeType
         
         cells = []
         for i in range(vhelix.lastActiveCell + 1):
