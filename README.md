@@ -1,5 +1,8 @@
 # Unified Nanotechnology Format (UNF) documentation
 
+## Version
+0.2
+
 ## Format type
 JSON
 
@@ -21,6 +24,12 @@ JSON
   - **initialAngle:** initial angle at the beginning of the virtual helix (can be used for generation of new structures)
   - **orientation:** rotation of this particular virtual helix (in v0.3, position might be added as well as these fields might serve for positioning the helix in space when gridPosition is not set)
   - **cells:** array of possible nucleotide locations (one cell can contain two complementary nucleotides)
+    - **id:** unique ID of this cell
+    - **number:** cell number (higher the number, the farther the cell is from the beginning of the virtual helix)
+    - **position:** if not empty, this array determines the position of this cell in space (order of axes: z/x/y)
+    - **type:** number determining the type of the cell (normal/loop/skip)
+    - **left:** ID of the left (5'3' direction) nucleotide
+    - **right:** ID of the right (3'5' direction) nucleotide
 - **singleStrands:** array of individual single strands and their nucleotides
 - **proteins:** array of proteins (their chains, amino acids, etc.)
 - **molecules:** array of arbitrary molecules which have some position in space but we do not care about their modifications or individual parts (i.e., PDB is enough)
