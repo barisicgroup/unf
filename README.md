@@ -47,8 +47,23 @@ JSON
       - **next:** ID of the following nucleotide in the strand
       - **oxDnaConfRow:** row in the referenced oxDNA config file relevant to this nucleotide (to load position)
       - **pdbId:** identification of the relevant residue in the PDB file (to load atoms)
-      - :question: **sidechainCenter:** -
-- **proteins:** array of proteins (their chains, amino acids, etc.)
+      - :question: **sidechainCenter:** --
+- :question: **proteins:** array of proteins (their chains, amino acids, etc.)
+  - **chains:** array of chains of the given protein
+    - **id:** unique ID of this chain
+    - **chainName:** chain name
+    - **pdbFileId:** ID of the relevant external PDB file
+    - **NTerm:** ID of the N-terminus amino acid
+    - **CTerm:** ID of the C-terminus amino acid
+    - **confFilesIds:** array of IDs referencing oxDNA configuration files used for retrieving amino acids' positional information. By default, zeroth config file is used but it is up to an application to decide which one to use if there are more (e.g., to show dynamics animation).
+    - **aminoAcids:** array of the amino acids of this chain
+      - **id:** unique ID of this amino acid
+      - **secondary:** string determining the secondary structure this AA is part of
+      - **seq:** abbreviation of the AA name
+      - **prev:** ID of the preceding AA in the chain
+      - **next:** ID of the following AA in the chain
+      - **oxDnaConfRow:** row in the referenced oxDNA config file relevant to this AA (to load position)
+      - **pdbId:** identification of the relevant residue in the PDB file (to load atoms)
 - **molecules:** array of arbitrary molecules which have some position in space but we do not care about their modifications or individual parts (i.e., PDB is enough)
 - :question: **groups:** object with user-defined groups of particular objects (should be probably changed to array in v0.3)
 -  :question: **connections:** array of connections between structures (namely, nucleotides and amino acids)
