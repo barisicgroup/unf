@@ -5,6 +5,7 @@
 
 import sys
 import json
+import datetime
 
 LATTICE_SQUARE = "square"
 LATTICE_HONEYCOMB = "honeycomb"
@@ -115,8 +116,11 @@ def process_cadnano_file(file_path, lattice_type):
 def initialize_unf_file_data_object():
     unfFileData = {}
 
-    unfFileData['version'] = 0.2
+    unfFileData['version'] = 0.3
     unfFileData['name'] = "cadnano_converted_structure" # TODO add real structure name
+    unfFileData['author'] = "cadnano_unf.py"
+    unfFileData['creationDate'] = datetime.datetime.now().replace(microsecond=0).isoformat()
+    unfFileData['doi'] = "NULL"
     unfFileData['externalFiles'] = []
     unfFileData['virtualHelices'] = []
     unfFileData['singleStrands'] = []

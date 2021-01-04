@@ -1,7 +1,7 @@
 # Unified Nanotechnology Format (UNF) documentation
 
 ## Version
-0.2
+0.3
 
 ## Format type
 JSON
@@ -14,6 +14,9 @@ Units are picometers
 *Note: :question: sign marks fields which are strongly "prototypical"*
 - **version:** format version number
 - **name:** structure name string
+- **author:** structure name string  
+- **creationDate:** structure creation date (stored in ISO 8601 standard, i.e., as YYYY-MM-DDThh:mm:ss) 
+- **doi:** DOI of the publication related to the structure stored in the file  
 - **externalFiles:** array of files which are referenced throughout the UNF file's content
   - **path:** path to the file / file name
   - **id:** unique number ID (no other external file should have the same)
