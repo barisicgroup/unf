@@ -48,7 +48,8 @@ Units are picometers
   - **confFilesIds:** array of IDs referencing oxDNA configuration files used for retrieving nucleotides' positional information. By default, zeroth config file is used but it is up to an application to decide which one to use if there are more (e.g., to show dynamics animation).
   - **nucleotides:** array of nucleotides of this strand
       - **id:** unique ID of this nucleotide
-      - **type:** number determining nucleobase type (A/T/C/G)
+      - **naType:** string determining the type of nucleic acid (e.g., DNA/RNA/XNA)  
+      - **nbAbbrev:** string determining the nucleobase type (A/T/C/G)
       - **pair:** ID of the complementary nucleotide
       - **prev:** ID of the preceding nucleotide in the strand
       - **next:** ID of the following nucleotide in the strand

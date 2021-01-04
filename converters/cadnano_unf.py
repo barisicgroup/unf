@@ -152,7 +152,8 @@ def strands_to_unf_data(idStart, unfFileData, strandsList, allStrandParts, areSc
         for strandPart in strand:
             newNucl = {}
             newNucl['id'] = strandPart.globalId
-            newNucl['type'] = 1
+            newNucl['nbAbbrev'] = "A"
+            newNucl['naType'] = "DNA"
             newNucl['pair'] = next((x.globalId for y in allStrandParts for x in y if x.vhelixId == strandPart.vhelixId and x.baseId == strandPart.baseId and x.globalId != strandPart.globalId), -1)
             newNucl['prev'] = strandPart.prevPart.globalId if strandPart.prevPart is not None else -1
             newNucl['next'] = strandPart.nextPart.globalId if strandPart.nextPart is not None else -1
