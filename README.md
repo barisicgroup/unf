@@ -78,6 +78,10 @@ Units are picometers
   - **position:** position in space
 - :question: **groups:** object with user-defined groups of particular objects (should be probably changed to array in v0.3)
 - :question: **connections:** array of connections between structures (namely, nucleotides and amino acids)
+  - **id:** unique ID of this connection
+  - **connectedObjects:** array with IDs of objects being part of this connection
+  - **interactionType:** string describing the type of interaction (e.g., "watson-crick" for pairing in helix, "hoogsteen BP" for a tertiary contacts, ...)
+  - *Note: For this field to work, each "structural" object must have global unique ID probably (to be able to uniquely identify particular nucl/aa based on one value)*
 - :question: **modifications:** array of modifications
   - **location:** array of nucleotide/AA IDs to be modified
   - **idtText:** string describing type of modification
