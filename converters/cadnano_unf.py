@@ -124,7 +124,7 @@ def initialize_unf_file_data_object():
     unfFileData['externalFiles'] = []
     unfFileData['virtualHelices'] = []
     unfFileData['singleStrands'] = []
-    unfFileData['groups'] = {}
+    unfFileData['groups'] = []
     unfFileData['proteins'] = []
     unfFileData['molecules'] = []
     unfFileData['connections'] = []

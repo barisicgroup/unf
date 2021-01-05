@@ -76,10 +76,14 @@ Units are picometers
   - **pdbFileId:** ID of the relevant external PDB file
   - **orientation:** orientation in space
   - **position:** position in space
-- :question: **groups:** object with user-defined groups of particular objects (should be probably changed to array in v0.3)
+- :question: **groups:** array with user-defined groups of particular objects
+  - **id:** integer ID of the group
+  - **name:** string describing the name of the group
+  - **includedObjects:** array with IDs of objects being part of this group
+  - *Note: For this field to work, each possible included object type must have global unique ID. This also applies to groups as well. Therefore, the groups field can be used to create group hierarchy (group of groups, etc.)*
 - :question: **connections:** array of connections between structures (namely, nucleotides and amino acids)
   - **id:** unique ID of this connection
-  - **connectedObjects:** array with IDs of objects being part of this connection
+  - **includedObjects:** array with IDs of objects being part of this connection
   - **interactionType:** string describing the type of interaction (e.g., "watson-crick" for pairing in helix, "hoogsteen BP" for a tertiary contacts, ...)
   - *Note: For this field to work, each "structural" object must have global unique ID probably (to be able to uniquely identify particular nucl/aa based on one value)*
 - :question: **modifications:** array of modifications
