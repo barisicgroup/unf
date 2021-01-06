@@ -39,11 +39,14 @@ var ParserUtils = {
 
     // FNV-1a based hashing function
     getStringHash(stringContent) {
+        // The string is first converted to "one-liner" to avoid
+        // issues related to differently represented line endings on various OSs
+        const strWithoutLines = stringContent.replace(/(\r\n|\n|\r)/gm, "");
         const fnvPrime = 0x01000193;
         let hash = 0x811c9dc5;
 
-        for (let i = 0; i < stringContent.length; ++i) {
-            hash ^= stringContent[i];
+        for (let i = 0; i < strWithoutLines.length; ++i) {
+            hash ^= strWithoutLines[i];
             hash *= fnvPrime;
         }
 
@@ -52,7 +55,10 @@ var ParserUtils = {
 }
 
 export function parseUNF(unfFileContent, relatedFilesList) {
-    const parsedJson = JSON.parse(unfFileContent);
+    let includedFileNameToContentMap = new Map();
+    const unfFileJsonPart = splitJsonAndIncludedFilesFromUNF(unfFileContent, includedFileNameToContentMap);
+
+    const parsedJson = JSON.parse(unfFileJsonPart);
     console.log(parsedJson); // Output to log for verification purposes
 
     if (parsedJson.version !== ParserConstants.SupportedFormatVersion) {
@@ -76,16 +82,39 @@ export function parseUNF(unfFileContent, relatedFilesList) {
     // ---
     // This will be actually asynchronous so this function will return immediately
     // but not everything will be processed atm
-    processExternalFiles(parsedJson, rescaledParent, relatedFilesList,
+    processExternalFiles(parsedJson, includedFileNameToContentMap, rescaledParent, relatedFilesList,
         function (fileIdToFileDataMap) {
             processSingleStrands(parsedJson, rescaledParent, fileIdToFileDataMap);
             processMolecules(parsedJson, rescaledParent, fileIdToFileDataMap);
         });
 
     return result;
+    return [];
 }
 
-function processExternalFiles(parsedJson, rescaledParent, relatedFilesList, onProcessed) {
+function splitJsonAndIncludedFilesFromUNF(unfFileContent, includedFileNameToContentMap) {
+    const splittedFileParts = unfFileContent.split(/#INCLUDED_FILE\s+/);
+
+    if (splittedFileParts.length > 0) {
+        const jsonPart = splittedFileParts[0]; // By the definition of the format, the JSON is the first record
+
+        for (let i = 1; i < splittedFileParts.length; ++i) {
+            const firstLineBreakIdx = splittedFileParts[i].indexOf("\n");
+            const fileName = splittedFileParts[i].substring(0, firstLineBreakIdx).trim();
+            const fileContent = splittedFileParts[i].substring(firstLineBreakIdx + 1);
+
+            includedFileNameToContentMap.set(fileName, fileContent);
+        }
+
+        return jsonPart;
+    }
+    else {
+        console.error("Cannot process file content: " + unfFileContent);
+        return "{}";
+    }
+}
+
+function processExternalFiles(parsedJson, includedFileNameToContentMap, rescaledParent, relatedFilesList, onProcessed) {
     // The values in the Map are actually different objects (i.e., of different data type)
     // so it is necessary to know what kind of data you are accessing
     let fileIdToFileDataMap = new Map();
@@ -94,12 +123,22 @@ function processExternalFiles(parsedJson, rescaledParent, relatedFilesList, onPr
 
     externalFilesList.forEach(fileRecord => {
         const fileName = ParserUtils.fileNameFromPath(fileRecord.path);
-        const uploadedFile = relatedFilesList.find(x => x.name === fileName);
         const extension = ParserUtils.extensionFromFileName(fileName);
+        const uploadedFile = relatedFilesList.find(x => x.name === fileName);
+        const isIncluded = fileRecord.isIncluded;
+        let fileContent = undefined;
         let necessaryToRevokeObjURL = false;
         let uploadedFileName = uploadedFile ? uploadedFile.name : undefined;
 
-        if (extension === "pdb") {
+        if (isIncluded) {
+            fileContent = includedFileNameToContentMap.get(fileName);
+            
+            if (fileContent === undefined) {
+                console.error("External file not included but should be: " + fileName);
+                return;
+            }
+        }
+        else if (extension === "pdb") {
             if (uploadedFile) {
                 // PDB Loader is using FileLoader class from three.js accepting 
                 // URLs only (if provided with only file name, it will look for it on the server which is incorrect). 
@@ -115,12 +154,16 @@ function processExternalFiles(parsedJson, rescaledParent, relatedFilesList, onPr
             }
         }
 
-        if (uploadedFileName) {
+        if (uploadedFileName || fileContent) {
             if (extension === "pdb") {
-                promises.push(() => processPdbAndAddToMap(fileRecord.id, fileRecord.hash, uploadedFileName, fileIdToFileDataMap, necessaryToRevokeObjURL));
+                promises.push(() =>
+                    processPdbAndAddToMap(fileRecord.id, fileRecord.hash, fileContent,
+                        uploadedFileName, fileIdToFileDataMap, necessaryToRevokeObjURL));
             }
             else if (extension === "oxdna") {
-                promises.push(() => processOxCfgAndAddToMap(uploadedFile, fileRecord.id, fileRecord.hash, fileIdToFileDataMap));
+                promises.push(() =>
+                    processOxCfgAndAddToMap(uploadedFile, fileRecord.id, fileContent,
+                        fileRecord.hash, fileIdToFileDataMap));
             }
             else {
                 console.warn("No parser for this file (unsupported extension): ", file);
@@ -137,9 +180,9 @@ function processExternalFiles(parsedJson, rescaledParent, relatedFilesList, onPr
     });
 
     // Helper functions
-    function processPdbAndAddToMap(fileId, expectedFileHash, pdbPath, fileIdToFileDataMap, necessaryToRevokeObjURL) {
+    function processPdbAndAddToMap(fileId, expectedFileHash, fileContent, pdbPath, fileIdToFileDataMap, necessaryToRevokeObjURL) {
         return new Promise(function (resolve) {
-            PdbUtils.loadPdb(pdbPath, (fileContent, pdbData) => {
+            PdbUtils.loadPdb(pdbPath, fileContent, (fileContent, pdbData) => {
                 const fileHash = ParserUtils.getStringHash(fileContent);
                 console.log("File id " + fileId + ": hash " + fileHash + ", expected " + expectedFileHash);
                 if (fileHash !== expectedFileHash) {
@@ -155,9 +198,9 @@ function processExternalFiles(parsedJson, rescaledParent, relatedFilesList, onPr
         });
     }
 
-    function processOxCfgAndAddToMap(oxFile, fileId, expectedFileHash, fileIdToFileDataMap) {
+    function processOxCfgAndAddToMap(oxFile, fileId, fileContent, expectedFileHash, fileIdToFileDataMap) {
         return new Promise(function (resolve) {
-            OxDnaUtils.parseOxConfFile(oxFile, (fileContent, oxData) => {
+            OxDnaUtils.parseOxConfFile(oxFile, fileContent, (fileContent, oxData) => {
                 const fileHash = ParserUtils.getStringHash(fileContent);
                 console.log("File id " + fileId + ": hash " + fileHash + ", expected " + expectedFileHash);
                 if (fileHash !== expectedFileHash) {

@@ -21,38 +21,53 @@ PDBLoader.prototype = Object.assign(Object.create(Loader.prototype), {
 
 	constructor: PDBLoader,
 
-	load: function (url, atomPredicate, onLoad, onProgress, onError) {
+	load: function (url, fileContent, atomPredicate, onLoad, onProgress, onError) {
 
 		var scope = this;
 
-		var loader = new FileLoader(scope.manager);
-		loader.setPath(scope.path);
-		loader.setRequestHeader(scope.requestHeader);
-		loader.setWithCredentials(scope.withCredentials);
-		loader.load(url, function (text) {
+		if (fileContent === undefined) {
+			var loader = new FileLoader(scope.manager);
+			loader.setPath(scope.path);
+			loader.setRequestHeader(scope.requestHeader);
+			loader.setWithCredentials(scope.withCredentials);
+			loader.load(url, function (text) {
 
+				try {
+
+					onLoad(text, scope.parse(text, atomPredicate));
+
+				} catch (e) {
+
+					if (onError) {
+
+						onError(e);
+
+					} else {
+
+						console.error(e);
+
+					}
+
+					scope.manager.itemError(url);
+
+				}
+
+			}, onProgress, onError);
+		}
+		else {
 			try {
-
-				onLoad(text, scope.parse(text, atomPredicate));
-
+				onLoad(fileContent, scope.parse(fileContent, atomPredicate));
 			} catch (e) {
-
 				if (onError) {
-
 					onError(e);
-
 				} else {
-
 					console.error(e);
-
 				}
 
 				scope.manager.itemError(url);
 
 			}
-
-		}, onProgress, onError);
-
+		}
 	},
 
 	// Based on CanvasMol PDB parser
@@ -124,7 +139,7 @@ PDBLoader.prototype = Object.assign(Object.create(Loader.prototype), {
 			var verticesBonds = [];
 
 			// atoms
-			
+
 			for (i = 0, l = atoms.length; i < l; i++) {
 
 				var atom = atoms[i];

@@ -5,11 +5,12 @@ export function getRemotePathToPdb(pdbName) {
     return "http://files.rcsb.org/download/" + pdbName;
 }
 
-export function loadPdb(pdbName, onFileParsed, atomPredicate = x => true) {
+export function loadPdb(pdbName, fileContent, onFileParsed, atomPredicate = x => true) {
     const loader = new PDBLoader();
 
     loader.load(
         pdbName,
+        fileContent,
         atomPredicate,
         onFileParsed,
         function (xhr) { }, // Called when loading is in progresses
@@ -20,7 +21,7 @@ export function loadPdb(pdbName, onFileParsed, atomPredicate = x => true) {
 }
 
 export function loadAndSpawnPdb(pdbName, position, eulerRotation, parentObject, atomPredicate = x => true) {
-    loadPdb(pdbName, function (pdb) { spawnPdbData(pdb, position, eulerRotation, parentObject); }, atomPredicate);
+    loadPdb(pdbName, undefined, function (pdb) { spawnPdbData(pdb, position, eulerRotation, parentObject); }, atomPredicate);
 }
 
 export function spawnPdbData(pdbData, objPosition, eulerRotation, parentObject, atomPredicate = x => true) {

@@ -4,7 +4,10 @@
 0.3
 
 ## Format type
-JSON
+JSON-based
+
+The core of the UNF file is pure JSON, however, due to the possibility to include other files directly
+in the UNF file (e.g., PDB), the final *.unf file cannot be always considered as valid JSON file.
 
 ## General notes
 Position is typically in z/x/y order (might be changed in v0.3)  
@@ -19,8 +22,10 @@ Units are picometers
 - **doi:** DOI of the publication related to the structure stored in the file  
 - **externalFiles:** array of files which are referenced throughout the UNF file's content
   - **path:** path to the file / file name
+  - **isIncluded:** boolean determining whether the file is included in this UNF file or is provided externally
+    -*Including external files inside the UNF file works as follows. First, UNF JSON is saved to a file. Then, for each included external file, line with the following content: "#INCLUDED_FILE <file_name>" is present immediately followed by the content of the inserted file starting on the next line. Finally, the resulting UNF file must end with a new line.* 
   - **id:** unique number ID (no other external file should have the same)
-  - **hash:** hash of the file's content (currently hashed with FNV-1a inspired algorithm, see UNF Viewer for more). Serves to ensure that the content of this file is the same when reading the UNF as it was when saving it.
+  - **hash:** hash of the file's content (currently hashed with FNV-1a inspired algorithm, see UNF Viewer, namely *unf_parser.ParserUtils.getStringHash*, for more). Serves to ensure that the content of this file is the same when reading the UNF as it was when saving it. Line endings are ignored when computing hash to avoid issues related to their expression on different OSs.
 - **virtualHelices:** array of virtual helices, i.e., cadnano-like cylindrical positions
   - **id:** unique ID of this virtual helix
   - **grid:** layout name string (e.g., "square" or "honeycomb")
