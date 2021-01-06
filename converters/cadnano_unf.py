@@ -9,7 +9,7 @@ import datetime
 
 LATTICE_SQUARE = "square"
 LATTICE_HONEYCOMB = "honeycomb"
-OUTPUT_FILE_NAME = "output.json"
+OUTPUT_FILE_NAME = "output.unf"
 
 class StrandPart:
     def __init__(self, globalId, vhelixId, baseId, prevVid, prevBid, nextVid, nextBid):
