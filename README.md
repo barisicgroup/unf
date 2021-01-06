@@ -23,9 +23,9 @@ Units are picometers
 - **externalFiles:** array of files which are referenced throughout the UNF file's content
   - **path:** path to the file / file name
   - **isIncluded:** boolean determining whether the file is included in this UNF file or is provided externally
-    -*Including external files inside the UNF file works as follows. First, UNF JSON is saved to a file. Then, for each included external file, line with the following content: "#INCLUDED_FILE <file_name>" is present immediately followed by the content of the inserted file starting on the next line. Finally, the resulting UNF file must end with a new line.* 
+    - *Including external files inside the UNF file works as follows. First, UNF JSON is saved to a file. Then, for each included external file, line with the following content: "#INCLUDED_FILE <file_name>" is present immediately followed by the content of the inserted file starting on the next line. Finally, the resulting UNF file must end with a new line.* 
   - **id:** unique number ID (no other external file should have the same)
-  - **hash:** hash of the file's content (currently hashed with FNV-1a inspired algorithm, see UNF Viewer, namely *unf_parser.ParserUtils.getStringHash*, for more). Serves to ensure that the content of this file is the same when reading the UNF as it was when saving it. Line endings are ignored when computing hash to avoid issues related to their expression on different OSs.
+  - **hash:** hash of the file's content (currently hashed with FNV-1a inspired algorithm, see UNF Viewer, namely *unf_parser.js:ParserUtils.getStringHash*, for more). Serves to ensure that the content of this file is the same when reading the UNF as it was when saving it. Line endings are ignored when computing hash to avoid issues related to their expression on different OSs.
 - **virtualHelices:** array of virtual helices, i.e., cadnano-like cylindrical positions
   - **id:** unique ID of this virtual helix
   - **grid:** layout name string (e.g., "square" or "honeycomb")
@@ -97,10 +97,10 @@ Units are picometers
 
 # UNF Viewer documentation
 The UNF Viewer is written in JavaScript and Three.js library.    
-It enables to visualize UNF files by selecting a desired file from the file dialog.  
-To run it, clone the repository and use e.g. live server to host the viewer application.    
-Since it is written in JavaScript, it cannot search your hard drive; in other words, you need to upload not just the UNF file but also all files referenced in the "externalFiles" field. If PDB file is not uploaded, the viewer automatically tries to download it from RCSB.  
-The application serves mainly for UNF development purpose, it is therefore recommended to have a dev console open to see the console logs.  
+It enables to visualize the content of a UNF file by selecting a desired file from the file dialog.  
+To run it, clone the repository and use, e.g., live server to host the viewer application. It is recommended to refresh/reload (typically F5) the application before loading a new strucutre.    
+Since it is written in JavaScript, it cannot search your hard drive; in other words, you need to upload not just the UNF file but also all files referenced in the "externalFiles" field which are not included directly in the UNF file. If a PDB file is not included nor uploaded, the viewer automatically tries to download it from RCSB.  
+The application serves mainly for UNF development purposes right now, it is, therefore, recommended to have a dev console open to see the console logs.  
 
 # Converters documentation
 - **Cadnano to UNF converter (Python)**
