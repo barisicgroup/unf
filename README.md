@@ -77,10 +77,26 @@ Units are picometers
       - **next:** ID of the following AA in the chain
       - **oxDnaConfRow:** row in the referenced oxDNA config file relevant to this AA (to load position)
       - **pdbId:** identification of the relevant residue in the PDB file (to load atoms)
-- **molecules:** array of arbitrary molecules which have some position in space but we do not care about their modifications or individual parts (i.e., PDB is enough)
-  - **pdbFileId:** ID of the relevant external PDB file
-  - **orientation:** orientation in space
-  - **position:** position in space
+- **molecules:** object containing molecules which have some position in space but we do not care about their modifications or individual parts (e.g., PDB is enough)
+  - **ligands:** array of ligands
+    - **id:** unique ID
+    - **name:** ligand name   
+    - **externalFileId:** ID of the relevant external file
+    - **orientation:** orientation in space
+    - **position:** position in space
+  - **nanostructures:** array of nanostructures (e.g., gold nanoparticles)
+    - **id:** unique ID
+    - **name:** nanostructure name 
+    - **externalFileId:** ID of the relevant external file
+    - **orientation:** orientation in space
+    - **position:** position in space
+  - **others:** array of other arbitrary molecules
+    - **id:** unique ID
+    - **name:** molecule name
+    - **type:** molecule type
+    - **externalFileId:** ID of the relevant external file
+    - **orientation:** orientation in space
+    - **position:** position in space
 - :question: **groups:** array with user-defined groups of particular objects
   - **id:** integer ID of the group
   - **name:** string describing the name of the group
