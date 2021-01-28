@@ -81,9 +81,16 @@ Units are picometers
   - **ligands:** array of ligands
     - **id:** unique ID
     - **name:** ligand name   
-    - **externalFileId:** ID of the relevant external file
+    - **externalFileId:** ID of the relevant external file if there is any (e.g., SDF file)
+    - **atoms:** if no external file exists, the ligand can be described also as an array of atoms
+      - **atomName:** unique atom name
+      - **position:** atom's position relative to ligand origin
+    - **bonds:** array of bonds between atoms ("atoms" field)
+      - **firstAtomName:** unique atom name
+      - **secondAtomName:** unique atom name
+      - **bondType:** string identifying the type of bond
     - **orientation:** orientation in space
-    - **position:** position in space
+    - **position:** position in space (centroid of all atoms)
   - **nanostructures:** array of nanostructures (e.g., gold nanoparticles)
     - **id:** unique ID
     - **name:** nanostructure name 
@@ -97,17 +104,15 @@ Units are picometers
     - **externalFileId:** ID of the relevant external file
     - **orientation:** orientation in space
     - **position:** position in space
-- :question: **groups:** array with user-defined groups of particular objects
-  - **id:** integer ID of the group
+- **groups:** array with user-defined groups of particular objects
+  - **id:** unique integer ID of the group
   - **name:** string describing the name of the group
   - **includedObjects:** array with IDs of objects being part of this group
-  - *Note: For this field to work, each possible included object type must have global unique ID. This also applies to groups as well. Therefore, the groups field can be used to create group hierarchy (group of groups, etc.)*
-- :question: **connections:** array of connections between structures (namely, nucleotides and amino acids)
+- **connections:** array of connections between structures (namely, nucleotides and amino acids)
   - **id:** unique ID of this connection
   - **includedObjects:** array with IDs of objects being part of this connection
   - **interactionType:** string describing the type of interaction (e.g., "watson-crick" for pairing in helix, "hoogsteen BP" for a tertiary contacts, ...)
-  - *Note: For this field to work, each "structural" object must have global unique ID probably (to be able to uniquely identify particular nucl/aa based on one value)*
-- :question: **modifications:** array of modifications
+- **modifications:** array of modifications
   - **location:** array of nucleotide/AA IDs to be modified
   - **idtText:** string describing type of modification
 
