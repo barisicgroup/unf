@@ -11,6 +11,8 @@ LATTICE_SQUARE = "square"
 LATTICE_HONEYCOMB = "honeycomb"
 OUTPUT_FILE_NAME = "output.unf"
 
+globalIdGenerator = 0
+
 class StrandPart:
     def __init__(self, globalId, vhelixId, baseId, prevVid, prevBid, nextVid, nextBid):
         self.globalId = globalId
@@ -70,7 +72,7 @@ def process_cadnano_file(file_path, lattice_type):
     processedVhelices = []
     allScaffoldRecords = []
     allStapleRecords = []
-    spId = 0
+    global globalIdGenerator
 
     for vstr in parsedData['vstrands']: 
         firstActiveCell = len(vstr['scaf'])
@@ -80,8 +82,8 @@ def process_cadnano_file(file_path, lattice_type):
         for idx, scaf in enumerate(vstr['scaf']):
             isValidRecord = scaf[0] >= 0 or scaf[2] >= 0
             if isValidRecord:
-                allScaffoldRecords.append(StrandPart(spId, vstr['num'], idx, scaf[0], scaf[1], scaf[2], scaf[3]))
-                spId += 1
+                allScaffoldRecords.append(StrandPart(globalIdGenerator, vstr['num'], idx, scaf[0], scaf[1], scaf[2], scaf[3]))
+                globalIdGenerator += 1
             lastCell = max(lastCell, idx)
             firstActiveCell = min(firstActiveCell, idx if isValidRecord else firstActiveCell) # TODO UNF expects these (first|last)ActiveCell values to be increasing for every vhelix ... thus right now, they are incorrect
             lastActiveCell = max(lastActiveCell, idx if isValidRecord else lastActiveCell)
@@ -89,8 +91,8 @@ def process_cadnano_file(file_path, lattice_type):
         for idx, stap in enumerate(vstr['stap']):
             isValidRecord = stap[0] >= 0 or stap[2] >= 0
             if isValidRecord:
-                allStapleRecords.append(StrandPart(spId, vstr['num'], idx, stap[0], stap[1], stap[2], stap[3]))
-                spId += 1
+                allStapleRecords.append(StrandPart(globalIdGenerator, vstr['num'], idx, stap[0], stap[1], stap[2], stap[3]))
+                globalIdGenerator += 1
             lastCell = max(lastCell, idx)
             firstActiveCell = min(firstActiveCell, idx if isValidRecord else firstActiveCell)
             lastActiveCell = max(lastActiveCell, idx if isValidRecord else lastActiveCell)
@@ -116,7 +118,7 @@ def process_cadnano_file(file_path, lattice_type):
 def initialize_unf_file_data_object():
     unfFileData = {}
 
-    unfFileData['version'] = 0.3
+    unfFileData['version'] = 0.4
     unfFileData['name'] = "cadnano_converted_structure" # TODO add real structure name
     unfFileData['author'] = "cadnano_unf.py"
     unfFileData['creationDate'] = datetime.datetime.now().replace(microsecond=0).isoformat()
@@ -126,20 +128,26 @@ def initialize_unf_file_data_object():
     unfFileData['singleStrands'] = []
     unfFileData['groups'] = []
     unfFileData['proteins'] = []
-    unfFileData['molecules'] = []
     unfFileData['connections'] = []
     unfFileData['modifications'] = []
+    unfFileData['misc'] = {}
+    unfFileData['molecules'] = {}
+    unfFileData['molecules']['ligands'] = []
+    unfFileData['molecules']['nanostructures'] = []
+    unfFileData['molecules']['others'] = []
 
     return unfFileData
 
-def strands_to_unf_data(idStart, unfFileData, strandsList, allStrandParts, areScaffolds):
+def strands_to_unf_data(unfFileData, strandsList, allStrandParts, areScaffolds):
     resultingObjects = []
-    
+    global globalIdGenerator
+
+
     for strand in strandsList:
         strandObject = {}
 
-        strandObject['id'] = idStart
-        idStart += 1
+        strandObject['id'] = globalIdGenerator
+        globalIdGenerator += 1
         strandObject['chainName'] = "NULL"
         strandObject['color'] = "#0000FF" if areScaffolds else "#FF0000"
         strandObject['isScaffold'] = "true" if areScaffolds else "false"
@@ -159,7 +167,8 @@ def strands_to_unf_data(idStart, unfFileData, strandsList, allStrandParts, areSc
             newNucl['next'] = strandPart.nextPart.globalId if strandPart.nextPart is not None else -1
             newNucl['oxdnaConfRow'] = -1
             newNucl['pdbId'] = -1
-            newNucl['sidechainCenter'] = []
+            newNucl['altPositions'] = [[]]
+            newNucl['altOrientations'] = [[]]
 
             nucleotides.append(newNucl)
 
@@ -170,24 +179,27 @@ def strands_to_unf_data(idStart, unfFileData, strandsList, allStrandParts, areSc
 
 def convert_data_to_unf_file(vhelices, scaffoldStrands, stapleStrands):
     unfFileData = initialize_unf_file_data_object()
-    cellsId = 0
+    global globalIdGenerator
     allStrandParts = scaffoldStrands + stapleStrands
 
     for vhelix in vhelices:
         outputVhelix = {}
-        outputVhelix['id'] = vhelix.id
+        outputVhelix['id'] = globalIdGenerator
+        globalIdGenerator += 1
         outputVhelix['firstActiveCell'] = vhelix.firstActiveCell
         outputVhelix['lastActiveCell'] = vhelix.lastActiveCell
         outputVhelix['lastCell'] = vhelix.lastCell
         outputVhelix['gridPosition'] = [vhelix.col, vhelix.row]
         outputVhelix['orientation'] = [0, 0, 0]
         outputVhelix['grid'] = vhelix.latticeType
+        outputVhelix['altPosition'] = []
+        outputVhelix['altOrientation'] = []
         
         cells = []
         for i in range(vhelix.lastActiveCell + 1):
             newCell = {}
-            newCell['id'] = cellsId
-            cellsId += 1
+            newCell['id'] = globalIdGenerator
+            globalIdGenerator += 1
             newCell['number'] = i
             newCell['position'] = []
             newCell['type'] = 0
@@ -210,8 +222,8 @@ def convert_data_to_unf_file(vhelices, scaffoldStrands, stapleStrands):
         outputVhelix['cells'] = cells
         unfFileData['virtualHelices'].append(outputVhelix)
     
-    strands_to_unf_data(0, unfFileData, scaffoldStrands, allStrandParts, True)
-    strands_to_unf_data(len(scaffoldStrands), unfFileData, stapleStrands, allStrandParts, False)
+    strands_to_unf_data(unfFileData, scaffoldStrands, allStrandParts, True)
+    strands_to_unf_data(unfFileData, stapleStrands, allStrandParts, False)
     
     with open(OUTPUT_FILE_NAME, 'w') as outfile:
         json.dump(unfFileData, outfile)
