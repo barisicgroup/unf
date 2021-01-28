@@ -131,7 +131,7 @@ To mark fields as "not used"/containing invalid value:
 # UNF Viewer documentation
 The UNF Viewer is written in JavaScript and Three.js library.    
 It enables to visualize the content of a UNF file by selecting a desired file from the file dialog.  
-At the moment, only a subset of UNF fields and properties is visualized. Mainly "virtuaHelices", "singleStrands" and "molecules.others".  
+**At the moment, only a subset of UNF fields and properties is visualized. Mainly "virtuaHelices", "singleStrands" and "molecules.others". When previewing the UNF file content, keep this fact in mind.**  
 To run it, clone the repository and use, e.g., live server to host the viewer application. It is recommended to refresh/reload (typically F5) the application before loading a new strucutre.    
 Since it is written in JavaScript, it cannot search your hard drive; in other words, you need to upload not just the UNF file but also all files referenced in the "externalFiles" field which are not included directly in the UNF file. If a PDB file is not included nor uploaded, the viewer automatically tries to download it from RCSB.  
 The application serves mainly for UNF development purposes right now, it is, therefore, recommended to have a dev console open to see the console logs.  
