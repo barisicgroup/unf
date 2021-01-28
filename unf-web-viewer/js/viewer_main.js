@@ -111,6 +111,7 @@ function viewerMain() {
                 }
                 catch (e) {
                     alert("Parsing failed: " + unfFile + ". ", e);
+                    console.error("Parser fail: ", unfFile, e);
                 }
             }
 

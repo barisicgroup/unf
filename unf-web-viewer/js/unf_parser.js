@@ -3,7 +3,7 @@ import * as PdbUtils from "./pdb_utils.js"
 import * as OxDnaUtils from "./oxdna_utils.js";
 
 var ParserConstants = {
-    SupportedFormatVersion: .3,
+    SupportedFormatVersion: .4,
     AngstromsPerUnit: 256,
     VHelixRadius: 20,
     BasePairRise: 3.32,
@@ -86,10 +86,10 @@ export function parseUNF(unfFileContent, relatedFilesList) {
         function (fileIdToFileDataMap) {
             processSingleStrands(parsedJson, rescaledParent, fileIdToFileDataMap);
             processMolecules(parsedJson, rescaledParent, fileIdToFileDataMap);
+            // TODO Proteins etc.
         });
 
     return result;
-    return [];
 }
 
 function splitJsonAndIncludedFilesFromUNF(unfFileContent, includedFileNameToContentMap) {
@@ -220,7 +220,7 @@ function processVirtualHelices(parsedJson, objectsParent) {
     const cylinderTranspMaterial = new THREE.MeshBasicMaterial({ color: 0xff4444, opacity: 0.3, transparent: true });
 
     let vHelices = parsedJson.virtualHelices;
-    let usePositionFromCells = !vHelices.some(vhelix => vhelix.cells.some(cell => cell.position.length != 3));
+    let usePositionFromCells = !vHelices.some(vhelix => vhelix.cells.some(cell => cell.altPosition.length != 3));
 
     if (usePositionFromCells) {
         vHelices.forEach(helix => {
@@ -228,10 +228,9 @@ function processVirtualHelices(parsedJson, objectsParent) {
                 cylinderTranspMaterial.color.setHex(Math.random() * 0xffffff);
                 const newMesh = new THREE.Mesh(cylinderGeometry, new THREE.MeshBasicMaterial(cylinderTranspMaterial));
                 newMesh.position.set(
-                    // UNF now stores positions as z/x/y
-                    ParserUtils.pmToAngs(cell.position[1]),
-                    ParserUtils.pmToAngs(cell.position[2]),
-                    ParserUtils.pmToAngs(cell.position[0]));
+                    ParserUtils.pmToAngs(cell.altPosition[0]),
+                    ParserUtils.pmToAngs(cell.altPosition[1]),
+                    ParserUtils.pmToAngs(cell.altPosition[2]));
                 newMesh.scale.set(.5, ParserConstants.BasePairRise, .5); // TODO The .5 here is possibly because of invalid values in test json file?
                 newMesh.rotation.set(THREE.MathUtils.degToRad(90), 0, 0);
                 objectsParent.add(newMesh);
@@ -345,22 +344,26 @@ function processSingleStrands(parsedJson, objectsParent, fileIdToFileDataMap) {
                 console.warn("File with id " + confFileId + " not provided. Skipping appropriate records.");
             }
         }
+
+        // TODO Add positioning according to altPosition/altOrientation values of nucleotides
     });
 }
 
 function processMolecules(parsedJson, objectsParent, fileIdToFileDataMap) {
-    parsedJson.molecules.forEach(molecule => {
-        const requestedPdbId = molecule.pdbFileId;
+    // TODO parsedJson.molecules.ligands/nanostructures/...
+    
+    parsedJson.molecules.others.forEach(molecule => {
+        const requestedPdbId = molecule.externalFileId;
 
         const position = new THREE.Vector3(
-            ParserUtils.pmToAngs(molecule.position[1]),
-            ParserUtils.pmToAngs(molecule.position[2]),
-            ParserUtils.pmToAngs(molecule.position[0]));
+            ParserUtils.pmToAngs(molecule.positions[0][0]),
+            ParserUtils.pmToAngs(molecule.positions[0][1]),
+            ParserUtils.pmToAngs(molecule.positions[0][1]));
 
         const rotation = new THREE.Vector3(
-            molecule.orientation[1],
-            molecule.orientation[2],
-            molecule.orientation[0]
+            molecule.orientations[0][0],
+            molecule.orientations[0][1],
+            molecule.orientations[0][2]
         );
 
         if (fileIdToFileDataMap.has(requestedPdbId)) {

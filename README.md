@@ -113,8 +113,8 @@ To mark fields as "not used"/containing invalid value:
     - **name:** molecule name
     - **type:** molecule type
     - **externalFileId:** ID of the relevant external file
-    - **position:** 2D array storing positions in space
-    - **orientation:** 2D array storing orientations in space
+    - **positions:** 2D array storing positions in space
+    - **orientations:** 2D array storing orientations in space
 - **groups:** array with user-defined groups of particular objects
   - **id:** unique integer ID of the group
   - **name:** string describing the name of the group
