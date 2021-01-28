@@ -10,7 +10,7 @@ The core of the UNF file is pure JSON, however, due to the possibility to includ
 in the UNF file (e.g., PDB), the final *.unf file cannot be always considered as valid JSON file.
 
 ## General notes
-Position are stored in [x, y, z] order, units are in picometers
+Positions are stored in [x, y, z] order, units are in picometers
 Rotations are stored in Euler angles,  values determines how much is the object rotated around each of [x, y, z] axes
 
 ## Conventions
@@ -68,8 +68,8 @@ To mark fields as "not used"/containing invalid value:
       - **next:** ID of the following nucleotide in the strand
       - **oxDnaConfRow:** row in the referenced oxDNA config file relevant to this nucleotide (to load position)
       - **pdbId:** identification of the relevant residue in the PDB file (to load atoms)
-      - **altPosition:** alternative position of this nucleotide (if oxDNA file is not provided or the position was modified)
-      - **altOrientation:** alternative orientation of this nucleotide (if oxDNA file is not provided or the rotation was modified)
+      - **altPositions:** 2D array of alternative positions of this nucleotide (if oxDNA file is not provided or the position was modified). By default, zeroth position is considered as current one. More positions can be stored for dynamics/animation purposes.
+      - **altOrientations:** 2D array of alternative orientations of this nucleotide (if oxDNA file is not provided or the rotation was modified). By default, zeroth orientation is considered as current one. More orientations can be stored for dynamics/animation purposes.
 - **proteins:** array of proteins (their chains, amino acids, etc.)
   - **chains:** array of chains of the given protein
     - **id:** unique ID of this chain
@@ -86,8 +86,8 @@ To mark fields as "not used"/containing invalid value:
       - **next:** ID of the following AA in the chain
       - **oxDnaConfRow:** row in the referenced oxDNA config file relevant to this AA (to load position)
       - **pdbId:** identification of the relevant residue in the PDB file (to load atoms)
-      - **altPosition:** alternative position of this AA (if oxDNA file is not provided or the position was modified)
-      - **altOrientation:** alternative orientation of this AA (if oxDNA file is not provided or the rotation was modified)
+      - **altPositions:** 2D array of alternative positions of this AA (if oxDNA file is not provided or the position was modified). By default, zeroth position is considered as current one. More positions can be stored for dynamics/animation purposes.
+      - **altOrientations:** 2D array of alternative orientations of this AA (if oxDNA file is not provided or the rotation was modified). By default, zeroth orientation is considered as current one. More orientations can be stored for dynamics/animation purposes.
 - **molecules:** object containing molecules which have some position in space but we do not care about their modifications or individual parts (e.g., PDB is enough)
   - **ligands:** array of ligands
     - **id:** unique ID
@@ -95,26 +95,26 @@ To mark fields as "not used"/containing invalid value:
     - **externalFileId:** ID of the relevant external file if there is any (e.g., SDF file)
     - **atoms:** if no external file exists, the ligand can be described also as an array of atoms
       - **atomName:** unique atom name
-      - **position:** atom's position relative to ligand origin
+      - **positions:** 2D array of atom's positions relative to ligand origin
     - **bonds:** array of bonds between atoms ("atoms" field)
       - **firstAtomName:** unique atom name
       - **secondAtomName:** unique atom name
       - **bondType:** string identifying the type of bond
-    - **orientation:** orientation in space
-    - **position:** position in space (centroid of all atoms)
+    - **orientations:** 2D array storing orientations in space
+    - **positions:** 2D array storing positions in space (centroid of all atoms)
   - **nanostructures:** array of nanostructures (e.g., gold nanoparticles)
     - **id:** unique ID
     - **name:** nanostructure name 
     - **externalFileId:** ID of the relevant external file
-    - **orientation:** orientation in space
-    - **position:** position in space
+    - **positions:** 2D array storing positions in space  
+    - **orientations:** 2D array storing orientations in space
   - **others:** array of other arbitrary molecules
     - **id:** unique ID
     - **name:** molecule name
     - **type:** molecule type
     - **externalFileId:** ID of the relevant external file
-    - **orientation:** orientation in space
-    - **position:** position in space
+    - **position:** 2D array storing positions in space
+    - **orientation:** 2D array storing orientations in space
 - **groups:** array with user-defined groups of particular objects
   - **id:** unique integer ID of the group
   - **name:** string describing the name of the group
@@ -125,7 +125,8 @@ To mark fields as "not used"/containing invalid value:
   - **interactionType:** string describing the type of interaction (e.g., "watson-crick" for pairing in helix, "hoogsteen BP" for a tertiary contacts, ...)
 - **modifications:** array of modifications
   - **location:** array of nucleotide/AA IDs to be modified
-  - **idtText:** string describing type of modification
+  - **idtText:** string describing type of modification  
+- **misc:** object which is by default empty but should be used for storing any application-specific/domain-specific information which could not have been stored in the other fields
 
 # UNF Viewer documentation
 The UNF Viewer is written in JavaScript and Three.js library.    
