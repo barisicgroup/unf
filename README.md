@@ -125,6 +125,7 @@ To mark fields as "not used"/containing invalid value:
   - **interactionType:** string describing the type of interaction (e.g., "watson-crick" for pairing in helix, "hoogsteen BP" for a tertiary contacts, ...)
 - **modifications:** array of modifications
   - **location:** array of nucleotide/AA IDs to be modified
+  - **externalFileId:** ID of the relevant external structure file  
   - **idtText:** string describing type of modification  
 - **misc:** object which is by default empty but should be used for storing any application-specific/domain-specific information which could not have been stored in the other fields
 
