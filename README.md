@@ -50,7 +50,7 @@ To mark fields as "not used"/containing invalid value:
     - **type:** number determining the type of the cell (normal/loop/skip)
     - **left:** ID of the left (5'3' direction) nucleotide
     - **right:** ID of the right (3'5' direction) nucleotide
-- **singleStrands:** array of individual single strands and their nucleotides
+- **NAStrands:** array of individual single strands and their nucleotides
   - **id:** unique ID of this strand
   - **isScaffold:** boolean determining whether this is a scaffold strand or a staple strand
   - **color:** hex string storing the color for this strand
