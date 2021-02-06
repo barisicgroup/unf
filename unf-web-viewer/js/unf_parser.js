@@ -273,7 +273,7 @@ function getGridPositionForIndex(x, y, z, gridType) {
 function processSingleStrands(parsedJson, objectsParent, fileIdToFileDataMap) {
     const sphereGeometry = new THREE.SphereGeometry(3.5, 16, 16);
 
-    parsedJson.singleStrands.forEach(strand => {
+    parsedJson.NAStrands.forEach(strand => {
         // If no references to files with positions are provided, strands will be positioned
         // according to the virtual helices' cells
         if (strand.confFilesIds.length === 0) {

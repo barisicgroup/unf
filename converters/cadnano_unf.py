@@ -125,7 +125,7 @@ def initialize_unf_file_data_object():
     unfFileData['doi'] = "NULL"
     unfFileData['externalFiles'] = []
     unfFileData['virtualHelices'] = []
-    unfFileData['singleStrands'] = []
+    unfFileData['NAStrands'] = []
     unfFileData['groups'] = []
     unfFileData['proteins'] = []
     unfFileData['connections'] = []
@@ -175,7 +175,7 @@ def strands_to_unf_data(unfFileData, strandsList, allStrandParts, areScaffolds):
         strandObject['nucleotides'] = nucleotides
         resultingObjects.append(strandObject)
 
-    unfFileData['singleStrands'] += resultingObjects
+    unfFileData['NAStrands'] += resultingObjects
 
 def convert_data_to_unf_file(vhelices, scaffoldStrands, stapleStrands):
     unfFileData = initialize_unf_file_data_object()
