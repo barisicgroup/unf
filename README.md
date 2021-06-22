@@ -1,7 +1,7 @@
 # Unified Nanotechnology Format (UNF) documentation
 
 ## Version
-0.4
+0.5
 
 ## Format type
 JSON-based
@@ -10,8 +10,8 @@ The core of the UNF file is pure JSON, however, due to the possibility to includ
 in the UNF file (e.g., PDB), the final *.unf file cannot be always considered as valid JSON file.
 
 ## General notes
-Positions are stored in [x, y, z] order, units are in picometers
-Rotations are stored in Euler angles,  values determines how much is the object rotated around each of [x, y, z] axes
+Positions are stored in [x, y, z] order, units are determined by "lengthUnits" field.  
+Rotations are stored in Euler angles ("angularUnits" field determines rads/degs), values determines how much is the object rotated around each of [x, y, z] axes.
 
 ## Conventions
 IDs are unsigned integers  
@@ -22,16 +22,21 @@ To mark fields as "not used"/containing invalid value:
 
 ## Core structure
 <!--- *Note: :question: sign marks fields which are strongly "prototypical"* -->
+- **format:** stores the file format identification (should be always "unf")
 - **version:** format version number
+- **lengthUnits:** determines in what length units (identified by SI symbol) are position-related data stored. 
+    - *Allowed values: A (for ångström), pm (for picometer), nm (for nanometer)*
+- **angularUnits:** determines the unit in which angular data are stored
+    - *Allowed values: deg (for degrees), rad (for radians)*
 - **name:** structure name string
 - **author:** structure author name string  
 - **creationDate:** structure creation date (stored in ISO 8601 standard, i.e., as YYYY-MM-DDThh:mm:ss) 
 - **doi:** DOI of the publication related to the structure stored in the file  
 - **externalFiles:** array of files which are referenced throughout the UNF file's content
+  - **id:** unique number ID
   - **path:** path to the file / file name
   - **isIncluded:** boolean determining whether the file is included in this UNF file or is provided externally
     - *Including external files inside the UNF file works as follows. First, UNF JSON is saved to a file. Then, for each included external file, line with the following content: "#INCLUDED_FILE <file_name>" is present immediately followed by the content of the inserted file starting on the next line. Finally, the resulting UNF file must end with a new line.* 
-  - **id:** unique number ID
   - **hash:** hash of the file's content (currently hashed with FNV-1a inspired algorithm, see UNF Viewer, namely *unf_parser.js:ParserUtils.getStringHash*, for more). Serves to ensure that the content of this file is the same when reading the UNF as it was when saving it. Line endings are ignored when computing hash to avoid issues related to their representation on different OSs.
 - **virtualHelices:** array of virtual helices, i.e., cadnano-like cylindrical positions used primarily for modeling purposes
   - **id:** unique ID of this virtual helix
