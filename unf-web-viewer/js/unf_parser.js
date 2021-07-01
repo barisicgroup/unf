@@ -3,7 +3,7 @@ import * as PdbUtils from "./pdb_utils.js"
 import * as OxDnaUtils from "./oxdna_utils.js";
 
 var ParserConstants = {
-    SupportedFormatVersion: .4,
+    SupportedFormatVersion: .5,
     AngstromsPerUnit: 256,
     VHelixRadius: 20,
     BasePairRise: 3.32,
@@ -228,7 +228,7 @@ function processVirtualHelices(parsedJson, objectsParent) {
                 cylinderTranspMaterial.color.setHex(Math.random() * 0xffffff);
                 const newMesh = new THREE.Mesh(cylinderGeometry, new THREE.MeshBasicMaterial(cylinderTranspMaterial));
                 newMesh.position.set(
-                    ParserUtils.pmToAngs(cell.altPosition[0]),
+                    ParserUtils.pmToAngs(cell.altPosition[0]), // TODO These conversions should be done automatically based on "lengthUnits" data (in all places in the code)
                     ParserUtils.pmToAngs(cell.altPosition[1]),
                     ParserUtils.pmToAngs(cell.altPosition[2]));
                 newMesh.scale.set(.5, ParserConstants.BasePairRise, .5); // TODO The .5 here is possibly because of invalid values in test json file?

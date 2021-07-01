@@ -118,7 +118,10 @@ def process_cadnano_file(file_path, lattice_type):
 def initialize_unf_file_data_object():
     unfFileData = {}
 
-    unfFileData['version'] = 0.4
+    unfFileData['format'] = "unf"
+    unfFileData['version'] = 0.5
+    unfFileData['lengthUnits'] = "pm"
+    unfFileData['angularUnits'] = "deg"
     unfFileData['name'] = "cadnano_converted_structure" # TODO add real structure name
     unfFileData['author'] = "cadnano_unf.py"
     unfFileData['creationDate'] = datetime.datetime.now().replace(microsecond=0).isoformat()
