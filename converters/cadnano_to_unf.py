@@ -85,7 +85,7 @@ def process_cadnano_file(file_path, lattice_type):
                 allScaffoldRecords.append(StrandPart(globalIdGenerator, vstr['num'], idx, scaf[0], scaf[1], scaf[2], scaf[3]))
                 globalIdGenerator += 1
             lastCell = max(lastCell, idx)
-            firstActiveCell = min(firstActiveCell, idx if isValidRecord else firstActiveCell) # TODO UNF expects these (first|last)ActiveCell values to be increasing for every vhelix ... thus right now, they are incorrect
+            firstActiveCell = min(firstActiveCell, idx if isValidRecord else firstActiveCell)
             lastActiveCell = max(lastActiveCell, idx if isValidRecord else lastActiveCell)
 
         for idx, stap in enumerate(vstr['stap']):
@@ -103,7 +103,7 @@ def process_cadnano_file(file_path, lattice_type):
     individualStapleStrands = create_strand_components(allStapleRecords)
 
     for vhelix in processedVhelices:
-        print str(vhelix)
+        print "Virtual helix: ", str(vhelix)
     
     for strandComp in individualScaffoldStrands:
         print "Scaffold strand found of length: ", len(strandComp)
@@ -119,16 +119,16 @@ def initialize_unf_file_data_object():
     unfFileData = {}
 
     unfFileData['format'] = "unf"
-    unfFileData['version'] = 0.5
-    unfFileData['lengthUnits'] = "pm"
+    unfFileData['version'] = 0.6
+    unfFileData['lengthUnits'] = "A"
     unfFileData['angularUnits'] = "deg"
     unfFileData['name'] = "cadnano_converted_structure" # TODO add real structure name
-    unfFileData['author'] = "cadnano_unf.py"
+    unfFileData['author'] = "Cadnano to UNF Python Converter Script"
     unfFileData['creationDate'] = datetime.datetime.now().replace(microsecond=0).isoformat()
     unfFileData['doi'] = "NULL"
     unfFileData['externalFiles'] = []
-    unfFileData['virtualHelices'] = []
-    unfFileData['NAStrands'] = []
+    unfFileData['lattices'] = []
+    unfFileData['naStrands'] = []
     unfFileData['groups'] = []
     unfFileData['proteins'] = []
     unfFileData['connections'] = []
@@ -145,12 +145,13 @@ def strands_to_unf_data(unfFileData, strandsList, allStrandParts, areScaffolds):
     resultingObjects = []
     global globalIdGenerator
 
-
     for strand in strandsList:
         strandObject = {}
 
         strandObject['id'] = globalIdGenerator
         globalIdGenerator += 1
+        strandObject['name'] = "DNA_strand"
+        strandObject['naType'] = "DNA"
         strandObject['chainName'] = "NULL"
         strandObject['color'] = "#0000FF" if areScaffolds else "#FF0000"
         strandObject['isScaffold'] = "true" if areScaffolds else "false"
@@ -163,8 +164,7 @@ def strands_to_unf_data(unfFileData, strandsList, allStrandParts, areScaffolds):
         for strandPart in strand:
             newNucl = {}
             newNucl['id'] = strandPart.globalId
-            newNucl['nbAbbrev'] = "A"
-            newNucl['naType'] = "DNA"
+            newNucl['nbAbbrev'] = "A" # TODO Does cadnano contain nb type data?
             newNucl['pair'] = next((x.globalId for y in allStrandParts for x in y if x.vhelixId == strandPart.vhelixId and x.baseId == strandPart.baseId and x.globalId != strandPart.globalId), -1)
             newNucl['prev'] = strandPart.prevPart.globalId if strandPart.prevPart is not None else -1
             newNucl['next'] = strandPart.nextPart.globalId if strandPart.nextPart is not None else -1
@@ -178,12 +178,19 @@ def strands_to_unf_data(unfFileData, strandsList, allStrandParts, areScaffolds):
         strandObject['nucleotides'] = nucleotides
         resultingObjects.append(strandObject)
 
-    unfFileData['NAStrands'] += resultingObjects
+    unfFileData['naStrands'] += resultingObjects
 
 def convert_data_to_unf_file(vhelices, scaffoldStrands, stapleStrands):
     unfFileData = initialize_unf_file_data_object()
     global globalIdGenerator
     allStrandParts = scaffoldStrands + stapleStrands
+
+    outputLattice = {}
+    outputLattice['id'] = globalIdGenerator
+    globalIdGenerator += 1
+    outputLattice['position'] = [0, 0, 0]
+    outputLattice['orientation'] = [0, 0, 0]  
+    outputLattice['virtualHelices'] = []
 
     for vhelix in vhelices:
         outputVhelix = {}
@@ -192,12 +199,13 @@ def convert_data_to_unf_file(vhelices, scaffoldStrands, stapleStrands):
         outputVhelix['firstActiveCell'] = vhelix.firstActiveCell
         outputVhelix['lastActiveCell'] = vhelix.lastActiveCell
         outputVhelix['lastCell'] = vhelix.lastCell
-        outputVhelix['gridPosition'] = [vhelix.col, vhelix.row]
-        outputVhelix['orientation'] = [0, 0, 0]
-        outputVhelix['grid'] = vhelix.latticeType
+        outputVhelix['latticePosition'] = [vhelix.row, vhelix.col]
+        outputVhelix['initialAngle'] = 0 # TODO Should equal cadnano. Depends on lattice?
         outputVhelix['altPosition'] = []
         outputVhelix['altOrientation'] = []
         
+        outputLattice['type'] = vhelix.latticeType
+
         cells = []
         for i in range(vhelix.lastActiveCell + 1):
             newCell = {}
@@ -205,7 +213,7 @@ def convert_data_to_unf_file(vhelices, scaffoldStrands, stapleStrands):
             globalIdGenerator += 1
             newCell['number'] = i
             newCell['altPosition'] = []
-            newCell['type'] = 0
+            newCell['type'] = "n"
             
             leftNucl =  next((x for y in allStrandParts for x in y if x.vhelixId == vhelix.id and x.baseId == i and (x.nextBid >= x.baseId or x.prevBid <= x.baseId)), None)
             if leftNucl is not None:
@@ -221,10 +229,11 @@ def convert_data_to_unf_file(vhelices, scaffoldStrands, stapleStrands):
 
             cells.append(newCell)
 
-
         outputVhelix['cells'] = cells
-        unfFileData['virtualHelices'].append(outputVhelix)
-    
+        outputLattice['virtualHelices'].append(outputVhelix)
+
+    unfFileData['lattices'].append(outputLattice)
+
     strands_to_unf_data(unfFileData, scaffoldStrands, allStrandParts, True)
     strands_to_unf_data(unfFileData, stapleStrands, allStrandParts, False)
     

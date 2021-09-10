@@ -29,8 +29,10 @@ To mark fields as "not used"/containing invalid value:
 - `number` **version:** format version number
 - `string` **lengthUnits:** determines in what length units (identified by SI symbol) are position-related data stored. 
     - *Allowed values: A (for ångström), pm (for picometer), nm (for nanometer)*
+    - *Default assumed value: A*
 - `string` **angularUnits:** determines the units in which angular data are stored
     - *Allowed values: deg (for degrees), rad (for radians)*
+    - *Default assumed value: deg*
 - `string` **name:** structure name
 - `string` **author:** structure author name  
 - `string` **creationDate:** structure creation date (stored in ISO 8601 standard, i.e., as YYYY-MM-DDThh:mm:ss) 
@@ -63,7 +65,8 @@ To mark fields as "not used"/containing invalid value:
       - `number` **id:** unique ID of this cell
       - `number` **number:** cell number (starting with zero; higher the number, the farther the cell is from the beginning of the virtual helix)
       - `[number]` **altPosition:** this field can determine the world position of this cell in space; can be used to override position determined by lattice & cell number
-      - `string` **type:** number determining the type of the cell (normal/loop/skip)
+      - `string` **type:** text determining the type of the cell
+        - *Allowed values: n (for normal), l (for loop), s (for skip)*
       - `number` **left:** ID of the left (5'3' direction) nucleotide
       - `number` **right:** ID of the right (3'5' direction) nucleotide
 - `[object]` **naStrands:** array of individual nucleic acid single strands and their nucleotides
@@ -113,7 +116,7 @@ To mark fields as "not used"/containing invalid value:
       - `number` **pdbId:** identification of the relevant residue in the PDB file (to load atoms)
       - `[[number]]` **altPositions:** 2D array of alternative positions, corresponding to alpha carbon location, of this AA (if oxDNA file is not provided or the position was modified). By default, zeroth position is considered as a current one. More positions can be stored for dynamics/animation purposes.
       <!--- Note: amino acids store only position now, any orientation/backbone direction data are now omitted. -->
-- `[object]` **molecules:** object containing molecules which have some position in space but we do not care about their modifications or individual parts (e.g., PDB is enough)
+- `object` **molecules:** object containing molecules which have some position in space but we do not care about their modifications or individual parts (e.g., PDB is enough)
   - `[object]` **ligands:** array of ligands. If there are molecules storing both proteins and ligands in one file (e.g., as a PDB), they should be referenced in field "other molecules" instead of this one.
     - `number` **id:** unique ID
     - `string` **name:** ligand name   
