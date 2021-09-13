@@ -240,13 +240,36 @@ def convert_data_to_unf_file(vhelices, scaffoldStrands, stapleStrands):
     with open(OUTPUT_FILE_NAME, 'w') as outfile:
         json.dump(unfFileData, outfile)
 
+def getInputFilesToProcess(argv):
+    resPaths = []
+    resTypes = []
+
+    for i in range(1, len(argv)):
+        thisArg = argv[i]
+        splitArr = thisArg.rsplit(':', 1)
+        resPaths.append(splitArr[0]) # Path to file
+        resTypes.append(splitArr[1]) # Its lattice type
+    
+    return (resPaths, resTypes)
+
 
 def main():
-    if len(sys.argv) != 3 or sys.argv[1] == "-h" or (sys.argv[2] != LATTICE_SQUARE and sys.argv[2] != LATTICE_HONEYCOMB):
-        print "usage: cadnano_unf.py <file_path> <lattice_type>"
+    if len(sys.argv) < 2 or sys.argv[1] == "-h":
+        print "usage: cadnano_to_unf.py <file_1_path>:<lattice_type> <file_2_path>:<lattice_type> (...) <file_n_path>:<lattice_type>"
         print "lattice_type = square|honeycomb"
+        print ""
+        print "At least one input file is mandatory."
         sys.exit(1)
-    convert_data_to_unf_file(*process_cadnano_file(sys.argv[1], sys.argv[2]))
+    
+    filesToProcess = getInputFilesToProcess(sys.argv)
+    processedFileData = []
+    print filesToProcess
+    for i in range(0, len(filesToProcess[0])):
+        processedFileData.append(process_cadnano_file(filesToProcess[0][i], filesToProcess[1][i]))
+    
+    print processedFileData
+
+    #convert_data_to_unf_file(*process_cadnano_file(sys.argv[1], sys.argv[2]))
 
 if __name__ == '__main__':
   main()

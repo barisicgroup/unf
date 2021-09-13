@@ -160,6 +160,8 @@ To mark fields as "not used"/containing invalid value:
 - `object` **misc:** object which is by default empty but should be used for storing any application-specific/domain-specific information which could not have been stored in the other fields. It can be also used for storing comments.
 
 # UNF Viewer documentation
+> :heavy_exclamation_mark: The UNF Viewer is currently outdated and supports only UNF version 0.5
+
 The UNF Viewer is written in JavaScript and Three.js library.    
 It enables to visualize the content of a UNF file by selecting a desired file from the file dialog.  
 **At the moment, only a subset of UNF fields and properties is visualized. Mainly "virtuaHelices", "NAStrands" and "molecules.others". When previewing the UNF file content, keep this fact in mind.**  
