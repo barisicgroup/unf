@@ -24,7 +24,7 @@ class StrandPart:
         self.nextBid = nextBid
 
     def __repr__(self):
-        return "vid: " + str(self.vhelixId) + ", bid " + str(self.baseId) + "\n\t prev: " + str(self.prevPart) + "\n\t next: " + str(self.nextPart)
+        return "vid: " + str(self.vhelixId) + ", bid " + str(self.baseId) + "\n\t prev: " + ("None" if self.prevPart is None else str(self.prevPart.globalId)) + "\n\t next: " + ("None" if self.nextPart is None else str(self.nextPart.globalId))
 
     def set_prev_next(self, prevPart, nextPart):
         self.prevPart = prevPart
@@ -180,62 +180,67 @@ def strands_to_unf_data(unfFileData, strandsList, allStrandParts, areScaffolds):
 
     unfFileData['naStrands'] += resultingObjects
 
-def convert_data_to_unf_file(vhelices, scaffoldStrands, stapleStrands):
+def convert_data_to_unf_file(latticesData):
     unfFileData = initialize_unf_file_data_object()
     global globalIdGenerator
-    allStrandParts = scaffoldStrands + stapleStrands
+    
+    for lattData in latticesData:
+        vhelices = lattData[0]
+        scaffoldStrands = lattData[1]
+        stapleStrands = lattData[2]
 
-    outputLattice = {}
-    outputLattice['id'] = globalIdGenerator
-    globalIdGenerator += 1
-    outputLattice['position'] = [0, 0, 0]
-    outputLattice['orientation'] = [0, 0, 0]  
-    outputLattice['virtualHelices'] = []
+        allStrandParts = scaffoldStrands + stapleStrands
 
-    for vhelix in vhelices:
-        outputVhelix = {}
-        outputVhelix['id'] = globalIdGenerator
+        outputLattice = {}
+        outputLattice['id'] = globalIdGenerator
         globalIdGenerator += 1
-        outputVhelix['firstActiveCell'] = vhelix.firstActiveCell
-        outputVhelix['lastActiveCell'] = vhelix.lastActiveCell
-        outputVhelix['lastCell'] = vhelix.lastCell
-        outputVhelix['latticePosition'] = [vhelix.row, vhelix.col]
-        outputVhelix['initialAngle'] = 0 # TODO Should equal cadnano. Depends on lattice?
-        outputVhelix['altPosition'] = []
-        outputVhelix['altOrientation'] = []
-        
-        outputLattice['type'] = vhelix.latticeType
+        outputLattice['position'] = [0, 0, 0]
+        outputLattice['orientation'] = [0, 0, 0]  
+        outputLattice['virtualHelices'] = []
 
-        cells = []
-        for i in range(vhelix.lastActiveCell + 1):
-            newCell = {}
-            newCell['id'] = globalIdGenerator
+        for vhelix in vhelices:
+            outputVhelix = {}
+            outputVhelix['id'] = globalIdGenerator
             globalIdGenerator += 1
-            newCell['number'] = i
-            newCell['altPosition'] = []
-            newCell['type'] = "n"
+            outputVhelix['firstActiveCell'] = vhelix.firstActiveCell
+            outputVhelix['lastActiveCell'] = vhelix.lastActiveCell
+            outputVhelix['lastCell'] = vhelix.lastCell
+            outputVhelix['latticePosition'] = [vhelix.row, vhelix.col]
+            outputVhelix['initialAngle'] = 0 # TODO Should equal cadnano. Depends on lattice?
+            outputVhelix['altPosition'] = []
+            outputVhelix['altOrientation'] = []
+        
+            outputLattice['type'] = vhelix.latticeType
+
+            cells = []
+            for i in range(vhelix.lastActiveCell + 1):
+                newCell = {}
+                newCell['id'] = globalIdGenerator
+                globalIdGenerator += 1
+                newCell['number'] = i
+                newCell['altPosition'] = []
+                newCell['type'] = "n"
             
-            leftNucl =  next((x for y in allStrandParts for x in y if x.vhelixId == vhelix.id and x.baseId == i and (x.nextBid >= x.baseId or x.prevBid <= x.baseId)), None)
-            if leftNucl is not None:
-                newCell['left'] = leftNucl.globalId
-            else:
-                newCell['left'] = -1
+                leftNucl =  next((x for y in allStrandParts for x in y if x.vhelixId == vhelix.id and x.baseId == i and (x.nextBid >= x.baseId or x.prevBid <= x.baseId)), None)
+                if leftNucl is not None:
+                    newCell['left'] = leftNucl.globalId
+                else:
+                    newCell['left'] = -1
 
-            rightNucl =  next((x for y in allStrandParts for x in y if x.vhelixId == vhelix.id and x.baseId == i and (x.nextBid <= x.baseId or x.prevBid >= x.baseId)), None)
-            if rightNucl is not None:
-                newCell['right'] = rightNucl.globalId
-            else:
-                newCell['right'] = -1
+                rightNucl =  next((x for y in allStrandParts for x in y if x.vhelixId == vhelix.id and x.baseId == i and (x.nextBid <= x.baseId or x.prevBid >= x.baseId)), None)
+                if rightNucl is not None:
+                    newCell['right'] = rightNucl.globalId
+                else:
+                    newCell['right'] = -1
 
-            cells.append(newCell)
+                cells.append(newCell)
 
-        outputVhelix['cells'] = cells
-        outputLattice['virtualHelices'].append(outputVhelix)
+            outputVhelix['cells'] = cells
+            outputLattice['virtualHelices'].append(outputVhelix)
 
-    unfFileData['lattices'].append(outputLattice)
-
-    strands_to_unf_data(unfFileData, scaffoldStrands, allStrandParts, True)
-    strands_to_unf_data(unfFileData, stapleStrands, allStrandParts, False)
+        unfFileData['lattices'].append(outputLattice)
+        strands_to_unf_data(unfFileData, scaffoldStrands, allStrandParts, True)
+        strands_to_unf_data(unfFileData, stapleStrands, allStrandParts, False)
     
     with open(OUTPUT_FILE_NAME, 'w') as outfile:
         json.dump(unfFileData, outfile)
@@ -262,14 +267,12 @@ def main():
         sys.exit(1)
     
     filesToProcess = getInputFilesToProcess(sys.argv)
-    processedFileData = []
-    print filesToProcess
-    for i in range(0, len(filesToProcess[0])):
-        processedFileData.append(process_cadnano_file(filesToProcess[0][i], filesToProcess[1][i]))
+    processedFilesData = []
     
-    print processedFileData
+    for i in range(0, len(filesToProcess[0])):
+        processedFilesData.append(process_cadnano_file(filesToProcess[0][i], filesToProcess[1][i]))
 
-    #convert_data_to_unf_file(*process_cadnano_file(sys.argv[1], sys.argv[2]))
+    convert_data_to_unf_file(processedFilesData)
 
 if __name__ == '__main__':
   main()
