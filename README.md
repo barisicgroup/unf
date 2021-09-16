@@ -171,5 +171,5 @@ The application serves mainly for UNF development purposes right now, it is, the
 
 # Converters documentation
 - **Cadnano to UNF converter (Python)**
-  - Given a path to cadnano json file and lattice type string, it converts the cadnano file to the UNF file
-  - Only the core features are converted now, i.e., virtual helices, their location in grid and nucleotide positions. Things such as loops and skips are missing.
+  - Converts given cadnano files to a single UNF file
+  - Only the core features are converted now, i.e., virtual helices, their location in grid and strands / nucleotides positions. **Things such as loops and skips are missing.**

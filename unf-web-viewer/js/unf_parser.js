@@ -54,12 +54,15 @@ var ParserUtils = {
     }
 }
 
-export function parseUNF(unfFileContent, relatedFilesList) {
+export function parseUNF(jsonTreeView, unfFileContent, relatedFilesList) {
     let includedFileNameToContentMap = new Map();
     const unfFileJsonPart = splitJsonAndIncludedFilesFromUNF(unfFileContent, includedFileNameToContentMap);
 
     const parsedJson = JSON.parse(unfFileJsonPart);
     console.log(parsedJson); // Output to log for verification purposes
+    
+    jsonTreeView.loadData(parsedJson);
+    jsonTreeView.collapse();
 
     if (parsedJson.version !== ParserConstants.SupportedFormatVersion) {
         alert("Unsupported format version!");
