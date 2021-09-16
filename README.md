@@ -9,15 +9,15 @@ UNF aims to allow for storing of DNA nanotechnology data (for example, DNA origa
 ## Format type
 JSON-based
 
-The core of the UNF file is pure JSON, however, due to the possibility to include other files directly in the UNF file (e.g., PDB, see field *externalFiles*), the final *.unf file cannot be always considered as a valid JSON file.
+The core of the UNF file is pure JSON. However, due to the possibility to include other files directly in the UNF file (e.g., PDB, see field *externalFiles*), the final *.unf file cannot be always considered as a valid JSON file.
 
 ## General notes
 Positions are stored in [x, y, z] order, units are determined by the *lengthUnits* field.  
-Rotations/orientations are stored in Euler angles ("angularUnits" field determines rads/degs), values determines how much is the object rotated around each of [x, y, z] axes.  
+Rotations/orientations are stored in Euler angles ("angularUnits" field determines rads/degs), values determine how much is the object rotated around each of [x, y, z] axes.  
 Zero-indexing is used.
 
 ## Conventions
-IDs are unsigned integers  
+IDs are unsigned integers.  
 To mark fields as "not used"/containing invalid value:
  - value "-1" should be used in ID-related fields (or in other fields where the meaningful values are only zero or greater)
  - empty array should be used in array-typed fields
@@ -40,7 +40,7 @@ To mark fields as "not used"/containing invalid value:
 - `[object]` **externalFiles:** array of files which are referenced throughout the UNF file's content
   - `number` **id:** unique number ID
   - `string` **path:** path to the file / file name
-    - If the file is not included, relative path starting from the location of the UNF file may be provided to reference it
+    - If the file is not included (see *isIncluded* field), relative path starting from the location of the UNF file may be provided to reference it
     - Otherwise, the name will be used to search for the file data inside of the UNF file 
   - `boolean` **isIncluded:** boolean determining whether the file is included in this UNF file or is provided externally
     - *Including external files inside the UNF file works as follows. First, UNF JSON is saved to a file. Then, for each included external file, line with the following content: "#INCLUDED_FILE <file_name>" is present immediately followed by the content of the inserted file starting on the next line. Finally, the resulting UNF file must end with a new line.* 

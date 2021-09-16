@@ -37,27 +37,16 @@ var ParserUtils = {
         return fileName.split('.').pop();
     },
 
-    // FNV-1a based hashing function
     getStringHash(stringContent) {
-        // The string is first converted to "one-liner" to avoid
-        // issues related to differently represented line endings on various OSs
-        const strWithoutLines = stringContent.replace(/(\r\n|\n|\r)/gm, "");
-        const fnvPrime = 0x01000193;
-        let hash = 0x811c9dc5;
-
-        for (let i = 0; i < strWithoutLines.length; ++i) {
-            hash ^= strWithoutLines[i];
-            hash *= fnvPrime;
-        }
-
-        return hash;
+        // blueimp-md5 library is used for hashing
+        return md5(stringContent);
     }
 }
 
 export function parseUNF(jsonTreeView, unfFileContent, relatedFilesList) {
     let includedFileNameToContentMap = new Map();
     const unfFileJsonPart = splitJsonAndIncludedFilesFromUNF(unfFileContent, includedFileNameToContentMap);
-
+    console.log(ParserUtils.getStringHash(unfFileContent));
     const parsedJson = JSON.parse(unfFileJsonPart);
     console.log(parsedJson); // Output to log for verification purposes
     
