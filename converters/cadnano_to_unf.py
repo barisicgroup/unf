@@ -43,7 +43,7 @@ class Vhelix:
     def __repr__(self):
         return "vhelix: " + str(self.id) + " [" + str(self.row) + "," + str(self.col) + "] fac " + str(self.firstActiveCell) + ", lac " + str(self.lastActiveCell) + ", lc " + str(self.lastCell)
 
-def create_strand_components(strandArray):
+def create_strand_components(strandArray, checkCircularScaffold):
     components = []
     
     for strand in strandArray:
@@ -51,6 +51,8 @@ def create_strand_components(strandArray):
         nextPart = next((x for x in strandArray if x.vhelixId == strand.nextVid and x.baseId == strand.nextBid), None)
         strand.set_prev_next(prevPart, nextPart)
     
+    circScaffComps = []
+
     for strand in strandArray:
         if strand.prevPart == None:
             newComponent = []
@@ -60,7 +62,36 @@ def create_strand_components(strandArray):
                 currPart = currPart.nextPart
                 newComponent.append(currPart)
             components.append(newComponent)
-    
+        elif checkCircularScaffold:
+            # Test for circular scaffold
+            start = strand
+            currPart = start
+            isCirc = False
+            while currPart.nextPart != None:
+                currPart = currPart.nextPart
+                if currPart == start:
+                    isCirc = True
+                    break
+            if isCirc:
+                isAlreadyFound = False
+                newComponent = []
+                currPart = start
+                newComponent.append(currPart)
+                while currPart.nextPart != start:
+                    currPart = currPart.nextPart
+                    newComponent.append(currPart)
+                for circComp in circScaffComps:
+                    if start in circComp:
+                        isAlreadyFound = True
+                        break
+                if not isAlreadyFound:
+                    circScaffComps.append(newComponent)
+                    components.append(newComponent)
+
+    for circComp in circScaffComps:
+        circComp[0].set_prev_next(None, circComp[0].nextPart)
+        circComp[-1].set_prev_next(circComp[-1].prevPart, None)
+
     return components
 
 def process_cadnano_file(file_path, lattice_type):
@@ -99,8 +130,8 @@ def process_cadnano_file(file_path, lattice_type):
         
         processedVhelices.append(Vhelix(vstr['num'], vstr['row'], vstr['col'], lattice_type, firstActiveCell, lastActiveCell, lastCell))
 
-    individualScaffoldStrands = create_strand_components(allScaffoldRecords)
-    individualStapleStrands = create_strand_components(allStapleRecords)
+    individualScaffoldStrands = create_strand_components(allScaffoldRecords, True)
+    individualStapleStrands = create_strand_components(allStapleRecords, False)
 
     for vhelix in processedVhelices:
         print "Virtual helix: ", str(vhelix)
@@ -154,7 +185,7 @@ def strands_to_unf_data(unfFileData, strandsList, allStrandParts, areScaffolds):
         strandObject['naType'] = "DNA"
         strandObject['chainName'] = "NULL"
         strandObject['color'] = "#0000FF" if areScaffolds else "#FF0000"
-        strandObject['isScaffold'] = "true" if areScaffolds else "false"
+        strandObject['isScaffold'] = areScaffolds
         strandObject['pdbFileId'] = -1
         strandObject['fivePrimeId'] = strand[0].globalId
         strandObject['threePrimeId'] = strand[-1].globalId
@@ -194,6 +225,7 @@ def convert_data_to_unf_file(latticesData):
         outputLattice = {}
         outputLattice['id'] = globalIdGenerator
         globalIdGenerator += 1
+        outputLattice['name'] = 'lattice_from_cadnano'
         outputLattice['position'] = [0, 0, 0]
         outputLattice['orientation'] = [0, 0, 0]  
         outputLattice['virtualHelices'] = []
@@ -218,7 +250,6 @@ def convert_data_to_unf_file(latticesData):
                 newCell['id'] = globalIdGenerator
                 globalIdGenerator += 1
                 newCell['number'] = i
-                newCell['altPosition'] = []
                 newCell['type'] = "n"
             
                 leftNucl =  next((x for y in allStrandParts for x in y if x.vhelixId == vhelix.id and x.baseId == i and (x.nextBid >= x.baseId or x.prevBid <= x.baseId)), None)

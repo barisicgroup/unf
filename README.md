@@ -47,11 +47,13 @@ To mark fields as "not used"/containing invalid value:
   - `string` **hash:** MD5 hash of the file's content. Serves to ensure that the content of this file is the same when reading the UNF as it was when saving it. Line endings are ignored when computing hash to avoid issues related to their representation on different OSs.
 - `[object]` **lattices:** array of lattices defining constrained design space
   - `number` **id:** unique ID of this lattice
+  - `string` **name:** name/title of this lattice
   - `string` **type:** lattice type/layout name
     - *Allowed values: square, honeycomb*
     - *Other values may result in incompatibility between applications*
-  - `[number]` **position:** world position of the top-left corner (origin) of the lattice
-  - `[number]` **orientation:** orientation of the lattice in space (x axis goes right from origin, y axis should face down, z axis "into" the lattice)
+  - `[number]` **position:** world position of the top-left corner (origin) of the lattice. 
+    - z-axis goes "into" the lattice, y-axis goes from top to bottom and x-axis from left to right.
+  - `[number]` **orientation:** orientation of the lattice in space
   - `[object]` **virtualHelices:** array of virtual helices, i.e., lattice cells determining location and orientation of a possible double helix. Lattice may contain lots of empty cells/virtual helices (theoretically infinite), which should not be part of UNF as they carry no data.
     - `number` **id:** unique ID of this virtual helix
     - `[number]` **latticePosition:** array describing the position of this virtual helix in the lattice. For example [1, 2] refers to row 1, column 2.
@@ -63,8 +65,7 @@ To mark fields as "not used"/containing invalid value:
     - `[number]` **altOrientation:** rotation of this particular virtual helix; can be used to override position determined by the lattice
     - `[object]` **cells:** array of nucleotide locations (one cell can contain up to two complementary nucleotides). Cells (cell numbers) which are not included are considered as empty.
       - `number` **id:** unique ID of this cell
-      - `number` **number:** cell number (starting with zero; higher the number, the farther the cell is from the beginning of the virtual helix)
-      - `[number]` **altPosition:** this field can determine the world position of this cell in space; can be used to override position determined by lattice & cell number
+      - `number` **number:** cell number (starting with zero; higher the number, the farther the cell is from the beginning of the virtual helix)<!-- - `[number]` **altPosition:** this field can determine the world position of this cell in space; can be used to override position determined by virtual helix & cell number-->
       - `string` **type:** text determining the type of the cell
         - *Allowed values: n (for normal), l (for loop), s (for skip)*
       - `number` **left:** ID of the left (5'3' direction) nucleotide
@@ -90,9 +91,11 @@ To mark fields as "not used"/containing invalid value:
       - `number` **prev:** ID of the preceding nucleotide in the strand
       - `number` **next:** ID of the following nucleotide in the strand
       - `number` **oxDnaConfRow:** row in the referenced oxDNA config file relevant to this nucleotide (to load position)
+        - :question: Replace references to oxDNA file with storing the position directly in *altPositions* field?
       - `number` **pdbId:** identification of the relevant residue in the PDB file (to load atoms)
       - `[[object]]` **altPositions:**  2D array of alternative positions of this nucleotide (if oxDNA file is not provided or the position was modified). By default, zeroth position is considered as the current one. More positions can be stored for dynamics/animation purposes.
         - `[number]` **worldOrigin:** world position of this nucleotide's helical axis
+          - :heavy_exclamation_mark: The origin may be replaced with nucleobase & backbone center positions or similar in upcoming version of the format
         - `[number]` **worldBaseAxisX:** x-axis goes along the short axis of the base pair (from minor groove side to major groove side)
         - `[number]` **worldBaseAxisY:** goes along the long axis of the base pair (from C1 carbon of one base to C1 carbon of other base). For each base, it goes in backbone to helical axis direction.
         - `[number]` **worldBaseAxisZ:** goes "up" and is prependicular to base plane
@@ -163,8 +166,8 @@ To mark fields as "not used"/containing invalid value:
 > :heavy_exclamation_mark: The UNF Viewer is currently outdated and supports only UNF version 0.5
 
 The UNF Viewer is written in JavaScript and Three.js library.    
-It enables to visualize the content of a UNF file by selecting a desired file from the file dialog.  
-**At the moment, only a subset of UNF fields and properties is visualized. Mainly "virtuaHelices", "NAStrands" and "molecules.others". When previewing the UNF file content, keep this fact in mind.**  
+It enables to visualize the content of a UNF file by selecting the desired file from the file dialog.  
+**At the moment, only a subset of UNF fields and properties is visualized. Mainly "lattices", "naStrands" and "molecules.others". When previewing the UNF file content, keep this fact in mind.**  
 To run it, clone the repository and use, e.g., live server to host the viewer application. It is recommended to refresh/reload (typically F5) the application before loading a new strucutre.    
 Since it is written in JavaScript, it cannot search your hard drive; in other words, you need to upload not just the UNF file but also all files referenced in the "externalFiles" field which are not included directly in the UNF file. If a PDB file is not included nor uploaded, the viewer automatically tries to download it from RCSB.  
 The application serves mainly for UNF development purposes right now, it is, therefore, recommended to have a dev console open to see the console logs.  
@@ -172,4 +175,4 @@ The application serves mainly for UNF development purposes right now, it is, the
 # Converters documentation
 - **Cadnano to UNF converter (Python)**
   - Converts given cadnano files to a single UNF file
-  - Only the core features are converted now, i.e., virtual helices, their location in grid and strands / nucleotides positions. **Things such as loops and skips are missing.**
+  - Only the core features are converted now, i.e., virtual helices, their location in lattice and strands / nucleotides positions. **Support for loops, skips and similar more advanced features is missing at the moment.**

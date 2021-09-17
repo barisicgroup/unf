@@ -111,7 +111,7 @@ function viewerMain() {
             return extension === "unf" || extension === "json";
         });
         selectedFiles.splice(selectedFiles.indexOf(unfFile), 1);
-
+        
         if (unfFile !== undefined) {
             // Only UNF file is fully read into the memory
             // Remaining files are forwarded only as references
