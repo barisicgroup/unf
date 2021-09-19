@@ -269,8 +269,10 @@ function processExternalFiles(parsedJson, includedFileNameToContentMap, rescaled
 
 function processLattices(parsedJson, objectsParent) {
     const cylinderGeometry = new THREE.CylinderBufferGeometry(
-        ParserConstants.VHelixRadius, ParserConstants.VHelixRadius, 1, 32, 32);
-    const cylinderTranspMaterial = new THREE.MeshPhongMaterial({ color: 0xff4444, opacity: 0.4, transparent: true });
+        ParserConstants.VHelixRadius, ParserConstants.VHelixRadius, 1, 16, 16, true);
+    const cylinderGeometryCapped = new THREE.CylinderBufferGeometry(
+        ParserConstants.VHelixRadius, ParserConstants.VHelixRadius, 1, 16, 16, false);
+    const cylinderTranspMaterial = new THREE.MeshPhongMaterial({ color: 0xff4444, opacity: 0.2, transparent: true });
 
     const lattices = parsedJson.lattices;
     const hslOffsetStep = 1 / lattices.length;
@@ -300,8 +302,9 @@ function processLattices(parsedJson, objectsParent) {
             //const altVhelixPos = new THREE.Vector3().fromArray(vhelix.altPosition, 0);
             //const altVhelixRot = new THREE.Vector3().fromArray(vhelix.altOrientation, 0);
 
-            vhelix.cells.forEach(cell => {
-                const newMesh = new THREE.Mesh(cylinderGeometry, new THREE.MeshPhongMaterial(cylinderTranspMaterial));
+            vhelix.cells.forEach((cell, idx) => {
+                const newMesh = new THREE.Mesh((idx === 0 || idx === vhelix.cells.length - 1) ? cylinderGeometryCapped : cylinderGeometry,
+                    new THREE.MeshPhongMaterial(cylinderTranspMaterial));
                 newMesh.position.copy(getLatticePositionForIndex(vhelix.latticePosition[0], vhelix.latticePosition[1], cell.number, lattice));
                 newMesh.scale.set(1, ParserConstants.BasePairRise, 1);
                 newMesh.rotation.set(THREE.MathUtils.degToRad(90) + latRot.x, latRot.y, latRot.z);
@@ -341,12 +344,13 @@ function getLatticePositionForIndex(row, col, z, lattice) {
 }
 
 function processSingleStrands(parsedJson, objectsParent, fileIdToFileDataMap) {
-    const sphereGeometry = new THREE.SphereGeometry(3.5, 16, 16);
+    const sphereGeometry = new THREE.SphereGeometry(1.5, 6, 6);
 
     parsedJson.naStrands.forEach(strand => {
         let nucleotidePositions = [];
-        const material = new THREE.LineBasicMaterial({ color: strand.color });
-        
+        const lineMaterial = new THREE.LineBasicMaterial({ color: strand.color });
+        const sphereMaterial = new THREE.MeshPhongMaterial({ color: strand.color });
+
         ParserUtils.getFileContentText().value += strand.naType + " strand (" +
             (strand.isScaffold === true ? "scaf" : "stap") + ") with " + strand.nucleotides.length + " nts.\n";
 
@@ -354,20 +358,25 @@ function processSingleStrands(parsedJson, objectsParent, fileIdToFileDataMap) {
         do {
             // If nucleotide has an alternative position defined, use it as a primary source of position
             if (currNucleotide.altPositions.length > 0 && currNucleotide.altPositions[0].length > 0) {
-                console.log(currNucleotide.altPositions);
                 nucleotidePositions.push(
-                    // Since the origin basically referes to a helical axis, this will render base-pairs as one point
+                    // Since the origin basically refers to a helical axis, this will render base-pairs as one point
                     new THREE.Vector3().fromArray(currNucleotide.altPositions[0].worldOrigin));
             }
             // Else, if no references to files with positions are provided, strands will be positioned
             // according to the virtual helices' cells
-            if (strand.confFilesIds.length === 0) {
+            // This is performed in a really unoptimized manner for simplicity and to show
+            // fully separated processing of virtual helices and single strands.
+            else if (strand.confFilesIds.length === 0) {
                 let position = null;
 
                 parsedJson.lattices.forEach(lattice => {
                     lattice.virtualHelices.forEach(helix => {
                         helix.cells.forEach(cell => {
                             if (cell.left === currNucleotide.id || cell.right === currNucleotide.id) {
+                                if (position !== null) {
+                                    console.error("Error! One nucleotide referenced in more cells.", currNucleotide);
+                                }
+
                                 position = getLatticePositionForIndex(helix.latticePosition[0], helix.latticePosition[1], cell.number, lattice);
 
                                 const xNeighborPos = getLatticePositionForIndex(helix.latticePosition[0], helix.latticePosition[1] + 2, cell.number, lattice);
@@ -379,12 +388,14 @@ function processSingleStrands(parsedJson, objectsParent, fileIdToFileDataMap) {
                                 let rot = undefined;
 
                                 if (cell.left === currNucleotide.id) {
-                                    rot = xDir.applyAxisAngle(zDir, UnfUtils.rad(helix.initialAngle) * cell.number);
+                                    rot = xDir.clone().applyAxisAngle(zDir, UnfUtils.rad(helix.initialAngle) +
+                                        THREE.MathUtils.degToRad(ParserConstants.RotationPerBp * cell.number));
                                 } else {
-                                    rot = xDir.applyAxisAngle(zDir, (UnfUtils.rad(helix.initialAngle) + THREE.MathUtils.degToRad(180)) * cell.number);
+                                    rot = xDir.clone().applyAxisAngle(zDir, UnfUtils.rad(helix.initialAngle) +
+                                        THREE.MathUtils.degToRad(180) + THREE.MathUtils.degToRad(ParserConstants.RotationPerBp * cell.number));
                                 }
 
-                                position.add(rot.normalize().multiply(ParserConstants.VHelixRadius));
+                                position.add(rot.normalize().multiplyScalar(ParserConstants.VHelixRadius * 0.8));
                             }
                         });
                     });
@@ -434,8 +445,14 @@ function processSingleStrands(parsedJson, objectsParent, fileIdToFileDataMap) {
 
         if (nucleotidePositions.length > 0) {
             const geometry = new THREE.BufferGeometry().setFromPoints(nucleotidePositions);
-            const strandLine = new THREE.Line(geometry, material);
+            const strandLine = new THREE.Line(geometry, lineMaterial);
             objectsParent.add(strandLine);
+
+            for(let i = 0; i < nucleotidePositions.length; ++i) {
+                const nuclMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
+                nuclMesh.position.copy(nucleotidePositions[i]);
+                objectsParent.add(nuclMesh);
+            }
         }
     });
 }

@@ -6,6 +6,7 @@
 import sys
 import json
 import datetime
+import random
 
 LATTICE_SQUARE = "square"
 LATTICE_HONEYCOMB = "honeycomb"
@@ -197,6 +198,7 @@ def initialize_unf_file_data_object():
 
 def strands_to_unf_data(unfFileData, strandsList, allStrandParts, areScaffolds):
     resultingObjects = []
+    r = lambda: random.randint(0, 230)
     global globalIdGenerator
 
     for strand in strandsList:
@@ -207,7 +209,7 @@ def strands_to_unf_data(unfFileData, strandsList, allStrandParts, areScaffolds):
         strandObject['name'] = "DNA_strand"
         strandObject['naType'] = "DNA"
         strandObject['chainName'] = "NULL"
-        strandObject['color'] = "#0000FF" if areScaffolds else "#FF0000"
+        strandObject['color'] = "#0000FF" if areScaffolds else "#{:02x}{:02x}{:02x}".format(r(), r(), r())
         strandObject['isScaffold'] = areScaffolds
         strandObject['pdbFileId'] = -1
         strandObject['fivePrimeId'] = strand[0].globalId
@@ -262,7 +264,7 @@ def convert_data_to_unf_file(latticesData):
             outputVhelix['lastActiveCell'] = vhelix.lastActiveCell
             outputVhelix['lastCell'] = vhelix.lastCell
             outputVhelix['latticePosition'] = [vhelix.row, vhelix.col]
-            outputVhelix['initialAngle'] = 0 # TODO Should equal cadnano.
+            outputVhelix['initialAngle'] = 240 # TODO Should equal cadnano. Just a rough guess atm.
             outputVhelix['altPosition'] = []
             outputVhelix['altOrientation'] = []
         
