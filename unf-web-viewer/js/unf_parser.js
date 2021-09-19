@@ -302,14 +302,15 @@ function processLattices(parsedJson, objectsParent) {
             //const altVhelixPos = new THREE.Vector3().fromArray(vhelix.altPosition, 0);
             //const altVhelixRot = new THREE.Vector3().fromArray(vhelix.altOrientation, 0);
 
-            vhelix.cells.forEach((cell, idx) => {
-                const newMesh = new THREE.Mesh((idx === 0 || idx === vhelix.cells.length - 1) ? cylinderGeometryCapped : cylinderGeometry,
+            for (let i = 0; i <= vhelix.lastCell; ++i) {
+                const newMesh = new THREE.Mesh((i === 0 || i === vhelix.lastCell - 1) ? cylinderGeometryCapped : cylinderGeometry,
                     new THREE.MeshPhongMaterial(cylinderTranspMaterial));
-                newMesh.position.copy(getLatticePositionForIndex(vhelix.latticePosition[0], vhelix.latticePosition[1], cell.number, lattice));
+                newMesh.position.copy(getLatticePositionForIndex(vhelix.latticePosition[0], vhelix.latticePosition[1], i, lattice));
                 newMesh.scale.set(1, ParserConstants.BasePairRise, 1);
                 newMesh.rotation.set(THREE.MathUtils.degToRad(90) + latRot.x, latRot.y, latRot.z);
                 objectsParent.add(newMesh);
-            });
+            }
+
         });
     });
 }

@@ -168,11 +168,9 @@ To mark fields as "not used"/containing invalid value:
 - `object` **misc:** object which is by default empty but should be used for storing any application-specific/domain-specific information which could not have been stored in the other fields. It can be also used for storing comments.
 
 # UNF Viewer documentation
-> :heavy_exclamation_mark: The UNF Viewer is currently outdated and supports only UNF version 0.5
-
 The UNF Viewer is written in JavaScript and Three.js library.    
 It enables to visualize the content of a UNF file by selecting the desired file from the file dialog.  
-**At the moment, only a subset of UNF fields and properties is visualized. Mainly "lattices", "naStrands" and "molecules.others". When previewing the UNF file content, keep this fact in mind.**  
+**At the moment, only a subset of UNF fields and properties is visualized. Mainly "lattices", "naStrands", "proteins", and "molecules.others". When previewing the UNF file content, keep this fact in mind.**  
 To run it, clone the repository and use, e.g., live server to host the viewer application. It is recommended to refresh/reload (typically F5) the application before loading a new strucutre.    
 Since it is written in JavaScript, it cannot search your hard drive; in other words, you need to upload not just the UNF file but also all files referenced in the "externalFiles" field which are not included directly in the UNF file. If a PDB file is not included nor uploaded, the viewer automatically tries to download it from RCSB.  
 The application serves mainly for UNF development purposes right now, it is, therefore, recommended to have a dev console open to see the console logs.  
@@ -181,3 +179,4 @@ The application serves mainly for UNF development purposes right now, it is, the
 - **Cadnano to UNF converter (Python)**
   - Converts given cadnano files to a single UNF file
   - Only the core features are converted now, i.e., virtual helices, their location in lattice and strands / nucleotides positions. **Support for loops, skips and similar more advanced features is missing at the moment.**
+  - Circular scaffolds are processed by performing a cut at random location.
