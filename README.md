@@ -107,18 +107,20 @@ To mark fields as "not used"/containing invalid value:
   - `string` **name:** name/title of this protein
   - `[object]` **chains:** array of chains of the given protein
     - `number` **id:** unique ID of this chain
-    - `string` **chainName:** chain name
+    - `string` **chainName:** chain name (used in the referenced PDB)
+    - `string` **color:** hex string storing the color of this chain
     - `number` **pdbFileId:** ID of the relevant external PDB file
     - `number` **nTerm:** ID of the N-terminus amino acid
     - `number` **cTerm:** ID of the C-terminus amino acid
     - `[number]` **confFilesIds:** array of IDs referencing oxDNA configuration files used for retrieving amino acids' positional information. By default, zeroth config file is used but it is up to an application to decide which one to use if there are more (e.g., to show dynamics animation).
-    - `[[object]]` **aminoAcids:** array of the amino acids of this chain
+    - `[object]` **aminoAcids:** array of the amino acids of this chain
       - `number` **id:** unique ID of this amino acid
       - `string` **secondary:** string determining the secondary structure this AA is part of
-      - `string` **seq:** three-letter abbreviation of the AA name
+      - `string` **aaAbbrev:** three-letter abbreviation of the AA name
       - `number` **prev:** ID of the preceding AA in the chain
       - `number` **next:** ID of the following AA in the chain
       - `number` **oxDnaConfRow:** row in the referenced oxDNA config file relevant to this AA (to load position)
+        - :question: Replace references to oxDNA file with storing the position directly in *altPositions* field?
       - `number` **pdbId:** identification of the relevant residue in the PDB file (to load atoms)
       - `[[number]]` **altPositions:** 2D array of alternative positions, corresponding to alpha carbon location, of this AA (if oxDNA file is not provided or the position was modified). By default, zeroth position is considered as a current one. More positions can be stored for dynamics/animation purposes.
       <!--- Note: amino acids store only position now, any orientation/backbone direction data are now omitted. -->

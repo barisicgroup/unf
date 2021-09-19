@@ -138,8 +138,8 @@ export function parseUNF(jsonTreeView, unfFileContent, relatedFilesList) {
     processExternalFiles(parsedJson, includedFileNameToContentMap, rescaledParent, relatedFilesList,
         function (fileIdToFileDataMap) {
             processSingleStrands(parsedJson, rescaledParent, fileIdToFileDataMap);
-            //processMolecules(parsedJson, rescaledParent, fileIdToFileDataMap);
-            // TODO Proteins etc.
+            processProteins(parsedJson, rescaledParent, fileIdToFileDataMap);
+            processMolecules(parsedJson, rescaledParent, fileIdToFileDataMap)
         });
 
     return result;
@@ -344,7 +344,7 @@ function getLatticePositionForIndex(row, col, z, lattice) {
 }
 
 function processSingleStrands(parsedJson, objectsParent, fileIdToFileDataMap) {
-    const sphereGeometry = new THREE.SphereGeometry(1.5, 6, 6);
+    const sphereGeometry = new THREE.SphereGeometry(2, 6, 6);
 
     parsedJson.naStrands.forEach(strand => {
         let nucleotidePositions = [];
@@ -408,26 +408,23 @@ function processSingleStrands(parsedJson, objectsParent, fileIdToFileDataMap) {
                     nucleotidePositions.push(position);
                 }
             }
-            // Otherwise, they will be located at the locations retrieved from configuration file
+            // Otherwise, they will be located at the locations retrieved from the oxDNA configuration file
             else if (strand.confFilesIds.length > 0) {
-                /*const confFileId = strand.confFilesIds[0];
+                const confFileId = strand.confFilesIds[0];
                 const pdbFileId = strand.pdbFileId;
-                const material = new THREE.MeshPhongMaterial({ color: strand.color, opacity: 0.3, transparent: true });
+
                 if (fileIdToFileDataMap.has(confFileId)) {
                     let parsedData = fileIdToFileDataMap.get(confFileId);
                     strand.nucleotides.forEach(nucleotide => {
-                        // Spawn sphere for each nucleotide
-                        let mesh = new THREE.Mesh(sphereGeometry, material);
                         let nmPos = parsedData[nucleotide.oxdnaConfRow].position;
                         nmPos = new THREE.Vector3(
                             ParserUtils.nmToAngs(nmPos.x),
                             ParserUtils.nmToAngs(nmPos.y),
                             ParserUtils.nmToAngs(nmPos.z));
-                        mesh.position.copy(nmPos);
-                        objectsParent.add(mesh);
-    
-                        // Spawn individual atoms
-                        if (fileIdToFileDataMap.has(pdbFileId)) {
+                        nucleotidePositions.push(nmPos);
+
+                        // Spawn individual atoms extracted from referenced PDB
+                        if (pdbFileId >= 0 && fileIdToFileDataMap.has(pdbFileId)) {
                             PdbUtils.spawnPdbData(fileIdToFileDataMap.get(pdbFileId), nmPos, new THREE.Vector3(0, 0, 0), objectsParent, atom => {
                                 return atom.chainIdentifier === strand.chainName && atom.residueSeqNum == nucleotide.pdbId;
                             });
@@ -436,7 +433,7 @@ function processSingleStrands(parsedJson, objectsParent, fileIdToFileDataMap) {
                 }
                 else {
                     console.warn("File with id " + confFileId + " not provided. Skipping appropriate records.");
-                }*/
+                }
             }
 
             currNucleotide = strand.nucleotides.find(x => x.id === currNucleotide.next);
@@ -448,12 +445,61 @@ function processSingleStrands(parsedJson, objectsParent, fileIdToFileDataMap) {
             const strandLine = new THREE.Line(geometry, lineMaterial);
             objectsParent.add(strandLine);
 
-            for(let i = 0; i < nucleotidePositions.length; ++i) {
+            for (let i = 0; i < nucleotidePositions.length; ++i) {
                 const nuclMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
                 nuclMesh.position.copy(nucleotidePositions[i]);
                 objectsParent.add(nuclMesh);
             }
         }
+    });
+}
+
+function processProteins(parsedJson, objectsParent, fileIdToFileDataMap) {
+    const sphereGeometry = new THREE.SphereGeometry(1, 6, 6);
+
+    parsedJson.proteins.forEach(protein => {
+        ParserUtils.getFileContentText().value += "Protein " + protein.name + " with " + protein.chains.length + " chains.";
+
+        // TODO For proteins, position from altPosition field is used and config files are ignored now.
+        protein.chains.forEach(chain => {
+            let aminoAcidPositions = [];
+            const pdbFileId = chain.pdbFileId;
+            const lineMaterial = new THREE.LineBasicMaterial({ color: chain.color });
+            const aaMaterial = new THREE.MeshPhongMaterial({ color: chain.color });
+
+            let currAminoAcid = chain.aminoAcids.find(x => x.id === chain.nTerm);
+            do {
+                if (currAminoAcid.altPositions.length > 0 && currAminoAcid.altPositions[0].length >= 3) {
+                    const aaPos = new THREE.Vector3().fromArray(currAminoAcid.altPositions[0]);
+                    aminoAcidPositions.push(aaPos);
+
+                    if (pdbFileId >= 0 && fileIdToFileDataMap.has(pdbFileId)) {
+                        PdbUtils.spawnPdbData(fileIdToFileDataMap.get(pdbFileId), aaPos, new THREE.Vector3(0, 0, 0), objectsParent, atom => {
+                            return atom.chainIdentifier === chain.chainName && atom.residueSeqNum == currAminoAcid.pdbId;
+                        });
+                    }
+                }
+                else {
+                    console.error("AA location can be retrieved only from 'altPositions' field " +
+                        "at the moment. It seems to contain invalid data: ", currAminoAcid.altPositions);
+                }
+
+                currAminoAcid = chain.aminoAcids.find(x => x.id === currAminoAcid.next);
+            }
+            while (currAminoAcid !== undefined);
+
+            if (aminoAcidPositions.length > 0) {
+                const geometry = new THREE.BufferGeometry().setFromPoints(aminoAcidPositions);
+                const chainLine = new THREE.Line(geometry, lineMaterial);
+                objectsParent.add(chainLine);
+
+                for (let i = 0; i < aminoAcidPositions.length; ++i) {
+                    const aaMesh = new THREE.Mesh(sphereGeometry, aaMaterial);
+                    aaMesh.position.copy(aminoAcidPositions[i]);
+                    objectsParent.add(aaMesh);
+                }
+            }
+        });
     });
 }
 
