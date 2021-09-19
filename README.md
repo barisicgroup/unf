@@ -65,7 +65,7 @@ To mark fields as "not used"/containing invalid value:
     - `[number]` **altOrientation:** rotation of this particular virtual helix; can be used to override position determined by the lattice
     - `[object]` **cells:** array of nucleotide locations (one cell can contain up to two complementary nucleotides). Cells (cell numbers) which are not included are considered as empty.
       - `number` **id:** unique ID of this cell
-      - `number` **number:** cell number (starting with zero; higher the number, the farther the cell is from the beginning of the virtual helix)<!-- - `[number]` **altPosition:** this field can determine the world position of this cell in space; can be used to override position determined by virtual helix & cell number-->
+      - `number` **number:** cell number (starting with zero; higher the number, the farther the cell is from the beginning of the virtual helix). Corresponds to base ID value of cadnano.<!-- - `[number]` **altPosition:** this field can determine the world position of this cell in space; can be used to override position determined by virtual helix & cell number-->
       - `string` **type:** text determining the type of the cell
         - *Allowed values: n (for normal), l (for loop), s (for skip)*
       - `number` **left:** ID of the left (5'3' direction) nucleotide

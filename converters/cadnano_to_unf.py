@@ -1,4 +1,4 @@
- #!/usr/bin/env python
+#!/usr/bin/env python
 # Code is using Python 2
 
 # TODO The converter currently ignores advanced functions like loops and skips
@@ -10,6 +10,13 @@ import datetime
 LATTICE_SQUARE = "square"
 LATTICE_HONEYCOMB = "honeycomb"
 OUTPUT_FILE_NAME = "output.unf"
+
+# Indices of the corresponding prev/next vstrand/base ids
+# in the cadnano's json file fields
+CADNANO_PREV_VID = 0
+CADNANO_PREV_BID = 1
+CADNANO_NEXT_VID = 2
+CADNANO_NEXT_BID = 3
 
 globalIdGenerator = 0
 
@@ -24,7 +31,9 @@ class StrandPart:
         self.nextBid = nextBid
 
     def __repr__(self):
-        return "vid: " + str(self.vhelixId) + ", bid " + str(self.baseId) + "\n\t prev: " + ("None" if self.prevPart is None else str(self.prevPart.globalId)) + "\n\t next: " + ("None" if self.nextPart is None else str(self.nextPart.globalId))
+        return ("vid: " + str(self.vhelixId) + ", bid " + str(self.baseId) + "\n\t prev: " +
+         ("None" if self.prevPart is None else str(self.prevPart.globalId)) + 
+         "\n\t next: " + ("None" if self.nextPart is None else str(self.nextPart.globalId)))
 
     def set_prev_next(self, prevPart, nextPart):
         self.prevPart = prevPart
@@ -41,22 +50,24 @@ class Vhelix:
         self.lastCell = lastCell
     
     def __repr__(self):
-        return "vhelix: " + str(self.id) + " [" + str(self.row) + "," + str(self.col) + "] fac " + str(self.firstActiveCell) + ", lac " + str(self.lastActiveCell) + ", lc " + str(self.lastCell)
+        return ("vhelix: " + str(self.id) + " [" + str(self.row) + "," + str(self.col) +
+         "] fac " + str(self.firstActiveCell) + ", lac " + 
+         str(self.lastActiveCell) + ", lc " + str(self.lastCell))
 
 def create_strand_components(strandArray, checkCircularScaffold):
     components = []
     
-    for strand in strandArray:
-        prevPart = next((x for x in strandArray if x.vhelixId == strand.prevVid and x.baseId == strand.prevBid), None)
-        nextPart = next((x for x in strandArray if x.vhelixId == strand.nextVid and x.baseId == strand.nextBid), None)
-        strand.set_prev_next(prevPart, nextPart)
+    for strandPart in strandArray:
+        prevPart = next((x for x in strandArray if x.vhelixId == strandPart.prevVid and x.baseId == strandPart.prevBid), None)
+        nextPart = next((x for x in strandArray if x.vhelixId == strandPart.nextVid and x.baseId == strandPart.nextBid), None)
+        strandPart.set_prev_next(prevPart, nextPart)
     
     circScaffComps = []
 
-    for strand in strandArray:
-        if strand.prevPart == None:
+    for strandPart in strandArray:
+        if strandPart.prevPart == None:
             newComponent = []
-            currPart = strand
+            currPart = strandPart
             newComponent.append(currPart)
             while currPart.nextPart != None:
                 currPart = currPart.nextPart
@@ -64,7 +75,7 @@ def create_strand_components(strandArray, checkCircularScaffold):
             components.append(newComponent)
         elif checkCircularScaffold:
             # Test for circular scaffold
-            start = strand
+            start = strandPart
             currPart = start
             isCirc = False
             while currPart.nextPart != None:
@@ -89,7 +100,17 @@ def create_strand_components(strandArray, checkCircularScaffold):
                     components.append(newComponent)
 
     for circComp in circScaffComps:
+        # TODO Circular scaffolds are simply cut at some random location at the moment.
+        #      This is primarily to not break all the tools relying on existence of 5'/3'
+        #      detected by having no prev/next nucleotide. Is it an issue? 
+        print "Note: circular scaffold strand was found and processed by breaking it"
+
+        circComp[0].prevVid = -1
+        circComp[0].prevBid = -1
         circComp[0].set_prev_next(None, circComp[0].nextPart)
+
+        circComp[-1].nextVid = -1
+        circComp[-1].nextBid = -1
         circComp[-1].set_prev_next(circComp[-1].prevPart, None)
 
     return components
@@ -106,23 +127,25 @@ def process_cadnano_file(file_path, lattice_type):
     global globalIdGenerator
 
     for vstr in parsedData['vstrands']: 
-        firstActiveCell = len(vstr['scaf'])
+        firstActiveCell = max(len(vstr['stap']), len(vstr['scaf']))
         lastActiveCell = 0
         lastCell = 0
 
         for idx, scaf in enumerate(vstr['scaf']):
-            isValidRecord = scaf[0] >= 0 or scaf[2] >= 0
+            isValidRecord = scaf[CADNANO_PREV_VID] >= 0 or scaf[CADNANO_NEXT_VID] >= 0
             if isValidRecord:
-                allScaffoldRecords.append(StrandPart(globalIdGenerator, vstr['num'], idx, scaf[0], scaf[1], scaf[2], scaf[3]))
+                allScaffoldRecords.append(StrandPart(globalIdGenerator, vstr['num'], idx, scaf[CADNANO_PREV_VID], 
+                scaf[CADNANO_PREV_BID], scaf[CADNANO_NEXT_VID], scaf[CADNANO_NEXT_BID]))
                 globalIdGenerator += 1
             lastCell = max(lastCell, idx)
             firstActiveCell = min(firstActiveCell, idx if isValidRecord else firstActiveCell)
             lastActiveCell = max(lastActiveCell, idx if isValidRecord else lastActiveCell)
 
         for idx, stap in enumerate(vstr['stap']):
-            isValidRecord = stap[0] >= 0 or stap[2] >= 0
+            isValidRecord = stap[CADNANO_PREV_VID] >= 0 or stap[CADNANO_NEXT_VID] >= 0
             if isValidRecord:
-                allStapleRecords.append(StrandPart(globalIdGenerator, vstr['num'], idx, stap[0], stap[1], stap[2], stap[3]))
+                allStapleRecords.append(StrandPart(globalIdGenerator, vstr['num'], idx, stap[CADNANO_PREV_VID], 
+                stap[CADNANO_PREV_BID], stap[CADNANO_NEXT_VID], stap[CADNANO_NEXT_BID]))
                 globalIdGenerator += 1
             lastCell = max(lastCell, idx)
             firstActiveCell = min(firstActiveCell, idx if isValidRecord else firstActiveCell)
@@ -195,8 +218,9 @@ def strands_to_unf_data(unfFileData, strandsList, allStrandParts, areScaffolds):
         for strandPart in strand:
             newNucl = {}
             newNucl['id'] = strandPart.globalId
-            newNucl['nbAbbrev'] = "A" # TODO Does cadnano contain nb type data?
-            newNucl['pair'] = next((x.globalId for y in allStrandParts for x in y if x.vhelixId == strandPart.vhelixId and x.baseId == strandPart.baseId and x.globalId != strandPart.globalId), -1)
+            newNucl['nbAbbrev'] = "A" # TODO Sequence is hardcoded now
+            newNucl['pair'] = next((x.globalId for y in allStrandParts for x in y if x.vhelixId == strandPart.vhelixId and
+                 x.baseId == strandPart.baseId and x.globalId != strandPart.globalId), -1)
             newNucl['prev'] = strandPart.prevPart.globalId if strandPart.prevPart is not None else -1
             newNucl['next'] = strandPart.nextPart.globalId if strandPart.nextPart is not None else -1
             newNucl['oxdnaConfRow'] = -1
@@ -238,7 +262,7 @@ def convert_data_to_unf_file(latticesData):
             outputVhelix['lastActiveCell'] = vhelix.lastActiveCell
             outputVhelix['lastCell'] = vhelix.lastCell
             outputVhelix['latticePosition'] = [vhelix.row, vhelix.col]
-            outputVhelix['initialAngle'] = 0 # TODO Should equal cadnano. Depends on lattice?
+            outputVhelix['initialAngle'] = 0 # TODO Should equal cadnano.
             outputVhelix['altPosition'] = []
             outputVhelix['altOrientation'] = []
         
@@ -251,18 +275,38 @@ def convert_data_to_unf_file(latticesData):
                 globalIdGenerator += 1
                 newCell['number'] = i
                 newCell['type'] = "n"
-            
-                leftNucl =  next((x for y in allStrandParts for x in y if x.vhelixId == vhelix.id and x.baseId == i and (x.nextBid >= x.baseId or x.prevBid <= x.baseId)), None)
-                if leftNucl is not None:
-                    newCell['left'] = leftNucl.globalId
-                else:
-                    newCell['left'] = -1
+                newCell['left'] = -1
+                newCell['right'] = -1
 
-                rightNucl =  next((x for y in allStrandParts for x in y if x.vhelixId == vhelix.id and x.baseId == i and (x.nextBid <= x.baseId or x.prevBid >= x.baseId)), None)
-                if rightNucl is not None:
-                    newCell['right'] = rightNucl.globalId
-                else:
-                    newCell['right'] = -1
+                # This is very computationally inoptimal.
+                # In any case, the purpose of this code is to
+                # find out the extent of a single strand in one given virtual helix
+                # to detect the strand directionality in that virtual helix.
+                for sp in allStrandParts:
+                    for x in sp:
+                        if x.vhelixId == vhelix.id and x.baseId == i:
+                            currPart = x
+                            strVhelixStartPart = currPart
+                            strVhelixEndPart = currPart
+
+                            while currPart.prevPart != None and currPart.prevPart.vhelixId == vhelix.id:
+                                currPart = currPart.prevPart
+                                strVhelixStartPart = currPart
+                            
+                            while currPart.nextPart != None and currPart.nextPart.vhelixId == vhelix.id:
+                                currPart = currPart.nextPart
+                                strVhelixEndPart = currPart
+                            
+                            # We can afford "and" instead of "or" because the start/end parts are initialized
+                            # with this strand part and the comparsion includes equality
+                            if strVhelixStartPart.baseId <= x.baseId and strVhelixEndPart.baseId >= x.baseId:
+                                if newCell['left'] >= 0:
+                                    print "Error! Rewriting content of a valid cell with a new value.", newCell['left'], x.globalId
+                                newCell['left'] = x.globalId
+                            elif strVhelixStartPart.baseId >= x.baseId and strVhelixEndPart.baseId <= x.baseId:
+                                if newCell['right'] >= 0:
+                                    print "Error! Rewriting content of a valid cell with a new value.", newCell['right'], x.globalId
+                                newCell['right'] = x.globalId
 
                 cells.append(newCell)
 
