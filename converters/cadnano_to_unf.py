@@ -319,6 +319,8 @@ def convert_data_to_unf_file(latticesData):
         strands_to_unf_data(unfFileData, scaffoldStrands, allStrandParts, True)
         strands_to_unf_data(unfFileData, stapleStrands, allStrandParts, False)
     
+    unfFileData['idCounter'] = globalIdGenerator
+
     with open(OUTPUT_FILE_NAME, 'w') as outfile:
         json.dump(unfFileData, outfile)
 

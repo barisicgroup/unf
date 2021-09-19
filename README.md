@@ -27,6 +27,9 @@ To mark fields as "not used"/containing invalid value:
 <!--- *Note: :question: sign marks fields which are strongly "prototypical"* -->
 - `string` **format:** stores the file format identification (should be always "unf")
 - `number` **version:** format version number
+- `number` **idCounter:** counter containing a value since which it is safe to assign new IDs
+    - Since UNF requires most of the objects to have a unique global ID, it is important to ensure this holds when creating new data.
+    - Therefore, this field is relevant mainly for design and simulation tools modifying the UNF file as it presents a safe starting point for assigning new IDs.
 - `string` **lengthUnits:** determines in what length units (identified by SI symbol) are position-related data stored. 
     - *Allowed values: A (for ångström), pm (for picometer), nm (for nanometer)*
     - *Default assumed value: A*
