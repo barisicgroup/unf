@@ -62,7 +62,8 @@ let ParserUtils = {
 
     getStringHash(stringContent) {
         // blueimp-md5 library is used for hashing
-        return md5(stringContent);
+        const strWithoutLines = stringContent.replace(/(\r\n|\n|\r)/gm, "");
+        return md5(strWithoutLines);
     },
 
     getFileInfoText() {
@@ -509,17 +510,16 @@ function processMolecules(parsedJson, objectsParent, fileIdToFileDataMap) {
         ParserUtils.getFileContentText().value += "molecule - other: " + molecule.name + "\n";
 
         const requestedPdbId = molecule.externalFileId;
-
+        
         const position = new THREE.Vector3(
             UnfUtils.angs(molecule.positions[0][0]),
             UnfUtils.angs(molecule.positions[0][1]),
-            UnfUtils.angs(molecule.positions[0][1]));
+            UnfUtils.angs(molecule.positions[0][2]));
 
         const rotation = new THREE.Vector3(
             UnfUtils.rad(molecule.orientations[0][0]),
             UnfUtils.rad(molecule.orientations[0][1]),
-            UnfUtils.rad(molecule.orientations[0][2])
-        );
+            UnfUtils.rad(molecule.orientations[0][2]));
 
         if (fileIdToFileDataMap.has(requestedPdbId)) {
             PdbUtils.spawnPdbData(fileIdToFileDataMap.get(requestedPdbId), position, rotation, objectsParent);

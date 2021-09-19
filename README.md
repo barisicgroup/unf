@@ -180,3 +180,9 @@ The application serves mainly for UNF development purposes right now, it is, the
   - Converts given cadnano files to a single UNF file
   - Only the core features are converted now, i.e., virtual helices, their location in lattice and strands / nucleotides positions. **Support for loops, skips and similar more advanced features is missing at the moment.**
   - Circular scaffolds are processed by performing a cut at random location.
+
+# Other scripts documentation
+
+- **Add PDB to UNF (Python)**
+  - Attaches given PDB structure to a UNF file
+  - The structure can be positioned at desirated location in space
