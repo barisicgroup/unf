@@ -458,7 +458,7 @@ function processProteins(parsedJson, objectsParent, fileIdToFileDataMap) {
     const sphereGeometry = new THREE.SphereGeometry(1, 6, 6);
 
     parsedJson.proteins.forEach(protein => {
-        ParserUtils.getFileContentText().value += "Protein " + protein.name + " with " + protein.chains.length + " chains.";
+        ParserUtils.getFileContentText().value += "Protein " + protein.name + " with " + protein.chains.length + " chains. \n";
 
         // TODO For proteins, position from altPosition field is used and config files are ignored now.
         protein.chains.forEach(chain => {
@@ -504,20 +504,20 @@ function processProteins(parsedJson, objectsParent, fileIdToFileDataMap) {
 }
 
 function processMolecules(parsedJson, objectsParent, fileIdToFileDataMap) {
-    // TODO parsedJson.molecules.ligands/nanostructures/...
-
     parsedJson.molecules.others.forEach(molecule => {
+        ParserUtils.getFileContentText().value += "molecule - other: " + molecule.name + "\n";
+
         const requestedPdbId = molecule.externalFileId;
 
         const position = new THREE.Vector3(
-            ParserUtils.pmToAngs(molecule.positions[0][0]),
-            ParserUtils.pmToAngs(molecule.positions[0][1]),
-            ParserUtils.pmToAngs(molecule.positions[0][1]));
+            UnfUtils.angs(molecule.positions[0][0]),
+            UnfUtils.angs(molecule.positions[0][1]),
+            UnfUtils.angs(molecule.positions[0][1]));
 
         const rotation = new THREE.Vector3(
-            molecule.orientations[0][0],
-            molecule.orientations[0][1],
-            molecule.orientations[0][2]
+            UnfUtils.rad(molecule.orientations[0][0]),
+            UnfUtils.rad(molecule.orientations[0][1]),
+            UnfUtils.rad(molecule.orientations[0][2])
         );
 
         if (fileIdToFileDataMap.has(requestedPdbId)) {
@@ -527,4 +527,6 @@ function processMolecules(parsedJson, objectsParent, fileIdToFileDataMap) {
             console.error("Molecule PDB not found, file ID: " + requestedPdbId);
         }
     });
+
+    // TODO molecules.ligands/nanostructures
 }
