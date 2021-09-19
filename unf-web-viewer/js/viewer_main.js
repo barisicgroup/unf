@@ -8,7 +8,9 @@ function viewerMain() {
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(60, getCurrAspectRatio(), 0.1, 100);
     const controls = new OrbitControls(camera, canvas);
+    const jsonTreeView = jsonTree.create({}, document.getElementById("jsonTree"));
 
+    jsonViewInit();
     fileReaderInit();
     cameraControlsInit();
     sceneInit();
@@ -82,6 +84,19 @@ function viewerMain() {
         return needResize;
     }
 
+    function jsonViewInit() {
+        const expandButton = document.getElementById("btnExpandJson");
+        const collapseButton = document.getElementById("btnCollapseJson");
+
+        expandButton.onclick = function() {
+            jsonTreeView.expand();
+        };
+
+        collapseButton.onclick = function() {
+            jsonTreeView.collapse();
+        };
+    }
+
     function fileReaderInit() {
         const fileSelector = document.querySelector("#inputUnfFile");
         fileSelector.addEventListener("change", (event) => {
@@ -96,15 +111,15 @@ function viewerMain() {
             return extension === "unf" || extension === "json";
         });
         selectedFiles.splice(selectedFiles.indexOf(unfFile), 1);
-
+        
         if (unfFile !== undefined) {
             // Only UNF file is fully read into the memory
-            // Remaining files are forwared only as references
+            // Remaining files are forwarded only as references
             const reader = new FileReader();
             
             reader.onload = function (evt) {
                 try {
-                    var parsedObjects = parseUNF(evt.target.result, selectedFiles);
+                    var parsedObjects = parseUNF(jsonTreeView, evt.target.result, selectedFiles);
                     if (parsedObjects) {
                         parsedObjects.forEach(object => scene.add(object));
                     }

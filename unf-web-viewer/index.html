@@ -6,24 +6,42 @@
     <meta charset="utf-8">
 
     <title>UNF Web Viewer</title>
-    <meta name="description" content="Simple web viewer showcasing the data stored in the Unified Nanotechnology Format (UNF).">
+    <meta name="description"
+        content="Simple web viewer visualizing the data stored in the Unified Nanotechnology Format (UNF).">
     <meta name="author" content="David Kutak">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
     <link rel="stylesheet" href="css/page_style.css">
-
+    <link href="libs/jsonTree/jsonTree.css" rel="stylesheet" />
 </head>
 
 <body>
     <div class="infoPanel">
         <h1>UNF Web Viewer</h1>
-        <p>Simple web viewer showcasing the data stored in the Unified Nanotechnology Format (UNF).</p>
-        <label for="inputUnfFile">Load UNF file:</label>
+        <p>Simple web viewer visualizing the data stored in the Unified Nanotechnology Format (UNF) file.</p>
+        <label for="inputUnfFile" style="font-weight: bold;">Load UNF file:</label>
         <input type="file" id="inputUnfFile" name="inputUnfFile" accept=".json,.unf,.oxdna,.pdb" multiple>
+
+        <p style="font-weight: bold;">File info: </p>
+        <textarea id="fileInfoText" disabled>No file loaded</textarea>
+
+        <p style="font-weight: bold;">Parsed file content: </p>
+        <textarea id="fileContentText" disabled></textarea>
+
+        <p style="font-weight: bold;">UNF JSON structure visualizer:</p>
+        <p style="margin-top: -10px; font-style: italic; font-size: 12px;">(resize this window as needed)</p>
+        <button id="btnExpandJson">+ Expand JSON</button> <button id="btnCollapseJson">- Collapse JSON</button>
+        <div id="jsonTreeWrapper">
+            <div id="jsonTree">
+            </div>
+        </div>
     </div>
     <canvas id="mainCanvas"></canvas>
 
     <!-- Scripts -->
+    <script src="libs/jsonTree/jsonTree.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.18.0/js/md5.min.js"></script>
+
     <script src="js/oxdna_utils.js" type="module"></script>
     <script src="js/PDBLoader.js" type="module"></script>
     <script src="js/pdb_utils.js" type="module"></script>
