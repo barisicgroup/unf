@@ -97,11 +97,10 @@ To mark fields as "not used"/containing invalid value:
         - :question: Replace references to oxDNA file with storing the position directly in *altPositions* field?
       - `number` **pdbId:** identification of the relevant residue in the PDB file (to load atoms)
       - `[[object]]` **altPositions:**  2D array of alternative positions of this nucleotide (if oxDNA file is not provided or the position was modified). By default, zeroth position is considered as the current one. More positions can be stored for dynamics/animation purposes.
-        - `[number]` **worldOrigin:** world position of this nucleotide's helical axis
-          - :heavy_exclamation_mark: The origin may be replaced with nucleobase & backbone center positions or similar in upcoming version of the format
-        - `[number]` **worldBaseAxisX:** x-axis goes along the short axis of the base pair (from minor groove side to major groove side)
-        - `[number]` **worldBaseAxisY:** goes along the long axis of the base pair (from C1 carbon of one base to C1 carbon of other base). For each base, it goes in backbone to helical axis direction.
-        - `[number]` **worldBaseAxisZ:** goes "up" and is prependicular to base plane
+        - `[number]` **nucleobaseCenter:** centroid location of the nucleobase
+        - `[number]` **backboneCenter:** centroid location of the backbone 
+        - `[number]` **baseNormal:** normal vector of the nucleobase plane (corresponds to nucleotide standard ref. frame z-axis)
+        - `[number]` **hydrogenFaceDir:** vector describing the direction of the face containing nucleobase's hydrogen bonds. Roughly corresponds to the standard ref. frame y-axis, i.e., it goes along the long axis of the base pair.
 - `[object]` **proteins:** array of coarse-grained stored proteins
   - `number` **id:** unique ID of this protein
   - `string` **name:** name/title of this protein
