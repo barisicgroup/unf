@@ -96,7 +96,7 @@ To mark fields as "not used"/containing invalid value:
       - `number` **oxDnaConfRow:** row in the referenced oxDNA config file relevant to this nucleotide (to load position)
         - :question: Replace references to oxDNA file with storing the position directly in *altPositions* field?
       - `number` **pdbId:** identification of the relevant residue in the PDB file (to load atoms)
-      - `[[object]]` **altPositions:**  2D array of alternative positions of this nucleotide (if oxDNA file is not provided or the position was modified). By default, zeroth position is considered as the current one. More positions can be stored for dynamics/animation purposes.
+      - `[object]` **altPositions:**  An array of alternative positions of this nucleotide (if oxDNA file is not provided or the position was modified). By default, zeroth position is considered as the current one. More positions can be stored for dynamics/animation purposes.
         - `[number]` **nucleobaseCenter:** centroid location of the nucleobase
         - `[number]` **backboneCenter:** centroid location of the backbone 
         - `[number]` **baseNormal:** normal vector of the nucleobase plane (corresponds to nucleotide standard ref. frame z-axis)
@@ -184,4 +184,5 @@ The application serves mainly for UNF development purposes right now, it is, the
 
 - **Add PDB to UNF (Python)**
   - Attaches given PDB structure to a UNF file
+  - The structure is attached "as is" without any conversions
   - The structure can be positioned at desirated location in space

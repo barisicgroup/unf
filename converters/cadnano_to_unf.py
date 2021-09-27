@@ -227,8 +227,7 @@ def strands_to_unf_data(unfFileData, strandsList, allStrandParts, areScaffolds):
             newNucl['next'] = strandPart.nextPart.globalId if strandPart.nextPart is not None else -1
             newNucl['oxdnaConfRow'] = -1
             newNucl['pdbId'] = -1
-            newNucl['altPositions'] = [[]]
-            newNucl['altOrientations'] = [[]]
+            newNucl['altPositions'] = []
 
             nucleotides.append(newNucl)
 

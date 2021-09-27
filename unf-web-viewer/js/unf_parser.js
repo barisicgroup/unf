@@ -359,10 +359,10 @@ function processSingleStrands(parsedJson, objectsParent, fileIdToFileDataMap) {
         let currNucleotide = strand.nucleotides.find(x => x.id === strand.fivePrimeId);
         do {
             // If nucleotide has an alternative position defined, use it as a primary source of position
-            if (currNucleotide.altPositions.length > 0 && currNucleotide.altPositions[0].length > 0) {
+            if (currNucleotide.altPositions.length > 0) {
                 nucleotidePositions.push(
-                    // Since the origin basically refers to a helical axis, this will render base-pairs as one point
-                    new THREE.Vector3().fromArray(currNucleotide.altPositions[0].worldOrigin));
+                    // Backbone position is visualized for nucleotides
+                    new THREE.Vector3().fromArray(currNucleotide.altPositions[0].backboneCenter));
             }
             // Else, if no references to files with positions are provided, strands will be positioned
             // according to the virtual helices' cells
