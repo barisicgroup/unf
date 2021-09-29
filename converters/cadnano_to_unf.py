@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Code is using Python 2
+# Code is using Python 3
 
 # TODO The converter currently ignores advanced functions like loops and skips
 
@@ -104,7 +104,7 @@ def create_strand_components(strandArray, checkCircularScaffold):
         # TODO Circular scaffolds are simply cut at some random location at the moment.
         #      This is primarily to not break all the tools relying on existence of 5'/3'
         #      detected by having no prev/next nucleotide. Is it an issue? 
-        print "Note: circular scaffold strand was found and processed by breaking it"
+        print("Note: circular scaffold strand was found and processed by breaking it")
 
         circComp[0].prevVid = -1
         circComp[0].prevBid = -1
@@ -117,7 +117,7 @@ def create_strand_components(strandArray, checkCircularScaffold):
     return components
 
 def process_cadnano_file(file_path, lattice_type):
-    print "Loading structure '" + file_path + "' with " + lattice_type + " lattice."
+    print("Loading structure '" + file_path + "' with " + lattice_type + " lattice.")
     
     file = open(file_path, "r")
     parsedData = json.loads(file.read())
@@ -158,13 +158,13 @@ def process_cadnano_file(file_path, lattice_type):
     individualStapleStrands = create_strand_components(allStapleRecords, False)
 
     for vhelix in processedVhelices:
-        print "Virtual helix: ", str(vhelix)
+        print("Virtual helix: ", str(vhelix))
     
     for strandComp in individualScaffoldStrands:
-        print "Scaffold strand found of length: ", len(strandComp)
+        print("Scaffold strand found of length: ", len(strandComp))
 
     for strandComp in individualStapleStrands:
-        print "Staple strand found of length: ", len(strandComp)     
+        print("Staple strand found of length: ", len(strandComp))     
     
     file.close()
 
@@ -302,11 +302,11 @@ def convert_data_to_unf_file(latticesData):
                             # with this strand part and the comparsion includes equality
                             if strVhelixStartPart.baseId <= x.baseId and strVhelixEndPart.baseId >= x.baseId:
                                 if newCell['left'] >= 0:
-                                    print "Error! Rewriting content of a valid cell with a new value.", newCell['left'], x.globalId
+                                    print("Error! Rewriting content of a valid cell with a new value.", newCell['left'], x.globalId)
                                 newCell['left'] = x.globalId
                             elif strVhelixStartPart.baseId >= x.baseId and strVhelixEndPart.baseId <= x.baseId:
                                 if newCell['right'] >= 0:
-                                    print "Error! Rewriting content of a valid cell with a new value.", newCell['right'], x.globalId
+                                    print("Error! Rewriting content of a valid cell with a new value.", newCell['right'], x.globalId)
                                 newCell['right'] = x.globalId
 
                 cells.append(newCell)
@@ -338,10 +338,10 @@ def getInputFilesToProcess(argv):
 
 def main():
     if len(sys.argv) < 2 or sys.argv[1] == "-h":
-        print "usage: cadnano_to_unf.py <file_1_path>:<lattice_type> <file_2_path>:<lattice_type> (...) <file_n_path>:<lattice_type>"
-        print "lattice_type = square|honeycomb"
-        print ""
-        print "At least one input file is mandatory."
+        print("usage: cadnano_to_unf.py <file_1_path>:<lattice_type> <file_2_path>:<lattice_type> (...) <file_n_path>:<lattice_type>")
+        print("lattice_type = square|honeycomb")
+        print("")
+        print("At least one input file is mandatory.")
         sys.exit(1)
     
     filesToProcess = getInputFilesToProcess(sys.argv)

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Code is using Python 2
+# Code is using Python 3
 
 import sys
 import json
@@ -60,7 +60,7 @@ def modify_unf(unfFile, pdbFile, molName, molPos, molRot):
 
 def main():
     if len(sys.argv) != 6 or sys.argv[1] == "-h":
-        print "usage unf_add_pdb.py <unf_path> <pdb_path> <molecule_name> <x_pos,y_pos,z_pos> <x_rot,y_rot,z_rot>"
+        print("usage unf_add_pdb.py <unf_path> <pdb_path> <molecule_name> <x_pos,y_pos,z_pos> <x_rot,y_rot,z_rot>")
         sys.exit(1)
 
     modify_unf(*parse_args(sys.argv))    
