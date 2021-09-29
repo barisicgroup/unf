@@ -368,7 +368,7 @@ function processSingleStrands(parsedJson, objectsParent, fileIdToFileDataMap) {
             // according to the virtual helices' cells
             // This is performed in a really unoptimized manner for simplicity and to show
             // fully separated processing of virtual helices and single strands.
-            else if (strand.confFilesIds.length === 0) {
+            else {
                 let position = null;
 
                 parsedJson.lattices.forEach(lattice => {
@@ -408,33 +408,6 @@ function processSingleStrands(parsedJson, objectsParent, fileIdToFileDataMap) {
                 }
                 else {
                     nucleotidePositions.push(position);
-                }
-            }
-            // Otherwise, they will be located at the locations retrieved from the oxDNA configuration file
-            else if (strand.confFilesIds.length > 0) {
-                const confFileId = strand.confFilesIds[0];
-                const pdbFileId = strand.pdbFileId;
-
-                if (fileIdToFileDataMap.has(confFileId)) {
-                    let parsedData = fileIdToFileDataMap.get(confFileId);
-                    strand.nucleotides.forEach(nucleotide => {
-                        let nmPos = parsedData[nucleotide.oxdnaConfRow].position;
-                        nmPos = new THREE.Vector3(
-                            ParserUtils.nmToAngs(nmPos.x),
-                            ParserUtils.nmToAngs(nmPos.y),
-                            ParserUtils.nmToAngs(nmPos.z));
-                        nucleotidePositions.push(nmPos);
-
-                        // Spawn individual atoms extracted from referenced PDB
-                        if (pdbFileId >= 0 && fileIdToFileDataMap.has(pdbFileId)) {
-                            PdbUtils.spawnPdbData(fileIdToFileDataMap.get(pdbFileId), nmPos, new THREE.Vector3(0, 0, 0), objectsParent, atom => {
-                                return atom.chainIdentifier === strand.chainName && atom.residueSeqNum == nucleotide.pdbId;
-                            });
-                        }
-                    });
-                }
-                else {
-                    console.warn("File with id " + confFileId + " not provided. Skipping appropriate records.");
                 }
             }
 

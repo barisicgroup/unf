@@ -84,7 +84,6 @@ To mark fields as "not used"/containing invalid value:
   - `number` **threePrimeId:** ID of the 3' nucleotide
   - `number` **pdbFileId:** ID of the relevant external PDB file (for loading atomic data)
   - `string` **chainName:** name of the chain in the referenced PDB
-  - `[number]` **confFilesIds:** array of IDs referencing oxDNA configuration files used for retrieving nucleotides' positional information. By default, zeroth config file is used but it is up to an application to decide which one to use if there are more (e.g., to show dynamics animation).
   - `[object]` **nucleotides:** array of nucleotides of this strand
       - `number` **id:** unique ID of this nucleotide
       - `number` **nbAbbrev:** nucleobase type
@@ -93,10 +92,8 @@ To mark fields as "not used"/containing invalid value:
       - `number` **pair:** ID of the complementary nucleotide
       - `number` **prev:** ID of the preceding nucleotide in the strand
       - `number` **next:** ID of the following nucleotide in the strand
-      - `number` **oxDnaConfRow:** row in the referenced oxDNA config file relevant to this nucleotide (to load position)
-        - :question: Replace references to oxDNA file with storing the position directly in *altPositions* field?
       - `number` **pdbId:** identification of the relevant residue in the PDB file (to load atoms)
-      - `[object]` **altPositions:**  An array of alternative positions of this nucleotide (if oxDNA file is not provided or the position was modified). By default, zeroth position is considered as the current one. More positions can be stored for dynamics/animation purposes.
+      - `[object]` **altPositions:**  An array of alternative positions of this nucleotide. By default, zeroth position is considered as the current one. More positions can be stored for dynamics/animation purposes.
         - `[number]` **nucleobaseCenter:** centroid location of the nucleobase
         - `[number]` **backboneCenter:** centroid location of the backbone 
         - `[number]` **baseNormal:** normal vector of the nucleobase plane (corresponds to nucleotide standard ref. frame z-axis)
@@ -111,17 +108,14 @@ To mark fields as "not used"/containing invalid value:
     - `number` **pdbFileId:** ID of the relevant external PDB file
     - `number` **nTerm:** ID of the N-terminus amino acid
     - `number` **cTerm:** ID of the C-terminus amino acid
-    - `[number]` **confFilesIds:** array of IDs referencing oxDNA configuration files used for retrieving amino acids' positional information. By default, zeroth config file is used but it is up to an application to decide which one to use if there are more (e.g., to show dynamics animation).
     - `[object]` **aminoAcids:** array of the amino acids of this chain
       - `number` **id:** unique ID of this amino acid
       - `string` **secondary:** string determining the secondary structure this AA is part of
       - `string` **aaAbbrev:** three-letter abbreviation of the AA name
       - `number` **prev:** ID of the preceding AA in the chain
       - `number` **next:** ID of the following AA in the chain
-      - `number` **oxDnaConfRow:** row in the referenced oxDNA config file relevant to this AA (to load position)
-        - :question: Replace references to oxDNA file with storing the position directly in *altPositions* field?
       - `number` **pdbId:** identification of the relevant residue in the PDB file (to load atoms)
-      - `[[number]]` **altPositions:** 2D array of alternative positions, corresponding to alpha carbon location, of this AA (if oxDNA file is not provided or the position was modified). By default, zeroth position is considered as a current one. More positions can be stored for dynamics/animation purposes.
+      - `[[number]]` **altPositions:** 2D array of alternative positions, corresponding to alpha carbon location, of this AA. By default, zeroth position is considered as a current one. More positions can be stored for dynamics/animation purposes.
       <!--- Note: amino acids store only position now, any orientation/backbone direction data are now omitted. -->
 - `object` **molecules:** object containing molecules which have some position in space but we do not care about their modifications or individual parts (e.g., PDB is enough)
   - `[object]` **ligands:** array of ligands. If there are molecules storing both proteins and ligands in one file (e.g., as a PDB), they should be referenced in field "other molecules" instead of this one.

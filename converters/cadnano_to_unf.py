@@ -214,7 +214,6 @@ def strands_to_unf_data(unfFileData, strandsList, allStrandParts, areScaffolds):
         strandObject['pdbFileId'] = -1
         strandObject['fivePrimeId'] = strand[0].globalId
         strandObject['threePrimeId'] = strand[-1].globalId
-        strandObject['confFilesIds'] = []
 
         nucleotides = []
         for strandPart in strand:
@@ -225,7 +224,6 @@ def strands_to_unf_data(unfFileData, strandsList, allStrandParts, areScaffolds):
                  x.baseId == strandPart.baseId and x.globalId != strandPart.globalId), -1)
             newNucl['prev'] = strandPart.prevPart.globalId if strandPart.prevPart is not None else -1
             newNucl['next'] = strandPart.nextPart.globalId if strandPart.nextPart is not None else -1
-            newNucl['oxdnaConfRow'] = -1
             newNucl['pdbId'] = -1
             newNucl['altPositions'] = []
 
