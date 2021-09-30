@@ -174,9 +174,14 @@ The application serves mainly for UNF development purposes right now, it is, the
   - Only the core features are converted now, i.e., virtual helices, their location in lattice and strands / nucleotides positions. **Support for loops, skips and similar more advanced features is missing at the moment.**
   - Circular scaffolds are processed by performing a cut at random location.
 
+- **PDB to UNF converter (Python)**
+  - Converts given PDB file to a single UNF file.
+  - The conversions takes all-atom details of (D)(R)NAs & proteins in PDB and converts them to a coarse-grained representation stored in the UNF.
+  - While UNF allows for storing ligands, these are not extracted from the PDB at the moment.
+
 # Other scripts documentation
 
 - **Add PDB to UNF (Python)**
   - Attaches given PDB structure to a UNF file
-  - The structure is attached "as is" without any conversions
+  - The structure is attached "as is" (in a full atomistic detail) without any conversions
   - The structure can be positioned at desirated location in space

@@ -7,6 +7,7 @@ import sys
 import json
 import datetime
 import random
+import modules.unf_utils as unfutils
 
 LATTICE_SQUARE = "square"
 LATTICE_HONEYCOMB = "honeycomb"
@@ -170,32 +171,6 @@ def process_cadnano_file(file_path, lattice_type):
 
     return (processedVhelices, individualScaffoldStrands, individualStapleStrands)
 
-def initialize_unf_file_data_object():
-    unfFileData = {}
-
-    unfFileData['format'] = "unf"
-    unfFileData['version'] = 0.6
-    unfFileData['lengthUnits'] = "A"
-    unfFileData['angularUnits'] = "deg"
-    unfFileData['name'] = "cadnano_converted_structure" # TODO add real structure name
-    unfFileData['author'] = "Cadnano to UNF Python Converter Script"
-    unfFileData['creationDate'] = datetime.datetime.now().replace(microsecond=0).isoformat()
-    unfFileData['doi'] = "NULL"
-    unfFileData['externalFiles'] = []
-    unfFileData['lattices'] = []
-    unfFileData['naStrands'] = []
-    unfFileData['groups'] = []
-    unfFileData['proteins'] = []
-    unfFileData['connections'] = []
-    unfFileData['modifications'] = []
-    unfFileData['misc'] = {}
-    unfFileData['molecules'] = {}
-    unfFileData['molecules']['ligands'] = []
-    unfFileData['molecules']['nanostructures'] = []
-    unfFileData['molecules']['others'] = []
-
-    return unfFileData
-
 def strands_to_unf_data(unfFileData, strandsList, allStrandParts, areScaffolds):
     resultingObjects = []
     r = lambda: random.randint(0, 230)
@@ -235,7 +210,7 @@ def strands_to_unf_data(unfFileData, strandsList, allStrandParts, areScaffolds):
     unfFileData['naStrands'] += resultingObjects
 
 def convert_data_to_unf_file(latticesData, latticesPositions):
-    unfFileData = initialize_unf_file_data_object()
+    unfFileData = unfutils.initialize_unf_file_data_object("cadnano_converted_structure", "Cadnano to UNF Python Converter Script")
     global globalIdGenerator
     posId = 0
 
@@ -336,7 +311,6 @@ def getInputFilesToProcess(argv):
         resPositions.append(splitArr[2]) # The lattice position
     
     return (resPaths, resTypes, resPositions)
-
 
 def main():
     if len(sys.argv) < 2 or sys.argv[1] == "-h":
