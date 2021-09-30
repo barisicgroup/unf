@@ -234,10 +234,11 @@ def strands_to_unf_data(unfFileData, strandsList, allStrandParts, areScaffolds):
 
     unfFileData['naStrands'] += resultingObjects
 
-def convert_data_to_unf_file(latticesData):
+def convert_data_to_unf_file(latticesData, latticesPositions):
     unfFileData = initialize_unf_file_data_object()
     global globalIdGenerator
-    
+    posId = 0
+
     for lattData in latticesData:
         vhelices = lattData[0]
         scaffoldStrands = lattData[1]
@@ -249,7 +250,8 @@ def convert_data_to_unf_file(latticesData):
         outputLattice['id'] = globalIdGenerator
         globalIdGenerator += 1
         outputLattice['name'] = 'lattice_from_cadnano'
-        outputLattice['position'] = [0, 0, 0]
+        outputLattice['position'] = [int(pos) for pos in latticesPositions[posId].split(",")]
+        posId += 1
         outputLattice['orientation'] = [0, 0, 0]  
         outputLattice['virtualHelices'] = []
 
@@ -300,11 +302,11 @@ def convert_data_to_unf_file(latticesData):
                             # with this strand part and the comparsion includes equality
                             if strVhelixStartPart.baseId <= x.baseId and strVhelixEndPart.baseId >= x.baseId:
                                 if newCell['left'] >= 0:
-                                    print("Error! Rewriting content of a valid cell with a new value.", newCell['left'], x.globalId)
+                                    print("Error! Rewriting content of a valid cell with a new value.", vhelix.row, vhelix.col, i, newCell['left'], x.globalId)
                                 newCell['left'] = x.globalId
                             elif strVhelixStartPart.baseId >= x.baseId and strVhelixEndPart.baseId <= x.baseId:
                                 if newCell['right'] >= 0:
-                                    print("Error! Rewriting content of a valid cell with a new value.", newCell['right'], x.globalId)
+                                    print("Error! Rewriting content of a valid cell with a new value.", vhelix.row, vhelix.col, i, newCell['right'], x.globalId)
                                 newCell['right'] = x.globalId
 
                 cells.append(newCell)
@@ -324,20 +326,23 @@ def convert_data_to_unf_file(latticesData):
 def getInputFilesToProcess(argv):
     resPaths = []
     resTypes = []
+    resPositions = []
 
     for i in range(1, len(argv)):
         thisArg = argv[i]
-        splitArr = thisArg.rsplit(':', 1)
+        splitArr = thisArg.split(':')
         resPaths.append(splitArr[0]) # Path to file
         resTypes.append(splitArr[1]) # Its lattice type
+        resPositions.append(splitArr[2]) # The lattice position
     
-    return (resPaths, resTypes)
+    return (resPaths, resTypes, resPositions)
 
 
 def main():
     if len(sys.argv) < 2 or sys.argv[1] == "-h":
-        print("usage: cadnano_to_unf.py <file_1_path>:<lattice_type> <file_2_path>:<lattice_type> (...) <file_n_path>:<lattice_type>")
+        print("usage: cadnano_to_unf.py <file_1_path>:<lattice_type>:<position> <file_2_path>:<lattice_type>:<position> (...) <file_n_path>:<lattice_type>:<position>")
         print("lattice_type = square|honeycomb")
+        print("position = x,y,z (angstroms)")
         print("")
         print("At least one input file is mandatory.")
         sys.exit(1)
@@ -348,7 +353,7 @@ def main():
     for i in range(0, len(filesToProcess[0])):
         processedFilesData.append(process_cadnano_file(filesToProcess[0][i], filesToProcess[1][i]))
 
-    convert_data_to_unf_file(processedFilesData)
+    convert_data_to_unf_file(processedFilesData, filesToProcess[2])
 
 if __name__ == '__main__':
   main()
