@@ -1,11 +1,15 @@
 import datetime
+import numpy as np
 
 DNA_PDB_BASES = ["DA", "DG", "DT", "DC", "DU"]
+
 RNA_PDB_BASES = ["A", "G", "T", "C", "U"]
 
 AA_PDB_RESNAMES = ["HIS", "ARG", "LYS", "ILE", "PHE", "LEU", "TRP"
   "ALA", "MET", "PRO", "CYS", "ASN", "VAL", "GLY", "SER", "GLN", "TYR"
   "ASP", "GLU", "THR", "SEC", "PYL"]
+
+NUCLEOBASE_RING_COMMON_ATOMS = ["C2", "C4", "C5", "C6", "N1", "N3"]
 
 def initialize_unf_file_data_object(name, author, lenUnits = "A", angUnits = "deg"):
     unfFileData = {}
@@ -42,3 +46,9 @@ def is_rna_res(resName):
 
 def is_protein_res(resName):
     return resName in AA_PDB_RESNAMES
+
+def is_drna_backbone(atomName):
+    return "P" in atomName or "'" in atomName
+
+def normalize(np_vector):
+    return np_vector / np.sqrt(np.sum(np_vector**2))

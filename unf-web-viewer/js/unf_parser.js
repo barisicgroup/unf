@@ -350,6 +350,9 @@ function processSingleStrands(parsedJson, objectsParent, fileIdToFileDataMap) {
 
     parsedJson.naStrands.forEach(strand => {
         let nucleotidePositions = [];
+        let nucleobasePositions = [];
+        let nucleobaseNormals = [];
+        let nucleobaseHydrFacesDirs = [];
         const lineMaterial = new THREE.LineBasicMaterial({ color: strand.color });
         const sphereMaterial = new THREE.MeshPhongMaterial({ color: strand.color });
 
@@ -361,8 +364,16 @@ function processSingleStrands(parsedJson, objectsParent, fileIdToFileDataMap) {
             // If nucleotide has an alternative position defined, use it as a primary source of position
             if (currNucleotide.altPositions.length > 0) {
                 nucleotidePositions.push(
-                    // Backbone position is visualized for nucleotides
                     new THREE.Vector3().fromArray(currNucleotide.altPositions[0].backboneCenter));
+
+                nucleobasePositions.push(
+                    new THREE.Vector3().fromArray(currNucleotide.altPositions[0].nucleobaseCenter));
+
+                nucleobaseNormals.push(
+                    new THREE.Vector3().fromArray(currNucleotide.altPositions[0].baseNormal));
+
+                nucleobaseHydrFacesDirs.push(
+                    new THREE.Vector3().fromArray(currNucleotide.altPositions[0].hydrogenFaceDir));
             }
             // Else, if no references to files with positions are provided, strands will be positioned
             // according to the virtual helices' cells
@@ -425,6 +436,23 @@ function processSingleStrands(parsedJson, objectsParent, fileIdToFileDataMap) {
                 nuclMesh.position.copy(nucleotidePositions[i]);
                 objectsParent.add(nuclMesh);
             }
+
+            if (nucleobasePositions.length === nucleotidePositions.length) {
+                for (let i = 0; i < nucleobasePositions.length; ++i) {
+                    const bbToNb = nucleobasePositions[i].clone().sub(nucleotidePositions[i]);
+                    const bbToNbArrow = new THREE.ArrowHelper(bbToNb.clone().normalize(), nucleotidePositions[i],
+                        bbToNb.length(), strand.color);
+                    objectsParent.add(bbToNbArrow);
+
+                    const baseNormArrow = new THREE.ArrowHelper(nucleobaseNormals[i].normalize(),
+                    nucleobasePositions[i], 2, "#0000FF");
+                    objectsParent.add(baseNormArrow);
+
+                    const baseHydrogFaceArrow = new THREE.ArrowHelper(nucleobaseHydrFacesDirs[i].normalize(),
+                    nucleobasePositions[i], 2, "#00FF00");
+                    objectsParent.add(baseHydrogFaceArrow);
+                }
+            }
         }
     });
 }
@@ -483,7 +511,7 @@ function processMolecules(parsedJson, objectsParent, fileIdToFileDataMap) {
         ParserUtils.getFileContentText().value += "molecule - other: " + molecule.name + "\n";
 
         const requestedPdbId = molecule.externalFileId;
-        
+
         const position = new THREE.Vector3(
             UnfUtils.angs(molecule.positions[0][0]),
             UnfUtils.angs(molecule.positions[0][1]),

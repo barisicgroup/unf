@@ -11,6 +11,7 @@ import sys
 import os
 import json
 import atomium # Using atomium library for PDB parsing; pip3 install atomium
+import itertools
 import numpy as np
 from pprint import pprint
 import modules.unf_utils as unfutils
@@ -74,10 +75,73 @@ class NucleicAcid:
         self.prev = prevNa
         self.next = nextNa
 
+# a1 computed in accordance with tacoxDNA (PDB -> oxDNA Python converter)
+def get_a1(residue, atNamesMap):
+    res_vector = np.array([0.0, 0.0, 0.0])
+
+    if "C" in residue.name or "T" in residue.name or "U" in residue.name:
+        pairs = [ ["N3", "C6"], ["C2", "N1"], ["C4", "C5"] ]
+    else:
+        pairs = [ ["N1", "C4"], ["C2", "N3"], ["C6", "C5"] ]
+
+    for pair in pairs:
+        p = atNamesMap[pair[0]]
+        q = atNamesMap[pair[1]]
+        diff = np.subtract(np.asarray(p.location), np.asarray(q.location))
+        res_vector = np.add(res_vector, diff)
+
+    return unfutils.normalize(res_vector)
+
+# a3 computed in accordance with tacoxDNA (PDB -> oxDNA Python converter)
+def get_a3(residue, atNamesMap, nbCenter):
+    parallel_to = np.subtract(np.asarray(atNamesMap["O4'"].location), nbCenter)
+    a3 = np.array([0.0, 0.0, 0.0])
+
+    for perm in itertools.permutations(unfutils.NUCLEOBASE_RING_COMMON_ATOMS, 3):
+        p = atNamesMap[perm[0]]
+        q = atNamesMap[perm[1]]
+        r = atNamesMap[perm[2]]   
+        
+        v1 = unfutils.normalize(
+            np.subtract(np.asarray(p.location), np.asarray(q.location)))
+        v2 = unfutils.normalize(
+            np.subtract(np.asarray(p.location), np.asarray(r.location)))
+
+        if abs(np.dot(v1, v2)) > 0.01 or 1:
+            curr_a3 = unfutils.normalize(np.cross(v1, v2))
+            if np.dot(curr_a3, parallel_to) < 0.0:
+                curr_a3 = -curr_a3
+            a3 = np.add(a3, curr_a3)
+        
+        return unfutils.normalize(a3)
+
 def get_nt_pos(residue):
-    return NucleotidePos(residue.center_of_mass, 
-    residue.center_of_mass, 
-    residue.center_of_mass, residue.center_of_mass)
+    bbCenter = np.array([0.0, 0.0, 0.0])
+    bbCount = 0
+    
+    nbCenter = np.array([0.0, 0.0, 0.0])
+    nbCount = 0
+
+    atNamesMap = {}
+
+    for atom in residue.atoms():
+        atLoc = np.asarray(atom.location)
+        atNamesMap[atom.name] = atom
+        if unfutils.is_drna_backbone(atom.name):
+            bbCenter = np.add(bbCenter, atLoc)
+            bbCount += 1
+        else:
+            nbCenter = np.add(nbCenter, atLoc)
+            nbCount += 1
+       
+    bbCenter = np.true_divide(bbCenter, bbCount)
+    nbCenter = np.true_divide(nbCenter, nbCount)
+
+    a1 = get_a1(residue, atNamesMap)
+    a3 = get_a3(residue, atNamesMap, nbCenter)
+
+    return NucleotidePos(nbCenter, bbCenter, 
+    a3, a1)
     
 def process_na_strand(chainName, residues, naType):
     print("Processing", naType, "strand with", len(residues), "nucleotides.")
