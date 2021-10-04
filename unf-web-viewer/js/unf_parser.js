@@ -273,7 +273,9 @@ function processLattices(parsedJson, objectsParent) {
         ParserConstants.VHelixRadius, ParserConstants.VHelixRadius, 1, 16, 16, true);
     const cylinderGeometryCapped = new THREE.CylinderBufferGeometry(
         ParserConstants.VHelixRadius, ParserConstants.VHelixRadius, 1, 16, 16, false);
-    const cylinderTranspMaterial = new THREE.MeshPhongMaterial({ color: 0xff4444, opacity: 0.2, transparent: true });
+    const cylinderTranspMaterial = new THREE.MeshPhongMaterial({ color: 0x44ff44, opacity: 0.2, transparent: true });
+    const cellDeletMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000, opacity: 0.4, transparent: true, side: THREE.DoubleSide });
+    const cellInsMaterial = new THREE.MeshPhongMaterial({ color: 0x0000ff, opacity: 0.4, transparent: true, side: THREE.DoubleSide });
 
     const lattices = parsedJson.lattices;
     const hslOffsetStep = 1 / lattices.length;
@@ -304,8 +306,18 @@ function processLattices(parsedJson, objectsParent) {
             //const altVhelixRot = new THREE.Vector3().fromArray(vhelix.altOrientation, 0);
 
             for (let i = 0; i <= vhelix.lastCell; ++i) {
+                let thisMat = cylinderTranspMaterial;
+
+                if(i < vhelix.cells.length) {
+                    if(vhelix.cells[i].type === "d") {
+                        thisMat = cellDeletMaterial;
+                    } else if(vhelix.cells[i].type === "i") {
+                        thisMat = cellInsMaterial;
+                    }
+                }
+
                 const newMesh = new THREE.Mesh((i === 0 || i === vhelix.lastCell - 1) ? cylinderGeometryCapped : cylinderGeometry,
-                    new THREE.MeshPhongMaterial(cylinderTranspMaterial));
+                    new THREE.MeshPhongMaterial(thisMat));
                 newMesh.position.copy(getLatticePositionForIndex(vhelix.latticePosition[0], vhelix.latticePosition[1], i, lattice));
                 newMesh.scale.set(1, ParserConstants.BasePairRise, 1);
                 newMesh.rotation.set(THREE.MathUtils.degToRad(90) + latRot.x, latRot.y, latRot.z);
@@ -385,12 +397,16 @@ function processSingleStrands(parsedJson, objectsParent, fileIdToFileDataMap) {
                 parsedJson.lattices.forEach(lattice => {
                     lattice.virtualHelices.forEach(helix => {
                         helix.cells.forEach(cell => {
-                            if (cell.left === currNucleotide.id || cell.right === currNucleotide.id) {
+                            if (cell.left.includes(currNucleotide.id) || cell.right.includes(currNucleotide.id)) {
                                 if (position !== null) {
                                     console.error("Error! One nucleotide referenced in more cells.", currNucleotide);
                                 }
 
-                                position = getLatticePositionForIndex(helix.latticePosition[0], helix.latticePosition[1], cell.number, lattice);
+                                const inCellIdx = Math.max(cell.left.indexOf(currNucleotide.id), cell.right.indexOf(currNucleotide.id));
+                                const insertedNucleotidesVisualOffset = 3;
+                                const sign = cell.left.includes(currNucleotide.id) ? 1 : -1;
+
+                                position = getLatticePositionForIndex(helix.latticePosition[0], helix.latticePosition[1] + sign * (inCellIdx > 0 ? insertedNucleotidesVisualOffset : 0), cell.number + sign * inCellIdx, lattice);
 
                                 const xNeighborPos = getLatticePositionForIndex(helix.latticePosition[0], helix.latticePosition[1] + 2, cell.number, lattice);
                                 const zNeighborPos = getLatticePositionForIndex(helix.latticePosition[0], helix.latticePosition[1], cell.number + 1, lattice);
@@ -400,7 +416,7 @@ function processSingleStrands(parsedJson, objectsParent, fileIdToFileDataMap) {
 
                                 let rot = undefined;
 
-                                if (cell.left === currNucleotide.id) {
+                                if (cell.left.includes(currNucleotide.id)) {
                                     rot = xDir.clone().applyAxisAngle(zDir, UnfUtils.rad(helix.initialAngle) +
                                         THREE.MathUtils.degToRad(ParserConstants.RotationPerBp * cell.number));
                                 } else {

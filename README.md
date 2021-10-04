@@ -70,9 +70,11 @@ To mark fields as "not used"/containing invalid value:
       - `number` **id:** unique ID of this cell
       - `number` **number:** cell number (starting with zero; higher the number, the farther the cell is from the beginning of the virtual helix). Corresponds to base ID value of cadnano.<!-- - `[number]` **altPosition:** this field can determine the world position of this cell in space; can be used to override position determined by virtual helix & cell number-->
       - `string` **type:** text determining the type of the cell
-        - *Allowed values: n (for normal), l (for loop), s (for skip)*
-      - `number` **left:** ID of the left (5'3' direction) nucleotide
-      - `number` **right:** ID of the right (3'5' direction) nucleotide
+        - *Allowed values: n (for normal), i (for insertion/loop), d (for deletion/skip)*
+      - `[number]` **left:** IDs of the left (5'3' direction) nucleotides
+        - For normal cell (see *type* field), this array will be empty or of length 1. For deletion, it should be empty. For insertion of length n, the array will contain n+1 values.
+      - `[number]` **right:** IDs of the right (3'5' direction) nucleotides
+        - For normal cell (see *type* field), this array will be empty or of length 1. For deletion, it should be empty. For insertion of length n, the array will contain n+1 values.
 - `[object]` **naStrands:** array of individual nucleic acid single strands and their nucleotides
   - `number` **id:** unique ID of this strand
   - `string` **name:** name/title of this strand
@@ -171,8 +173,9 @@ The application serves mainly for UNF development purposes right now, it is, the
 # Converters documentation
 - **Cadnano to UNF converter (Python)**
   - Converts given cadnano files to a single UNF file
-  - Only the core features are converted now, i.e., virtual helices, their location in lattice and strands / nucleotides positions. **Support for loops, skips and similar more advanced features is missing at the moment.**
   - Circular scaffolds are processed by performing a cut at random location.
+  - Loops are converted to an "insertion" cell referencing corresponding number of nucleotides.
+  - Skips are converted to a "deletion" cell referencing no nucleotides.
 
 - **PDB to UNF converter (Python)**
   - Converts given PDB file to a single UNF file.

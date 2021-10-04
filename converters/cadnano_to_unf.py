@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # Code is using Python 3
 
-# TODO The converter currently ignores advanced functions like loops and skips
-
 import sys
 import json
 import datetime
@@ -22,8 +20,9 @@ CADNANO_NEXT_BID = 3
 
 globalIdGenerator = 0
 
+# Strand part corresponds to a number of nucleotides being located at a particular location in a strand
 class StrandPart:
-    def __init__(self, globalId, vhelixId, baseId, prevVid, prevBid, nextVid, nextBid):
+    def __init__(self, globalId, vhelixId, baseId, prevVid, prevBid, nextVid, nextBid, nuclToRepresent, insIds):
         self.globalId = globalId
         self.vhelixId = vhelixId
         self.baseId = baseId
@@ -31,15 +30,36 @@ class StrandPart:
         self.prevBid = prevBid
         self.nextVid = nextVid
         self.nextBid = nextBid
+        # Nucl to represent stores the number of nucleotides represented by this strand part
+        # For deletion, it is < 0, for normal cell 0 or 1, for insertion > 1
+        self.nuclToRepresent = nuclToRepresent
+        self.insertedNuclIds = insIds
+        self.set_prev_next(None, None)
 
     def __repr__(self):
-        return ("vid: " + str(self.vhelixId) + ", bid " + str(self.baseId) + "\n\t prev: " +
+        return ("vid: " + str(self.vhelixId) + ", bid " + str(self.baseId) + ", type " + self.get_strand_type() + "\n\t prev: " +
          ("None" if self.prevPart is None else str(self.prevPart.globalId)) + 
          "\n\t next: " + ("None" if self.nextPart is None else str(self.nextPart.globalId)))
 
     def set_prev_next(self, prevPart, nextPart):
         self.prevPart = prevPart
         self.nextPart = nextPart
+    
+    def get_strand_type(self):
+        if self.nuclToRepresent < 0:
+            return "deletion"
+        elif self.nuclToRepresent > 1:
+            return "insertion of size " + str(self.nuclToRepresent - 1)
+        else:
+            return "normal"
+    
+    def get_unf_cell_type(self):
+        if self.nuclToRepresent < 0:
+            return "d"
+        elif self.nuclToRepresent > 1:
+            return "i"
+        else:
+            return "n"
 
 class Vhelix:
     def __init__(self, id, row, col, latticeType, firstActiveCell, lastActiveCell, lastCell):
@@ -133,25 +153,27 @@ def process_cadnano_file(file_path, lattice_type):
         lastActiveCell = 0
         lastCell = 0
 
-        for idx, scaf in enumerate(vstr['scaf']):
-            isValidRecord = scaf[CADNANO_PREV_VID] >= 0 or scaf[CADNANO_NEXT_VID] >= 0
-            if isValidRecord:
-                allScaffoldRecords.append(StrandPart(globalIdGenerator, vstr['num'], idx, scaf[CADNANO_PREV_VID], 
-                scaf[CADNANO_PREV_BID], scaf[CADNANO_NEXT_VID], scaf[CADNANO_NEXT_BID]))
-                globalIdGenerator += 1
-            lastCell = max(lastCell, idx)
-            firstActiveCell = min(firstActiveCell, idx if isValidRecord else firstActiveCell)
-            lastActiveCell = max(lastActiveCell, idx if isValidRecord else lastActiveCell)
+        arrToProcess = [(vstr['scaf'], allScaffoldRecords, "scaffold"), (vstr['stap'], allStapleRecords, "staple")]
 
-        for idx, stap in enumerate(vstr['stap']):
-            isValidRecord = stap[CADNANO_PREV_VID] >= 0 or stap[CADNANO_NEXT_VID] >= 0
-            if isValidRecord:
-                allStapleRecords.append(StrandPart(globalIdGenerator, vstr['num'], idx, stap[CADNANO_PREV_VID], 
-                stap[CADNANO_PREV_BID], stap[CADNANO_NEXT_VID], stap[CADNANO_NEXT_BID]))
-                globalIdGenerator += 1
-            lastCell = max(lastCell, idx)
-            firstActiveCell = min(firstActiveCell, idx if isValidRecord else firstActiveCell)
-            lastActiveCell = max(lastActiveCell, idx if isValidRecord else lastActiveCell)
+        for arrDestPair in arrToProcess:
+            for idx, strRec in enumerate(arrDestPair[0]):
+                isValidRecord = strRec[CADNANO_PREV_VID] >= 0 or strRec[CADNANO_NEXT_VID] >= 0
+                nuclToRepr = vstr['skip'][idx] if vstr['skip'][idx] < 0 else ((vstr['loop'][idx] + 1) if vstr['loop'][idx] > 0 else 1)
+                if isValidRecord:
+                    thisId = globalIdGenerator
+                    globalIdGenerator += 1
+                    insIds = []
+                    for lId in range(nuclToRepr - 1):
+                        insIds.append(globalIdGenerator)
+                        globalIdGenerator += 1
+                    arrDestPair[1].append(StrandPart(thisId, vstr['num'], idx, strRec[CADNANO_PREV_VID], 
+                    strRec[CADNANO_PREV_BID], strRec[CADNANO_NEXT_VID], strRec[CADNANO_NEXT_BID], nuclToRepr, insIds))
+                lastCell = max(lastCell, idx)
+                if nuclToRepr < 0 or nuclToRepr > 1:
+                    print("Found", arrDestPair[2], arrDestPair[1][-1].get_strand_type())
+
+                firstActiveCell = min(firstActiveCell, idx if isValidRecord else firstActiveCell)
+                lastActiveCell = max(lastActiveCell, idx if isValidRecord else lastActiveCell)
         
         processedVhelices.append(Vhelix(vstr['num'], vstr['row'], vstr['col'], lattice_type, firstActiveCell, lastActiveCell, lastCell))
 
@@ -162,10 +184,10 @@ def process_cadnano_file(file_path, lattice_type):
         print("Virtual helix: ", str(vhelix))
     
     for strandComp in individualScaffoldStrands:
-        print("Scaffold strand found of length: ", len(strandComp))
+        print("Scaffold strand found, routed via", len(strandComp), "cells")
 
     for strandComp in individualStapleStrands:
-        print("Staple strand found of length: ", len(strandComp))     
+        print("Staple strand found, routed via", len(strandComp), "cells")     
     
     file.close()
 
@@ -177,6 +199,40 @@ def strands_to_unf_data(unfFileData, strandsList, allStrandParts, areScaffolds):
     global globalIdGenerator
 
     for strand in strandsList:
+        # Each strand is an array of strand parts (StrandPart).
+        # Since one strand part may represent different number of nucleotides
+        # or possibly none at all, the parts will be preprocessed to work
+        # with a consecutive sequence of nucleotides where deleted ones are omitted
+        # and insertions are "expanded".
+        
+        # Index i refers to i-th nucleotide of a strand
+        # Its next/prev nucleotides have neighboring IDs in the ntIds array
+        ntIds = []
+        ntPairs = []
+
+        for strandPart in strand:
+            cellType = strandPart.get_unf_cell_type()
+            if cellType == "n":
+                ntIds.append(strandPart.globalId)
+                ntPairs.append(next((x.globalId for y in allStrandParts for x in y if x.vhelixId == strandPart.vhelixId and
+                 x.baseId == strandPart.baseId and x.globalId != strandPart.globalId), -1))
+            elif cellType == "i":
+                idsToAdd = [strandPart.globalId] + strandPart.insertedNuclIds
+                pairPart = next((x for y in allStrandParts for x in y if x.vhelixId == strandPart.vhelixId and
+                 x.baseId == strandPart.baseId and x.globalId != strandPart.globalId), None)
+
+                pairsToAdd = []
+                if pairPart != None:
+                    pairsToAdd = pairPart.insertedNuclIds[::-1] + [pairPart.globalId]
+                else:
+                    pairsToAdd = [-1] * len(idsToAdd)
+                
+                ntIds += idsToAdd
+                ntPairs += pairsToAdd
+            # For deletion, "deletion" cell exists but it contains no nucleotides
+            # and is thus ignored on the level of DNA data structure.
+            # The resulting strand, therefore, simply "goes through that cell without stopping".
+            
         strandObject = {}
 
         strandObject['id'] = globalIdGenerator
@@ -187,18 +243,17 @@ def strands_to_unf_data(unfFileData, strandsList, allStrandParts, areScaffolds):
         strandObject['color'] = "#0000FF" if areScaffolds else "#{:02x}{:02x}{:02x}".format(r(), r(), r())
         strandObject['isScaffold'] = areScaffolds
         strandObject['pdbFileId'] = -1
-        strandObject['fivePrimeId'] = strand[0].globalId
-        strandObject['threePrimeId'] = strand[-1].globalId
+        strandObject['fivePrimeId'] = ntIds[0]
+        strandObject['threePrimeId'] = ntIds[-1]
 
         nucleotides = []
-        for strandPart in strand:
+        for i in range(len(ntIds)):
             newNucl = {}
-            newNucl['id'] = strandPart.globalId
+            newNucl['id'] = ntIds[i]
             newNucl['nbAbbrev'] = "A" # TODO Sequence is hardcoded now
-            newNucl['pair'] = next((x.globalId for y in allStrandParts for x in y if x.vhelixId == strandPart.vhelixId and
-                 x.baseId == strandPart.baseId and x.globalId != strandPart.globalId), -1)
-            newNucl['prev'] = strandPart.prevPart.globalId if strandPart.prevPart is not None else -1
-            newNucl['next'] = strandPart.nextPart.globalId if strandPart.nextPart is not None else -1
+            newNucl['pair'] = ntPairs[i]
+            newNucl['prev'] = ntIds[i - 1] if i > 0 else -1
+            newNucl['next'] = ntIds[i + 1] if i < len(ntIds) - 1 else - 1
             newNucl['pdbId'] = -1
             newNucl['altPositions'] = []
 
@@ -206,6 +261,7 @@ def strands_to_unf_data(unfFileData, strandsList, allStrandParts, areScaffolds):
 
         strandObject['nucleotides'] = nucleotides
         resultingObjects.append(strandObject)
+        print("Scaffold" if areScaffolds else "Staple", "strand object generated with", len(nucleotides), "nucleotides.")
 
     unfFileData['naStrands'] += resultingObjects
 
@@ -251,8 +307,8 @@ def convert_data_to_unf_file(latticesData, latticesPositions):
                 globalIdGenerator += 1
                 newCell['number'] = i
                 newCell['type'] = "n"
-                newCell['left'] = -1
-                newCell['right'] = -1
+                newCell['left'] = []
+                newCell['right'] = []
 
                 # This is very computationally inoptimal.
                 # In any case, the purpose of this code is to
@@ -262,28 +318,34 @@ def convert_data_to_unf_file(latticesData, latticesPositions):
                     for x in sp:
                         if x.vhelixId == vhelix.id and x.baseId == i:
                             currPart = x
-                            strVhelixStartPart = currPart
-                            strVhelixEndPart = currPart
-
-                            while currPart.prevPart != None and currPart.prevPart.vhelixId == vhelix.id:
-                                currPart = currPart.prevPart
+                            cellType = currPart.get_unf_cell_type()
+                            newCell['type'] = cellType        
+                            
+                            if cellType != "d":
                                 strVhelixStartPart = currPart
-                            
-                            while currPart.nextPart != None and currPart.nextPart.vhelixId == vhelix.id:
-                                currPart = currPart.nextPart
                                 strVhelixEndPart = currPart
+                                
+                                while currPart.prevPart != None and currPart.prevPart.vhelixId == vhelix.id:
+                                    currPart = currPart.prevPart
+                                    strVhelixStartPart = currPart
                             
-                            # We can afford "and" instead of "or" because the start/end parts are initialized
-                            # with this strand part and the comparsion includes equality
-                            if strVhelixStartPart.baseId <= x.baseId and strVhelixEndPart.baseId >= x.baseId:
-                                if newCell['left'] >= 0:
-                                    print("Error! Rewriting content of a valid cell with a new value.", vhelix.row, vhelix.col, i, newCell['left'], x.globalId)
-                                newCell['left'] = x.globalId
-                            elif strVhelixStartPart.baseId >= x.baseId and strVhelixEndPart.baseId <= x.baseId:
-                                if newCell['right'] >= 0:
-                                    print("Error! Rewriting content of a valid cell with a new value.", vhelix.row, vhelix.col, i, newCell['right'], x.globalId)
-                                newCell['right'] = x.globalId
-
+                                while currPart.nextPart != None and currPart.nextPart.vhelixId == vhelix.id:
+                                    currPart = currPart.nextPart
+                                    strVhelixEndPart = currPart
+                                
+                                # We can afford "and" instead of "or" because the start/end parts are initialized
+                                # with this strand part and the comparsion includes equality
+                                if strVhelixStartPart.baseId <= x.baseId and strVhelixEndPart.baseId >= x.baseId:
+                                    if len(newCell['left']) > 0:
+                                        print("Error! Rewriting content of a valid cell with a new value.", vhelix.row,
+                                         vhelix.col, i, newCell['left'], x.globalId)
+                                    newCell['left'] = [x.globalId] + x.insertedNuclIds
+                                elif strVhelixStartPart.baseId >= x.baseId and strVhelixEndPart.baseId <= x.baseId:
+                                    if len(newCell['right']) > 0:
+                                        print("Error! Rewriting content of a valid cell with a new value.", vhelix.row, 
+                                        vhelix.col, i, newCell['right'], x.globalId)
+                                    newCell['right'] = [x.globalId] + x.insertedNuclIds
+              
                 cells.append(newCell)
 
             outputVhelix['cells'] = cells
@@ -306,9 +368,13 @@ def getInputFilesToProcess(argv):
     for i in range(1, len(argv)):
         thisArg = argv[i]
         splitArr = thisArg.split(':')
-        resPaths.append(splitArr[0]) # Path to file
-        resTypes.append(splitArr[1]) # Its lattice type
-        resPositions.append(splitArr[2]) # The lattice position
+        if len(splitArr) != 3:
+            print("Invalid argument!", thisArg, splitArr)
+            sys.exit(1)
+        else:
+            resPaths.append(splitArr[0]) # Path to file
+            resTypes.append(splitArr[1]) # Its lattice type
+            resPositions.append(splitArr[2]) # The lattice position
     
     return (resPaths, resTypes, resPositions)
 

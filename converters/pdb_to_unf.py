@@ -140,8 +140,7 @@ def get_nt_pos(residue):
     a1 = get_a1(residue, atNamesMap)
     a3 = get_a3(residue, atNamesMap, nbCenter)
 
-    return NucleotidePos(nbCenter, bbCenter, 
-    a3, a1)
+    return NucleotidePos(nbCenter, bbCenter, a3, a1)
     
 def process_na_strand(chainName, residues, naType):
     print("Processing", naType, "strand with", len(residues), "nucleotides.")
