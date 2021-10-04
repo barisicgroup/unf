@@ -129,7 +129,7 @@ export function parseUNF(jsonTreeView, unfFileContent, relatedFilesList) {
 
     // Lattices are not referring to any external files 
     // so they can be processed instantly
-    processLattices(parsedJson, rescaledParent);
+    const nuclToCellDict = processLattices(parsedJson, rescaledParent);
 
     // The rest may depend on external files which need to be first processed
     // and after this is done, UNF parsing can continue
@@ -138,7 +138,7 @@ export function parseUNF(jsonTreeView, unfFileContent, relatedFilesList) {
     // though the processing is not finished
     processExternalFiles(parsedJson, includedFileNameToContentMap, rescaledParent, relatedFilesList,
         function (fileIdToFileDataMap) {
-            processSingleStrands(parsedJson, rescaledParent, fileIdToFileDataMap);
+            processSingleStrands(parsedJson, rescaledParent, fileIdToFileDataMap, nuclToCellDict);
             processProteins(parsedJson, rescaledParent, fileIdToFileDataMap);
             processMolecules(parsedJson, rescaledParent, fileIdToFileDataMap)
         });
@@ -279,6 +279,7 @@ function processLattices(parsedJson, objectsParent) {
 
     const lattices = parsedJson.lattices;
     const hslOffsetStep = 1 / lattices.length;
+    const nuclToCellDict = {};
 
     lattices.forEach(lattice => {
         ParserUtils.getFileContentText().value += lattice.type + " lattice: " + lattice.name + "\n---\n";
@@ -308,11 +309,19 @@ function processLattices(parsedJson, objectsParent) {
             for (let i = 0; i <= vhelix.lastCell; ++i) {
                 let thisMat = cylinderTranspMaterial;
 
-                if(i < vhelix.cells.length) {
-                    if(vhelix.cells[i].type === "d") {
+                if (i < vhelix.cells.length) {
+                    if (vhelix.cells[i].type === "d") {
                         thisMat = cellDeletMaterial;
-                    } else if(vhelix.cells[i].type === "i") {
+                    } else if (vhelix.cells[i].type === "i") {
                         thisMat = cellInsMaterial;
+                    }
+
+                    for (let l = 0; l < vhelix.cells[i].left.length; ++l) {
+                        nuclToCellDict[vhelix.cells[i].left[l]] = [lattice, vhelix, vhelix.cells[i]];
+                    }
+    
+                    for (let l = 0; l < vhelix.cells[i].right.length; ++l) {
+                        nuclToCellDict[vhelix.cells[i].right[l]] = [lattice, vhelix, vhelix.cells[i]];
                     }
                 }
 
@@ -326,6 +335,8 @@ function processLattices(parsedJson, objectsParent) {
 
         });
     });
+
+    return nuclToCellDict;
 }
 
 function getLatticePositionForIndex(row, col, z, lattice) {
@@ -357,7 +368,7 @@ function getLatticePositionForIndex(row, col, z, lattice) {
     return pos;
 }
 
-function processSingleStrands(parsedJson, objectsParent, fileIdToFileDataMap) {
+function processSingleStrands(parsedJson, objectsParent, fileIdToFileDataMap, nuclToCellDict) {
     const sphereGeometry = new THREE.SphereGeometry(2, 6, 6);
 
     parsedJson.naStrands.forEach(strand => {
@@ -393,42 +404,37 @@ function processSingleStrands(parsedJson, objectsParent, fileIdToFileDataMap) {
             // fully separated processing of virtual helices and single strands.
             else {
                 let position = null;
+                const nuclRec = nuclToCellDict[currNucleotide.id];
+                const lattice = nuclRec[0];
+                const helix = nuclRec[1];
+                const cell = nuclRec[2];
+                
+                if (cell !== undefined) {
+                    const inCellIdx = Math.max(cell.left.indexOf(currNucleotide.id), cell.right.indexOf(currNucleotide.id));
+                    const insertedNucleotidesVisualOffset = 3;
+                    const sign = cell.left.includes(currNucleotide.id) ? 1 : -1;
 
-                parsedJson.lattices.forEach(lattice => {
-                    lattice.virtualHelices.forEach(helix => {
-                        helix.cells.forEach(cell => {
-                            if (cell.left.includes(currNucleotide.id) || cell.right.includes(currNucleotide.id)) {
-                                if (position !== null) {
-                                    console.error("Error! One nucleotide referenced in more cells.", currNucleotide);
-                                }
+                    position = getLatticePositionForIndex(helix.latticePosition[0], helix.latticePosition[1] + sign * (inCellIdx > 0 ? insertedNucleotidesVisualOffset : 0), cell.number + sign * inCellIdx, lattice);
 
-                                const inCellIdx = Math.max(cell.left.indexOf(currNucleotide.id), cell.right.indexOf(currNucleotide.id));
-                                const insertedNucleotidesVisualOffset = 3;
-                                const sign = cell.left.includes(currNucleotide.id) ? 1 : -1;
+                    const xNeighborPos = getLatticePositionForIndex(helix.latticePosition[0], helix.latticePosition[1] + 2, cell.number, lattice);
+                    const zNeighborPos = getLatticePositionForIndex(helix.latticePosition[0], helix.latticePosition[1], cell.number + 1, lattice);
 
-                                position = getLatticePositionForIndex(helix.latticePosition[0], helix.latticePosition[1] + sign * (inCellIdx > 0 ? insertedNucleotidesVisualOffset : 0), cell.number + sign * inCellIdx, lattice);
+                    const xDir = xNeighborPos.clone().sub(position).normalize();
+                    const zDir = zNeighborPos.clone().sub(position).normalize();
 
-                                const xNeighborPos = getLatticePositionForIndex(helix.latticePosition[0], helix.latticePosition[1] + 2, cell.number, lattice);
-                                const zNeighborPos = getLatticePositionForIndex(helix.latticePosition[0], helix.latticePosition[1], cell.number + 1, lattice);
+                    let rot = undefined;
 
-                                const xDir = xNeighborPos.clone().sub(position).normalize();
-                                const zDir = zNeighborPos.clone().sub(position).normalize();
+                    if (cell.left.includes(currNucleotide.id)) {
+                        rot = xDir.clone().applyAxisAngle(zDir, UnfUtils.rad(helix.initialAngle) +
+                            THREE.MathUtils.degToRad(ParserConstants.RotationPerBp * cell.number));
+                    } else {
+                        rot = xDir.clone().applyAxisAngle(zDir, UnfUtils.rad(helix.initialAngle) +
+                            THREE.MathUtils.degToRad(180) + THREE.MathUtils.degToRad(ParserConstants.RotationPerBp * cell.number));
+                    }
 
-                                let rot = undefined;
+                    position.add(rot.normalize().multiplyScalar(ParserConstants.VHelixRadius * 0.8));
+                }
 
-                                if (cell.left.includes(currNucleotide.id)) {
-                                    rot = xDir.clone().applyAxisAngle(zDir, UnfUtils.rad(helix.initialAngle) +
-                                        THREE.MathUtils.degToRad(ParserConstants.RotationPerBp * cell.number));
-                                } else {
-                                    rot = xDir.clone().applyAxisAngle(zDir, UnfUtils.rad(helix.initialAngle) +
-                                        THREE.MathUtils.degToRad(180) + THREE.MathUtils.degToRad(ParserConstants.RotationPerBp * cell.number));
-                                }
-
-                                position.add(rot.normalize().multiplyScalar(ParserConstants.VHelixRadius * 0.8));
-                            }
-                        });
-                    });
-                });
 
                 if (position === null) {
                     console.error("Invalid nucleotide position: ", currNucleotide);
@@ -461,11 +467,11 @@ function processSingleStrands(parsedJson, objectsParent, fileIdToFileDataMap) {
                     objectsParent.add(bbToNbArrow);
 
                     const baseNormArrow = new THREE.ArrowHelper(nucleobaseNormals[i].normalize(),
-                    nucleobasePositions[i], 2, "#0000FF");
+                        nucleobasePositions[i], 2, "#0000FF");
                     objectsParent.add(baseNormArrow);
 
                     const baseHydrogFaceArrow = new THREE.ArrowHelper(nucleobaseHydrFacesDirs[i].normalize(),
-                    nucleobasePositions[i], 2, "#00FF00");
+                        nucleobasePositions[i], 2, "#00FF00");
                     objectsParent.add(baseHydrogFaceArrow);
                 }
             }
