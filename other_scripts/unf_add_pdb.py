@@ -33,7 +33,7 @@ def modify_unf(unfFile, pdbFile, molName, molPos, molRot):
         pdbFullContent = file.read()
         pdbContent = re.sub("\r\n|\n|\r", "", pdbFullContent)
 
-    newExternalFile["hash"] = hashlib.md5(pdbContent).hexdigest()
+    newExternalFile["hash"] = hashlib.md5(pdbContent.encode("utf-8")).hexdigest()
     parsedData["externalFiles"].append(newExternalFile)
 
     newMolecule = {}
