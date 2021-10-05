@@ -98,8 +98,8 @@ To mark fields as "not used"/containing invalid value:
       - `[object]` **altPositions:**  An array of alternative positions of this nucleotide. By default, zeroth position is considered as the current one. More positions can be stored for dynamics/animation purposes.
         - `[number]` **nucleobaseCenter:** centroid location of the nucleobase
         - `[number]` **backboneCenter:** centroid location of the backbone 
-        - `[number]` **baseNormal:** normal vector of the nucleobase plane (corresponds to nucleotide standard ref. frame z-axis)
-        - `[number]` **hydrogenFaceDir:** vector describing the direction of the face containing nucleobase's hydrogen bonds. Roughly corresponds to the standard ref. frame y-axis, i.e., it goes along the long axis of the base pair.
+        - `[number]` **baseNormal:** normal vector of the nucleobase plane (facing in 5'3' direction)
+        - `[number]` **hydrogenFaceDir:** vector describing the direction of the face containing nucleobase's hydrogen bonds.
 - `[object]` **proteins:** array of coarse-grained stored proteins
   - `number` **id:** unique ID of this protein
   - `string` **name:** name/title of this protein
