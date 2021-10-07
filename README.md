@@ -40,6 +40,8 @@ To mark fields as "not used"/containing invalid value:
 - `string` **author:** structure author name  
 - `string` **creationDate:** structure creation date (stored in ISO 8601 standard, i.e., as YYYY-MM-DDThh:mm:ss) 
 - `string` **doi:** DOI of the publication related to the structure stored in the file  
+- `object` **simData:** object carrying data related to simulations
+  - `[number]` **boxSize:** length of the box sides (x, y, z)
 - `[object]` **externalFiles:** array of files which are referenced throughout the UNF file's content
   - `number` **id:** unique number ID
   - `string` **path:** path to the file / file name
