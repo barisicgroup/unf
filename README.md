@@ -4,12 +4,12 @@
 UNF aims to allow for storing of DNA nanotechnology data (for example, DNA origami lattice designs and individual free-form single strands) together with proteins and other molecules in one file.
 
 ## Version
-0.6
+0.7
 
 ## Format type
 JSON-based
 
-The core of the UNF file is pure JSON. However, due to the possibility to include other files directly in the UNF file (e.g., PDB, see field *externalFiles*), the final *.unf file cannot be always considered as a valid JSON file.
+The core of the UNF file is pure JSON. However, due to the possibility to include other files directly in the UNF file (e.g., PDB, see field *externalFiles*), the final *.unf file cannot be always considered as a valid JSON file. However, extracting the JSON core is a straightforward task.
 
 ## General notes
 Positions are stored in [x, y, z] order, units are determined by the *lengthUnits* field.  
@@ -17,7 +17,7 @@ Rotations/orientations are stored in Euler angles ("angularUnits" field determin
 Zero-indexing is used.
 
 ## Conventions
-IDs are unsigned integers.  
+IDs are integers – unsigned to denote valid ID.  
 To mark fields as "not used"/containing invalid value:
  - value "-1" should be used in ID-related fields (or in other fields where the meaningful values are only zero or greater)
  - empty array should be used in array-typed fields
@@ -98,8 +98,10 @@ To mark fields as "not used"/containing invalid value:
       - `[object]` **altPositions:**  An array of alternative positions of this nucleotide. By default, zeroth position is considered as the current one. More positions can be stored for dynamics/animation purposes.
         - `[number]` **nucleobaseCenter:** centroid location of the nucleobase
         - `[number]` **backboneCenter:** centroid location of the backbone 
-        - `[number]` **baseNormal:** normal vector of the nucleobase plane (facing in 5'3' direction)
-        - `[number]` **hydrogenFaceDir:** vector describing the direction of the face containing nucleobase's hydrogen bonds.
+        - `[number]` **baseNormal:** normal vector of the nucleobase plane (facing in 5'3' direction). 
+          - See *Nucleobase vectors* section of the documentation for additional information.
+        - `[number]` **hydrogenFaceDir:** vector describing the direction of the face containing nucleobase's hydrogen bonds
+          - See *Nucleobase vectors* section of the documentation for additional information.
 - `[object]` **proteins:** array of coarse-grained stored proteins
   - `number` **id:** unique ID of this protein
   - `string` **name:** name/title of this protein
@@ -161,6 +163,27 @@ To mark fields as "not used"/containing invalid value:
   - `[number]` **externalFileId:** ID of the relevant external structure file  
   - `[number]` **idtText:** string describing type of modification  
 - `object` **misc:** object which is by default empty but should be used for storing any application-specific/domain-specific information which could not have been stored in the other fields. It can be also used for storing comments.
+
+# Nucleobase vectors
+Apart from storing the position of a nucleotide, UNF also stores orientation of its nucleobase.   
+This information is represented by two vectors – *baseNormal* and *hydrogenFaceDir* – defining the directions along with the stacking and hydrogen bonding interactions happen. To foster compatibility with existing applications, it was opted for making these vectors correspond to the *a3* (&rarr; *baseNormal*) and *a1* (&rarr; *hydrogenFaceDir*) oxDNA vectors, as this model is widely accepted and validated [[1]](https://doi.org/10.1063/1.4921957), [[2]](https://doi.org/10.1063/1.4961398), [[3]](https://doi.org/10.1002/jcc.26029).  
+In this section, the relation of these vectors to nucleotide atoms will be described.   
+For better understanding, atom names of DNA nucleobases are visualized below.
+
+| Adenine | Thymine  |
+|---------|----------|
+| ![Adenine](docs/nucl_da.png "Adenine") | ![Thymine](docs/nucl_dt.png "Thymine") |
+
+| Guanine | Cytosine |
+|---------|----------|
+| ![Guanine](docs/nucl_dg.png "Guanine") | ![Cytosine](docs/nucl_dc.png "Cytosine") |
+
+
+### Vector *baseNormal*
+TODO
+
+### Vector *hydrogenFaceDir*
+TODO
 
 # UNF Viewer documentation
 The UNF Viewer is written in JavaScript and Three.js library.    
