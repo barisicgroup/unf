@@ -166,9 +166,9 @@ To mark fields as "not used"/containing invalid value:
 
 # Nucleobase vectors
 Apart from storing the position of a nucleotide, UNF also stores orientation of its nucleobase.   
-This information is represented by two vectors – *baseNormal* and *hydrogenFaceDir* – defining the directions along with the stacking and hydrogen bonding interactions happen. To foster compatibility with existing applications, it was opted for making these vectors correspond to the *a3* (&rarr; *baseNormal*) and *a1* (&rarr; *hydrogenFaceDir*) oxDNA vectors, as this model is widely accepted and validated [[1]](https://doi.org/10.1063/1.4921957), [[2]](https://doi.org/10.1063/1.4961398), [[3]](https://doi.org/10.1002/jcc.26029).  
-In this section, the relation of these vectors to nucleotide atoms will be described.   
-For better understanding, atom names of DNA nucleobases are visualized below.
+This information is represented by two vectors – *baseNormal* and *hydrogenFaceDir* – defining the directions along which the stacking and hydrogen bonding interactions happen. To foster compatibility with existing applications, it was opted for making these vectors correspond to the *a3* (&rarr; *baseNormal*) and *a1* (&rarr; *hydrogenFaceDir*) oxDNA vectors, as this model is already used in the field and experimentally validated [[1]](https://doi.org/10.1063/1.4921957), [[2]](https://doi.org/10.1063/1.4961398), [[3]](https://doi.org/10.1002/jcc.26029).  
+In this section, the relation of these vectors to nucleotide atoms will be described in a form of simple pseudocode (based on the conversion performed by [tacoxDNA](https://doi.org/10.1002/jcc.26029) scripts and the respective parts by Lorenzo Rovigatti).   
+For better imagination, atom names of DNA nucleobases are visualized in the figure below. As for uracil, its ring atoms carry the same name as thymine's atoms.
 
 | Adenine | Thymine  |
 |---------|----------|
@@ -180,10 +180,44 @@ For better understanding, atom names of DNA nucleobases are visualized below.
 
 
 ### Vector *baseNormal*
-TODO
+The computation of nucleobase normal exploits planarity of base atoms to compute the result. To end up with proper direction of the normal with respect to the directionality of the strand, it is based on a precondition that O4' sugar oxygen is oriented in 3'5' direction with respect to the centre of mass of the base.
+
+```matlab
+function baseNormal(nucleobase):
+    baseCom = nucleobase.centerOfMass
+    parallelDir = "O4'" - baseCom
+    ringAtoms = ["C2", "C4", "C5", "C6", "N1", "N3"]
+    bn = (0, 0, 0)
+    
+    foreach permutation (p,q,r) from ringAtoms:
+        v1 = normalize(p - q)
+        v2 = normalize(p - r)
+        if v1•v2 > 0.01 or 1:
+            tmp = normalize(v1×v2)
+            if tmp•parallelDir < 0:
+                negate(tmp)
+            bn += tmp
+    
+    return normalize(bn)
+```
 
 ### Vector *hydrogenFaceDir*
-TODO
+The idea of computing hydrogen face direction lies in adding together three vectors, of which each faces roughly along the hydrogen bonding direction, followed by normalization of the result.
+
+```matlab
+function hydrogenFaceDir(nucleobase):
+    if nucleobase is purine:
+        v1 = vector from "C4" to "N1"
+        v2 = vector from "N3" to "C2"
+        v3 = vector from "C5" to "C6"
+    else:
+        v1 = vector from "C6" to "N3"
+        v2 = vector from "N1" to "C2"
+        v3 = vector from "C5" to "C4"
+    
+    v = v1 + v2 + v3
+    return normalize(v)
+```
 
 # UNF Viewer documentation
 The UNF Viewer is written in JavaScript and Three.js library.    
