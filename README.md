@@ -77,37 +77,37 @@ To mark fields as "not used"/containing invalid value:
         - For normal cell (see *type* field), this array will be empty or of length 1. For deletion, it should be empty. For insertion of length n, the array will contain n+1 values.
       - `[number]` **right:** IDs of the right (3'5' direction) nucleotides
         - For normal cell (see *type* field), this array will be empty or of length 1. For deletion, it should be empty. For insertion of length n, the array will contain n+1 values.
-- `[object]` **naStrands:** array of individual nucleic acid single strands and their nucleotides
-  - `number` **id:** unique ID of this strand
-  - `string` **name:** name/title of this strand
-  - `boolean` **isScaffold:** boolean determining whether this is a scaffold strand or a staple strand
-  - `string` **naType:** nucleic acid type
-    - *Allowed values: DNA, RNA, XNA*
-  - `string` **color:** hex string storing the color for this strand
-  - `number` **fivePrimeId:** ID of the 5' nucleotide
-  - `number` **threePrimeId:** ID of the 3' nucleotide
-  - `number` **pdbFileId:** ID of the relevant external PDB file (for loading atomic data)
-  - `string` **chainName:** name of the chain in the referenced PDB
-  - `[object]` **nucleotides:** array of nucleotides of this strand
-      - `number` **id:** unique ID of this nucleotide
-      - `number` **nbAbbrev:** nucleobase type
-        - *Allowed values: A, T, C, G, U*
-        - *Other values may result in application incompatibility*
-      - `number` **pair:** ID of the complementary nucleotide
-      - `number` **prev:** ID of the preceding nucleotide in the strand
-      - `number` **next:** ID of the following nucleotide in the strand
-      - `number` **pdbId:** identification of the relevant residue in the PDB file (to load atoms)
-      - `[object]` **altPositions:**  An array of alternative positions of this nucleotide. By default, zeroth position is considered as the current one. More positions can be stored for dynamics/animation purposes.
-        - `[number]` **nucleobaseCenter:** centroid location of the nucleobase
-        - `[number]` **backboneCenter:** centroid location of the backbone 
-        - `[number]` **baseNormal:** normal vector of the nucleobase plane (facing in 5'3' direction). 
-          - See *Nucleobase vectors* section of the documentation for additional information.
-        - `[number]` **hydrogenFaceDir:** vector describing the direction of the face containing nucleobase's hydrogen bonds
-          - See *Nucleobase vectors* section of the documentation for additional information.
-- `[object]` **proteins:** array of coarse-grained stored proteins
-  - `number` **id:** unique ID of this protein
-  - `string` **name:** name/title of this protein
-  - `[object]` **chains:** array of chains of the given protein
+- `[object]` **structures:** array of molecular structures, each of which is a set of nucleic acid strands, protein chains or combination of both
+  - `number` **id:** unique ID of this structure
+  - `string` **name:** name/title of this structure
+  - `[object]` **naStrands:** array of individual nucleic acid single strands and their nucleotides
+    - `number` **id:** unique ID of this strand
+    - `string` **name:** name/title of this strand
+    - `boolean` **isScaffold:** boolean determining whether this is a scaffold strand or a staple strand
+    - `string` **naType:** nucleic acid type
+      - *Allowed values: DNA, RNA, XNA*
+    - `string` **color:** hex string storing the color for this strand
+    - `number` **fivePrimeId:** ID of the 5' nucleotide
+    - `number` **threePrimeId:** ID of the 3' nucleotide
+    - `number` **pdbFileId:** ID of the relevant external PDB file (for loading atomic data)
+    - `string` **chainName:** name of the chain in the referenced PDB
+    - `[object]` **nucleotides:** array of nucleotides of this strand
+        - `number` **id:** unique ID of this nucleotide
+        - `number` **nbAbbrev:** nucleobase type
+          - *Allowed values: A, T, C, G, U*
+          - *Other values may result in application incompatibility*
+        - `number` **pair:** ID of the complementary nucleotide
+        - `number` **prev:** ID of the preceding nucleotide in the strand
+        - `number` **next:** ID of the following nucleotide in the strand
+        - `number` **pdbId:** identification of the relevant residue in the PDB file (to load atoms)
+        - `[object]` **altPositions:**  An array of alternative positions of this nucleotide. By default, zeroth position is considered as the current one. More positions can be stored for dynamics/animation purposes.
+          - `[number]` **nucleobaseCenter:** centroid location of the nucleobase
+          - `[number]` **backboneCenter:** centroid location of the backbone 
+          - `[number]` **baseNormal:** normal vector of the nucleobase plane (facing in 5'3' direction). 
+            - See *Nucleobase vectors* section of the documentation for additional information.
+          - `[number]` **hydrogenFaceDir:** vector describing the direction of the face containing nucleobase's hydrogen bonds
+            - See *Nucleobase vectors* section of the documentation for additional information.
+  - `[object]` **aaChains:** array of protein chains
     - `number` **id:** unique ID of this chain
     - `string` **chainName:** chain name (used in the referenced PDB)
     - `string` **color:** hex string storing the color of this chain
@@ -122,7 +122,7 @@ To mark fields as "not used"/containing invalid value:
       - `number` **next:** ID of the following AA in the chain
       - `number` **pdbId:** identification of the relevant residue in the PDB file (to load atoms)
       - `[[number]]` **altPositions:** 2D array of alternative positions, corresponding to alpha carbon location, of this AA. By default, zeroth position is considered as a current one. More positions can be stored for dynamics/animation purposes.
-      <!--- Note: amino acids store only position now, any orientation/backbone direction data are now omitted. -->
+      <!--- Note: amino acids store only position now, any orientation/backbone direction data are now omitted. -->    
 - `object` **molecules:** object containing molecules which have some position in space but we do not care about their modifications or individual parts (e.g., PDB is enough)
   - `[object]` **ligands:** array of ligands. If there are molecules storing both proteins and ligands in one file (e.g., as a PDB), they should be referenced in field "other molecules" instead of this one.
     - `number` **id:** unique ID
