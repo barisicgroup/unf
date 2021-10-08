@@ -166,6 +166,17 @@ To mark fields as "not used"/containing invalid value:
   - `[number]` **idtText:** string describing type of modification  
 - `object` **misc:** object which is by default empty but should be used for storing any application-specific/domain-specific information which could not have been stored in the other fields. It can be also used for storing comments.
 
+# Determining nucleotide position
+The position of a nucleotide can be defined by two elements:
+
+- Lattice
+  - In lattice-based design applications, nucleotide is referenced by some cell. This cell has some location in space (defined by lattice *position*/*orientation*/*type* and cell *number*),
+which is in turn also determining the location of the nucleotide itself. The intra-cell nucleotide position (with relation to its complementary base) for 3D visualizations is then based on lattice's *initialAngle*.
+- Nucleotide's *altPositions* field
+  - This field stores the center of mass of a nucleobase and the backbone, ready to be visualized or processed in any other way
+
+In case both of these fields are present (i.e., the nucleotide is referenced by a lattice but also has a valid value in *altPositions*), **the *altPositions* field takes precedence for 3D visualization purposes**.
+
 # Nucleobase vectors
 Apart from storing the position of a nucleotide, UNF also stores orientation of its nucleobase.   
 This information is represented by two vectors – *baseNormal* and *hydrogenFaceDir* – defining the directions along which the stacking and hydrogen bonding interactions happen. To foster compatibility with existing applications, it was opted for making these vectors correspond to the *a3* (&rarr; *baseNormal*) and *a1* (&rarr; *hydrogenFaceDir*) oxDNA vectors, as this model is already used in the field and experimentally validated [[1]](https://doi.org/10.1063/1.4921957), [[2]](https://doi.org/10.1063/1.4961398), [[3]](https://doi.org/10.1002/jcc.26029).  
