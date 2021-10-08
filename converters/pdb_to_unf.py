@@ -75,8 +75,7 @@ class NucleicAcid:
         self.prev = prevNa
         self.next = nextNa
 
-# a1 computed in accordance with tacoxDNA (PDB -> oxDNA Python converter)
-def get_a1(residue, atNamesMap):
+def get_hydr_face_dir(residue, atNamesMap):
     res_vector = np.array([0.0, 0.0, 0.0])
 
     if "C" in residue.name or "T" in residue.name or "U" in residue.name:
@@ -92,10 +91,9 @@ def get_a1(residue, atNamesMap):
 
     return unfutils.normalize(res_vector)
 
-# a3 computed in accordance with tacoxDNA (PDB -> oxDNA Python converter)
-def get_a3(residue, atNamesMap, nbCenter):
+def get_base_normal(residue, atNamesMap, nbCenter):
     parallel_to = np.subtract(np.asarray(atNamesMap["O4'"].location), nbCenter)
-    a3 = np.array([0.0, 0.0, 0.0])
+    res = np.array([0.0, 0.0, 0.0])
 
     for perm in itertools.permutations(unfutils.NUCLEOBASE_RING_COMMON_ATOMS, 3):
         p = atNamesMap[perm[0]]
@@ -108,12 +106,12 @@ def get_a3(residue, atNamesMap, nbCenter):
             np.subtract(np.asarray(p.location), np.asarray(r.location)))
 
         if abs(np.dot(v1, v2)) > 0.01 or 1:
-            curr_a3 = unfutils.normalize(np.cross(v1, v2))
-            if np.dot(curr_a3, parallel_to) < 0.0:
-                curr_a3 = -curr_a3
-            a3 = np.add(a3, curr_a3)
+            curr_res = unfutils.normalize(np.cross(v1, v2))
+            if np.dot(curr_res, parallel_to) < 0.0:
+                curr_res = -curr_res
+            res = np.add(res, curr_res)
         
-        return unfutils.normalize(a3)
+        return unfutils.normalize(res)
 
 def get_nt_pos(residue):
     bbCenter = np.array([0.0, 0.0, 0.0])
@@ -137,10 +135,10 @@ def get_nt_pos(residue):
     bbCenter = np.true_divide(bbCenter, bbCount)
     nbCenter = np.true_divide(nbCenter, nbCount)
 
-    a1 = get_a1(residue, atNamesMap)
-    a3 = get_a3(residue, atNamesMap, nbCenter)
+    hydrFaceDir = get_hydr_face_dir(residue, atNamesMap)
+    baseNormal = get_base_normal(residue, atNamesMap, nbCenter)
 
-    return NucleotidePos(nbCenter, bbCenter, a3, a1)
+    return NucleotidePos(nbCenter, bbCenter, baseNormal, hydrFaceDir)
     
 def process_na_strand(chainName, residues, naType):
     print("Processing", naType, "strand with", len(residues), "nucleotides.")
@@ -219,6 +217,13 @@ def convert_data_to_unf_file(pdbFile, aaChains, naStrands):
     unf_file_data = unfutils.initialize_unf_file_data_object(pdbFile.code + ", " + pdbFile.title,
          ", ".join(pdbFile.authors) + " (converted to UNF by PDB to UNF converter)")
     
+    newStructure = {}
+    newStructure["id"] = globalIdGenerator
+    globalIdGenerator += 1
+    newStructure["name"] = pdbFile.code
+    newStructure["naStrands"] = []
+    newStructure["aaChains"] = []
+
     for strand in naStrands:
         newStrObj = {}
         newStrObj["id"] = strand.id
@@ -257,13 +262,7 @@ def convert_data_to_unf_file(pdbFile, aaChains, naStrands):
             if currNucl == None:
                 break
 
-        unf_file_data["naStrands"].append(newStrObj)
-
-    prot = {}
-    prot["id"] = globalIdGenerator
-    globalIdGenerator += 1
-    prot["name"] = pdbFile.code
-    prot["chains"] = []
+        newStructure["naStrands"].append(newStrObj)
 
     for chain in aaChains:
         newChainObj = {}
@@ -293,9 +292,9 @@ def convert_data_to_unf_file(pdbFile, aaChains, naStrands):
             if currAa == None:
                 break
 
-        prot["chains"].append(newChainObj)
+        newStructure["aaChains"].append(newChainObj)
     
-    unf_file_data["proteins"].append(prot)
+    unf_file_data['structures'].append(newStructure)
     unf_file_data["idCounter"] = globalIdGenerator
 
     with open(OUTPUT_FILE_NAME, 'w') as outfile:

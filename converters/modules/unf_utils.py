@@ -15,7 +15,7 @@ def initialize_unf_file_data_object(name, author, lenUnits = "A", angUnits = "de
     unfFileData = {}
 
     unfFileData['format'] = "unf"
-    unfFileData['version'] = 0.6
+    unfFileData['version'] = 0.7
     unfFileData['idCounter'] = 0
     unfFileData['lengthUnits'] = lenUnits
     unfFileData['angularUnits'] = angUnits
@@ -23,11 +23,12 @@ def initialize_unf_file_data_object(name, author, lenUnits = "A", angUnits = "de
     unfFileData['author'] = author
     unfFileData['creationDate'] = datetime.datetime.now().replace(microsecond=0).isoformat()
     unfFileData['doi'] = "NULL"
+    unfFileData['simData'] = {}
+    unfFileData['simData']['boxSize'] = []
     unfFileData['externalFiles'] = []
     unfFileData['lattices'] = []
-    unfFileData['naStrands'] = []
+    unfFileData['structures'] = []
     unfFileData['groups'] = []
-    unfFileData['proteins'] = []
     unfFileData['connections'] = []
     unfFileData['modifications'] = []
     unfFileData['misc'] = {}

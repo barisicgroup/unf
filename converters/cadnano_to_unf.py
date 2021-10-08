@@ -193,7 +193,7 @@ def process_cadnano_file(file_path, lattice_type):
 
     return (processedVhelices, individualScaffoldStrands, individualStapleStrands)
 
-def strands_to_unf_data(unfFileData, strandsList, allStrandParts, areScaffolds):
+def strands_to_unf_data(unfFileData, thisStructure, strandsList, allStrandParts, areScaffolds):
     resultingObjects = []
     r = lambda: random.randint(0, 230)
     global globalIdGenerator
@@ -263,7 +263,7 @@ def strands_to_unf_data(unfFileData, strandsList, allStrandParts, areScaffolds):
         resultingObjects.append(strandObject)
         print("Scaffold" if areScaffolds else "Staple", "strand object generated with", len(nucleotides), "nucleotides.")
 
-    unfFileData['naStrands'] += resultingObjects
+    thisStructure['naStrands'] = thisStructure['naStrands'] + resultingObjects
 
 def convert_data_to_unf_file(latticesData, latticesPositions):
     unfFileData = unfutils.initialize_unf_file_data_object("cadnano_converted_structure", "Cadnano to UNF Python Converter Script")
@@ -352,8 +352,16 @@ def convert_data_to_unf_file(latticesData, latticesPositions):
             outputLattice['virtualHelices'].append(outputVhelix)
 
         unfFileData['lattices'].append(outputLattice)
-        strands_to_unf_data(unfFileData, scaffoldStrands, allStrandParts, True)
-        strands_to_unf_data(unfFileData, stapleStrands, allStrandParts, False)
+
+        newStructure = {}
+        newStructure['id'] = globalIdGenerator
+        globalIdGenerator += 1
+        newStructure['name'] = "Lattice-based structure"
+        newStructure['naStrands'] = []
+        newStructure['aaChains'] = []
+        strands_to_unf_data(unfFileData, newStructure, scaffoldStrands, allStrandParts, True)
+        strands_to_unf_data(unfFileData, newStructure, stapleStrands, allStrandParts, False)
+        unfFileData['structures'].append(newStructure)
     
     unfFileData['idCounter'] = globalIdGenerator
 
