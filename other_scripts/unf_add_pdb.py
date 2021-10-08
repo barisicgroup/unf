@@ -22,7 +22,10 @@ def modify_unf(unfFile, pdbFile, molName, molPos, molRot):
     parsedData = json.loads(file.read())
 
     idCounter = parsedData["idCounter"]
-    
+    # Back slashes are replaced because they are escaped in JSON
+    # which causes some issues when matching appended file name and JSON data
+    pdbFile = pdbFile.replace("\\", "/")
+
     newExternalFile = {}
     newExternalFile["id"] = idCounter
     idCounter += 1

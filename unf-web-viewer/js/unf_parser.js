@@ -3,7 +3,7 @@ import * as PdbUtils from "./pdb_utils.js"
 import * as OxDnaUtils from "./oxdna_utils.js";
 
 let ParserConstants = {
-    SupportedFormatVersion: .6,
+    SupportedFormatVersion: .7,
     AngstromsPerUnit: 256,
     VHelixRadius: 10, //A
     BasePairRise: 3.32, // A
@@ -138,8 +138,7 @@ export function parseUNF(jsonTreeView, unfFileContent, relatedFilesList) {
     // though the processing is not finished
     processExternalFiles(parsedJson, includedFileNameToContentMap, rescaledParent, relatedFilesList,
         function (fileIdToFileDataMap) {
-            processSingleStrands(parsedJson, rescaledParent, fileIdToFileDataMap, nuclToCellDict);
-            processProteins(parsedJson, rescaledParent, fileIdToFileDataMap);
+            processStructures(parsedJson, rescaledParent, fileIdToFileDataMap, nuclToCellDict);
             processMolecules(parsedJson, rescaledParent, fileIdToFileDataMap)
         });
 
@@ -156,7 +155,6 @@ function splitJsonAndIncludedFilesFromUNF(unfFileContent, includedFileNameToCont
             const firstLineBreakIdx = splittedFileParts[i].indexOf("\n");
             const fileName = splittedFileParts[i].substring(0, firstLineBreakIdx).trim();
             const fileContent = splittedFileParts[i].substring(firstLineBreakIdx + 1);
-
             includedFileNameToContentMap.set(fileName, fileContent);
         }
 
@@ -185,10 +183,10 @@ function processExternalFiles(parsedJson, includedFileNameToContentMap, rescaled
         let uploadedFileName = uploadedFile ? uploadedFile.name : undefined;
 
         if (isIncluded) {
-            fileContent = includedFileNameToContentMap.get(fileName);
+            fileContent = includedFileNameToContentMap.get(fileRecord.path);
 
             if (fileContent === undefined) {
-                console.error("External file not included but should be: " + fileName);
+                console.error("External file not included but should be: " + fileName, fileRecord.path);
                 return;
             }
         }
@@ -319,7 +317,7 @@ function processLattices(parsedJson, objectsParent) {
                     for (let l = 0; l < vhelix.cells[i].left.length; ++l) {
                         nuclToCellDict[vhelix.cells[i].left[l]] = [lattice, vhelix, vhelix.cells[i]];
                     }
-    
+
                     for (let l = 0; l < vhelix.cells[i].right.length; ++l) {
                         nuclToCellDict[vhelix.cells[i].right[l]] = [lattice, vhelix, vhelix.cells[i]];
                     }
@@ -368,10 +366,18 @@ function getLatticePositionForIndex(row, col, z, lattice) {
     return pos;
 }
 
-function processSingleStrands(parsedJson, objectsParent, fileIdToFileDataMap, nuclToCellDict) {
+function processStructures(parsedJson, rescaledParent, fileIdToFileDataMap, nuclToCellDict) {
+    parsedJson.structures.forEach(structure => {
+        ParserUtils.getFileContentText().value += "Structure " + structure.name + "\n";
+        processSingleStrands(parsedJson, structure.naStrands, rescaledParent, fileIdToFileDataMap, nuclToCellDict);
+        processProteins(parsedJson, structure.aaChains, rescaledParent, fileIdToFileDataMap);
+    });
+}
+
+function processSingleStrands(parsedJson, naStrands, objectsParent, fileIdToFileDataMap, nuclToCellDict) {
     const sphereGeometry = new THREE.SphereGeometry(2, 6, 6);
 
-    parsedJson.naStrands.forEach(strand => {
+    naStrands.forEach(strand => {
         let nucleotidePositions = [];
         let nucleobasePositions = [];
         let nucleobaseNormals = [];
@@ -408,7 +414,7 @@ function processSingleStrands(parsedJson, objectsParent, fileIdToFileDataMap, nu
                 const lattice = nuclRec[0];
                 const helix = nuclRec[1];
                 const cell = nuclRec[2];
-                
+
                 if (cell !== undefined) {
                     const inCellIdx = Math.max(cell.left.indexOf(currNucleotide.id), cell.right.indexOf(currNucleotide.id));
                     const insertedNucleotidesVisualOffset = 3;
@@ -479,52 +485,47 @@ function processSingleStrands(parsedJson, objectsParent, fileIdToFileDataMap, nu
     });
 }
 
-function processProteins(parsedJson, objectsParent, fileIdToFileDataMap) {
+function processProteins(parsedJson, aaChains, objectsParent, fileIdToFileDataMap) {
     const sphereGeometry = new THREE.SphereGeometry(1, 6, 6);
 
-    parsedJson.proteins.forEach(protein => {
-        ParserUtils.getFileContentText().value += "Protein " + protein.name + " with " + protein.chains.length + " chains. \n";
+    aaChains.forEach(chain => {
+        let aminoAcidPositions = [];
+        const pdbFileId = chain.pdbFileId;
+        const lineMaterial = new THREE.LineBasicMaterial({ color: chain.color });
+        const aaMaterial = new THREE.MeshPhongMaterial({ color: chain.color });
 
-        // TODO For proteins, position from altPosition field is used and config files are ignored now.
-        protein.chains.forEach(chain => {
-            let aminoAcidPositions = [];
-            const pdbFileId = chain.pdbFileId;
-            const lineMaterial = new THREE.LineBasicMaterial({ color: chain.color });
-            const aaMaterial = new THREE.MeshPhongMaterial({ color: chain.color });
+        let currAminoAcid = chain.aminoAcids.find(x => x.id === chain.nTerm);
+        do {
+            if (currAminoAcid.altPositions.length > 0 && currAminoAcid.altPositions[0].length >= 3) {
+                const aaPos = new THREE.Vector3().fromArray(currAminoAcid.altPositions[0]);
+                aminoAcidPositions.push(aaPos);
 
-            let currAminoAcid = chain.aminoAcids.find(x => x.id === chain.nTerm);
-            do {
-                if (currAminoAcid.altPositions.length > 0 && currAminoAcid.altPositions[0].length >= 3) {
-                    const aaPos = new THREE.Vector3().fromArray(currAminoAcid.altPositions[0]);
-                    aminoAcidPositions.push(aaPos);
-
-                    if (pdbFileId >= 0 && fileIdToFileDataMap.has(pdbFileId)) {
-                        PdbUtils.spawnPdbData(fileIdToFileDataMap.get(pdbFileId), aaPos, new THREE.Vector3(0, 0, 0), objectsParent, atom => {
-                            return atom.chainIdentifier === chain.chainName && atom.residueSeqNum == currAminoAcid.pdbId;
-                        });
-                    }
-                }
-                else {
-                    console.error("AA location can be retrieved only from 'altPositions' field " +
-                        "at the moment. It seems to contain invalid data: ", currAminoAcid.altPositions);
-                }
-
-                currAminoAcid = chain.aminoAcids.find(x => x.id === currAminoAcid.next);
-            }
-            while (currAminoAcid !== undefined);
-
-            if (aminoAcidPositions.length > 0) {
-                const geometry = new THREE.BufferGeometry().setFromPoints(aminoAcidPositions);
-                const chainLine = new THREE.Line(geometry, lineMaterial);
-                objectsParent.add(chainLine);
-
-                for (let i = 0; i < aminoAcidPositions.length; ++i) {
-                    const aaMesh = new THREE.Mesh(sphereGeometry, aaMaterial);
-                    aaMesh.position.copy(aminoAcidPositions[i]);
-                    objectsParent.add(aaMesh);
+                if (pdbFileId >= 0 && fileIdToFileDataMap.has(pdbFileId)) {
+                    PdbUtils.spawnPdbData(fileIdToFileDataMap.get(pdbFileId), aaPos, new THREE.Vector3(0, 0, 0), objectsParent, atom => {
+                        return atom.chainIdentifier === chain.chainName && atom.residueSeqNum == currAminoAcid.pdbId;
+                    });
                 }
             }
-        });
+            else {
+                console.error("AA location can be retrieved only from 'altPositions' field " +
+                    "at the moment. It seems to contain invalid data: ", currAminoAcid.altPositions);
+            }
+
+            currAminoAcid = chain.aminoAcids.find(x => x.id === currAminoAcid.next);
+        }
+        while (currAminoAcid !== undefined);
+
+        if (aminoAcidPositions.length > 0) {
+            const geometry = new THREE.BufferGeometry().setFromPoints(aminoAcidPositions);
+            const chainLine = new THREE.Line(geometry, lineMaterial);
+            objectsParent.add(chainLine);
+
+            for (let i = 0; i < aminoAcidPositions.length; ++i) {
+                const aaMesh = new THREE.Mesh(sphereGeometry, aaMaterial);
+                aaMesh.position.copy(aminoAcidPositions[i]);
+                objectsParent.add(aaMesh);
+            }
+        }
     });
 }
 
