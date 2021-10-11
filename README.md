@@ -231,6 +231,14 @@ function hydrogenFaceDir(nucleobase):
     v = v1 + v2 + v3
     return normalize(v)
 ```
+### Short-axis of the base-pair
+To properly define the vector space / basis of the nucleobase, three vectors are needed. In case of UNF, the third vector goes along the short-axis of the base-pair. In other words, from one groove side to another.  
+To compute this vector, a simple cross product of the two abovementioned ones is needed.
+
+```matlab
+function basePairShortAxis(nucleobase):
+    return baseNormal(nucleobase) × hydrogenFaceDir(nucleobase)
+```
 
 # UNF Viewer documentation
 The UNF Viewer is written in JavaScript and Three.js library.    
