@@ -4,7 +4,7 @@
 UNF aims to allow for storing of DNA nanotechnology data (for example, DNA origami lattice designs and individual free-form single strands) together with proteins and other molecules in one file.
 
 ## Version
-0.7
+0.71
 
 ## Format type
 JSON-based
@@ -73,9 +73,9 @@ To mark fields as "not used"/containing invalid value:
       - `number` **number:** cell number (starting with zero; higher the number, the farther the cell is from the beginning of the virtual helix). Corresponds to base ID value of cadnano.<!-- - `[number]` **altPosition:** this field can determine the world position of this cell in space; can be used to override position determined by virtual helix & cell number-->
       - `string` **type:** text determining the type of the cell
         - *Allowed values: n (for normal), i (for insertion/loop), d (for deletion/skip)*
-      - `[number]` **left:** IDs of the left (5'3' direction) nucleotides
+      - `[number]` **fiveToThreeNts:** IDs of the left/up (5'3' direction) nucleotides
         - For normal cell (see *type* field), this array will be empty or of length 1. For deletion, it should be empty. For insertion of length n, the array will contain n+1 values.
-      - `[number]` **right:** IDs of the right (3'5' direction) nucleotides
+      - `[number]` **threeToFiveNts:** IDs of the right/down (3'5' direction) nucleotides
         - For normal cell (see *type* field), this array will be empty or of length 1. For deletion, it should be empty. For insertion of length n, the array will contain n+1 values.
 - `[object]` **structures:** array of molecular structures, each of which is a set of nucleic acid strands, protein chains or combination of both
   - `number` **id:** unique ID of this structure
