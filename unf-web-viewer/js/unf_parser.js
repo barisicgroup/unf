@@ -285,8 +285,8 @@ function processLattices(parsedJson, objectsParent) {
         cylinderTranspMaterial.color.offsetHSL(hslOffsetStep, 0, 0);
 
         const latPos = UnfUtils.angsVec3(new THREE.Vector3().fromArray(lattice.position, 0));
-        // TODO lattice rotation/orientation works badly now
-        const latRot = new THREE.Euler(UnfUtils.rad(lattice.orientation[0]),
+        const latRot = new THREE.Vector3(
+            UnfUtils.rad(lattice.orientation[0]),
             UnfUtils.rad(lattice.orientation[1]),
             UnfUtils.rad(lattice.orientation[2]));
 
@@ -315,11 +315,11 @@ function processLattices(parsedJson, objectsParent) {
                     }
 
                     for (let l = 0; l < vhelix.cells[i].fiveToThreeNts.length; ++l) {
-                        nuclToCellDict[vhelix.cells[i].fiveToThreeNts[l]] = [lattice, vhelix, vhelix.cells[i]];
+                        nuclToCellDict[vhelix.cells[i].fiveToThreeNts[l]] = [lattice, vhelix, vhelix.cells[i], lattOrigMesh];
                     }
 
                     for (let l = 0; l < vhelix.cells[i].threeToFiveNts.length; ++l) {
-                        nuclToCellDict[vhelix.cells[i].threeToFiveNts[l]] = [lattice, vhelix, vhelix.cells[i]];
+                        nuclToCellDict[vhelix.cells[i].threeToFiveNts[l]] = [lattice, vhelix, vhelix.cells[i], lattOrigMesh];
                     }
                 }
 
@@ -327,8 +327,8 @@ function processLattices(parsedJson, objectsParent) {
                     new THREE.MeshPhongMaterial(thisMat));
                 newMesh.position.copy(getLatticePositionForIndex(vhelix.latticePosition[0], vhelix.latticePosition[1], i, lattice));
                 newMesh.scale.set(1, ParserConstants.BasePairRise, 1);
-                newMesh.rotation.set(THREE.MathUtils.degToRad(90) + latRot.x, latRot.y, latRot.z);
-                objectsParent.add(newMesh);
+                newMesh.rotation.set(THREE.MathUtils.degToRad(90), 0, 0);
+                lattOrigMesh.add(newMesh);
             }
 
         });
@@ -356,13 +356,6 @@ function getLatticePositionForIndex(row, col, z, lattice) {
         throw new Error("Invalid grid type: " + lattice.type);
     }
 
-    const latPos = UnfUtils.angsVec3(new THREE.Vector3().fromArray(lattice.position, 0));
-
-    pos.add(latPos).applyEuler(
-        new THREE.Euler(UnfUtils.rad(lattice.orientation[0]),
-            UnfUtils.rad(lattice.orientation[1]),
-            UnfUtils.rad(lattice.orientation[2])));
-
     return UnfUtils.angsVec3(pos);
 }
 
@@ -382,6 +375,7 @@ function processSingleStrands(parsedJson, naStrands, objectsParent, fileIdToFile
         let nucleobasePositions = [];
         let nucleobaseNormals = [];
         let nucleobaseHydrFacesDirs = [];
+        let nucleotideParents = [];
         const lineMaterial = new THREE.LineBasicMaterial({ color: strand.color });
         const sphereMaterial = new THREE.MeshPhongMaterial({ color: strand.color });
 
@@ -418,6 +412,7 @@ function processSingleStrands(parsedJson, naStrands, objectsParent, fileIdToFile
                 const lattice = nuclRec[0];
                 const helix = nuclRec[1];
                 const cell = nuclRec[2];
+                nucleotideParents.push(nuclRec[3]);
 
                 if (cell !== undefined) {
                     const inCellIdx = Math.max(cell.fiveToThreeNts.indexOf(currNucleotide.id), cell.threeToFiveNts.indexOf(currNucleotide.id));
@@ -445,7 +440,6 @@ function processSingleStrands(parsedJson, naStrands, objectsParent, fileIdToFile
                     position.add(rot.normalize().multiplyScalar(ParserConstants.VHelixRadius * 0.8));
                 }
 
-
                 if (position === null) {
                     console.error("Invalid nucleotide position: ", currNucleotide);
                 }
@@ -458,31 +452,35 @@ function processSingleStrands(parsedJson, naStrands, objectsParent, fileIdToFile
         }
         while (currNucleotide !== undefined);
 
+        const strandParent = new THREE.Object3D();
+        objectsParent.add(strandParent);
+
         if (nucleotidePositions.length > 0) {
             const geometry = new THREE.BufferGeometry().setFromPoints(nucleotidePositions);
             const strandLine = new THREE.Line(geometry, lineMaterial);
-            objectsParent.add(strandLine);
+            (nucleotideParents.length > 0 ? nucleotideParents[0] : strandParent).add(strandLine);
 
             for (let i = 0; i < nucleotidePositions.length; ++i) {
                 const nuclMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
                 nuclMesh.position.copy(nucleotidePositions[i]);
-                objectsParent.add(nuclMesh);
+                (nucleotideParents.length > i ? nucleotideParents[i] : strandParent).add(nuclMesh);
             }
 
+            // Non-lattice-based data
             if (nucleobasePositions.length === nucleotidePositions.length) {
                 for (let i = 0; i < nucleobasePositions.length; ++i) {
                     const bbToNb = nucleobasePositions[i].clone().sub(nucleotidePositions[i]);
                     const bbToNbArrow = new THREE.ArrowHelper(bbToNb.clone().normalize(), nucleotidePositions[i],
                         bbToNb.length(), strand.color);
-                    objectsParent.add(bbToNbArrow);
+                        strandParent.add(bbToNbArrow);
 
                     const baseNormArrow = new THREE.ArrowHelper(nucleobaseNormals[i].normalize(),
                         nucleobasePositions[i], 2, "#0000FF");
-                    objectsParent.add(baseNormArrow);
+                        strandParent.add(baseNormArrow);
 
                     const baseHydrogFaceArrow = new THREE.ArrowHelper(nucleobaseHydrFacesDirs[i].normalize(),
                         nucleobasePositions[i], 2, "#00FF00");
-                    objectsParent.add(baseHydrogFaceArrow);
+                        strandParent.add(baseHydrogFaceArrow);
                 }
             }
         }

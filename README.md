@@ -59,6 +59,7 @@ To mark fields as "not used"/containing invalid value:
   - `[number]` **position:** world position of the top-left corner (origin) of the lattice. 
     - z-axis goes "into" the lattice, y-axis goes from top to bottom and x-axis from left to right.
   - `[number]` **orientation:** orientation of the lattice in space
+    - by default, lattice's z-axis is considered to be aligned with the world z-axis
   - `[object]` **virtualHelices:** array of virtual helices, i.e., lattice cells determining location and orientation of a possible double helix. Lattice may contain lots of empty cells/virtual helices (theoretically infinite), which should not be part of UNF as they carry no data.
     - `number` **id:** unique ID of this virtual helix
     - `[number]` **latticePosition:** array describing the position of this virtual helix in the lattice. For example [1, 2] refers to row 1, column 2.
@@ -243,7 +244,7 @@ function basePairShortAxis(nucleobase):
 # UNF Viewer documentation
 The UNF Viewer is written in JavaScript and Three.js library.    
 It enables to visualize the content of a UNF file by selecting the desired file from the file dialog.  
-**At the moment, only a subset of UNF fields and properties is visualized. Mainly "lattices", "naStrands", "proteins", and "molecules.others". When previewing the UNF file content, keep this fact in mind.**  
+**At the moment, only a subset of UNF fields and properties is visualized. Mainly "lattices", "structures", and "molecules.others". When previewing the UNF file content, keep this fact in mind.**  
 To run it, clone the repository and use, e.g., live server to host the viewer application. It is recommended to refresh/reload (typically F5) the application before loading a new strucutre.    
 Since it is written in JavaScript, it cannot search your hard drive; in other words, you need to upload not just the UNF file but also all files referenced in the "externalFiles" field which are not included directly in the UNF file. If a PDB file is not included nor uploaded, the viewer automatically tries to download it from RCSB.  
 The application serves mainly for UNF development purposes right now, it is, therefore, recommended to have a dev console open to see the console logs.  
