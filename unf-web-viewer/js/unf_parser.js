@@ -3,7 +3,7 @@ import * as PdbUtils from "./pdb_utils.js"
 import * as OxDnaUtils from "./oxdna_utils.js";
 
 let ParserConstants = {
-    SupportedFormatVersion: .7,
+    SupportedFormatVersion: .71,
     AngstromsPerUnit: 256,
     VHelixRadius: 10, //A
     BasePairRise: 3.32, // A
@@ -314,12 +314,12 @@ function processLattices(parsedJson, objectsParent) {
                         thisMat = cellInsMaterial;
                     }
 
-                    for (let l = 0; l < vhelix.cells[i].left.length; ++l) {
-                        nuclToCellDict[vhelix.cells[i].left[l]] = [lattice, vhelix, vhelix.cells[i]];
+                    for (let l = 0; l < vhelix.cells[i].fiveToThreeNts.length; ++l) {
+                        nuclToCellDict[vhelix.cells[i].fiveToThreeNts[l]] = [lattice, vhelix, vhelix.cells[i]];
                     }
 
-                    for (let l = 0; l < vhelix.cells[i].right.length; ++l) {
-                        nuclToCellDict[vhelix.cells[i].right[l]] = [lattice, vhelix, vhelix.cells[i]];
+                    for (let l = 0; l < vhelix.cells[i].threeToFiveNts.length; ++l) {
+                        nuclToCellDict[vhelix.cells[i].threeToFiveNts[l]] = [lattice, vhelix, vhelix.cells[i]];
                     }
                 }
 
@@ -363,7 +363,7 @@ function getLatticePositionForIndex(row, col, z, lattice) {
             UnfUtils.rad(lattice.orientation[1]),
             UnfUtils.rad(lattice.orientation[2])));
 
-    return pos;
+    return UnfUtils.angsVec3(pos);
 }
 
 function processStructures(parsedJson, rescaledParent, fileIdToFileDataMap, nuclToCellDict) {
@@ -393,16 +393,20 @@ function processSingleStrands(parsedJson, naStrands, objectsParent, fileIdToFile
             // If nucleotide has an alternative position defined, use it as a primary source of position
             if (currNucleotide.altPositions.length > 0) {
                 nucleotidePositions.push(
-                    new THREE.Vector3().fromArray(currNucleotide.altPositions[0].backboneCenter));
+                    UnfUtils.angsVec3(
+                        new THREE.Vector3().fromArray(currNucleotide.altPositions[0].backboneCenter)));
 
                 nucleobasePositions.push(
-                    new THREE.Vector3().fromArray(currNucleotide.altPositions[0].nucleobaseCenter));
+                    UnfUtils.angsVec3(
+                        new THREE.Vector3().fromArray(currNucleotide.altPositions[0].nucleobaseCenter)));
 
                 nucleobaseNormals.push(
-                    new THREE.Vector3().fromArray(currNucleotide.altPositions[0].baseNormal));
+                    UnfUtils.angsVec3(
+                        new THREE.Vector3().fromArray(currNucleotide.altPositions[0].baseNormal)));
 
                 nucleobaseHydrFacesDirs.push(
-                    new THREE.Vector3().fromArray(currNucleotide.altPositions[0].hydrogenFaceDir));
+                    UnfUtils.angsVec3(
+                        new THREE.Vector3().fromArray(currNucleotide.altPositions[0].hydrogenFaceDir)));
             }
             // Else, if no references to files with positions are provided, strands will be positioned
             // according to the virtual helices' cells
@@ -416,9 +420,9 @@ function processSingleStrands(parsedJson, naStrands, objectsParent, fileIdToFile
                 const cell = nuclRec[2];
 
                 if (cell !== undefined) {
-                    const inCellIdx = Math.max(cell.left.indexOf(currNucleotide.id), cell.right.indexOf(currNucleotide.id));
+                    const inCellIdx = Math.max(cell.fiveToThreeNts.indexOf(currNucleotide.id), cell.threeToFiveNts.indexOf(currNucleotide.id));
                     const insertedNucleotidesVisualOffset = 3;
-                    const sign = cell.left.includes(currNucleotide.id) ? 1 : -1;
+                    const sign = cell.fiveToThreeNts.includes(currNucleotide.id) ? 1 : -1;
 
                     position = getLatticePositionForIndex(helix.latticePosition[0], helix.latticePosition[1] + sign * (inCellIdx > 0 ? insertedNucleotidesVisualOffset : 0), cell.number + sign * inCellIdx, lattice);
 
@@ -430,7 +434,7 @@ function processSingleStrands(parsedJson, naStrands, objectsParent, fileIdToFile
 
                     let rot = undefined;
 
-                    if (cell.left.includes(currNucleotide.id)) {
+                    if (cell.fiveToThreeNts.includes(currNucleotide.id)) {
                         rot = xDir.clone().applyAxisAngle(zDir, UnfUtils.rad(helix.initialAngle) +
                             THREE.MathUtils.degToRad(ParserConstants.RotationPerBp * cell.number));
                     } else {
@@ -498,10 +502,10 @@ function processProteins(parsedJson, aaChains, objectsParent, fileIdToFileDataMa
         do {
             if (currAminoAcid.altPositions.length > 0 && currAminoAcid.altPositions[0].length >= 3) {
                 const aaPos = new THREE.Vector3().fromArray(currAminoAcid.altPositions[0]);
-                aminoAcidPositions.push(aaPos);
+                aminoAcidPositions.push(UnfUtils.angsVec3(aaPos));
 
                 if (pdbFileId >= 0 && fileIdToFileDataMap.has(pdbFileId)) {
-                    PdbUtils.spawnPdbData(fileIdToFileDataMap.get(pdbFileId), aaPos, new THREE.Vector3(0, 0, 0), objectsParent, atom => {
+                    PdbUtils.spawnPdbData(fileIdToFileDataMap.get(pdbFileId), UnfUtils.angsVec3(aaPos), new THREE.Vector3(0, 0, 0), objectsParent, atom => {
                         return atom.chainIdentifier === chain.chainName && atom.residueSeqNum == currAminoAcid.pdbId;
                     });
                 }
