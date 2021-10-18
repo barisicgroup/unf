@@ -62,7 +62,7 @@ class StrandPart:
             return "n"
 
 class Vhelix:
-    def __init__(self, id, row, col, latticeType, firstActiveCell, lastActiveCell, lastCell):
+    def __init__(self, id, row, col, latticeType, firstActiveCell, lastActiveCell, lastCell, stapColors):
         self.id = id
         self.row = row
         self.col = col
@@ -70,6 +70,7 @@ class Vhelix:
         self.firstActiveCell = firstActiveCell
         self.lastActiveCell = lastActiveCell
         self.lastCell = lastCell
+        self.stapColors = stapColors
     
     def __repr__(self):
         return ("vhelix: " + str(self.id) + " [" + str(self.row) + "," + str(self.col) +
@@ -175,7 +176,7 @@ def process_cadnano_file(file_path, lattice_type):
                 firstActiveCell = min(firstActiveCell, idx if isValidRecord else firstActiveCell)
                 lastActiveCell = max(lastActiveCell, idx if isValidRecord else lastActiveCell)
         
-        processedVhelices.append(Vhelix(vstr['num'], vstr['row'], vstr['col'], lattice_type, firstActiveCell, lastActiveCell, lastCell))
+        processedVhelices.append(Vhelix(vstr['num'], vstr['row'], vstr['col'], lattice_type, firstActiveCell, lastActiveCell, lastCell, vstr['stap_colors']))
 
     individualScaffoldStrands = create_strand_components(allScaffoldRecords, True)
     individualStapleStrands = create_strand_components(allStapleRecords, False)
@@ -193,7 +194,7 @@ def process_cadnano_file(file_path, lattice_type):
 
     return (processedVhelices, individualScaffoldStrands, individualStapleStrands)
 
-def strands_to_unf_data(unfFileData, thisStructure, strandsList, allStrandParts, areScaffolds):
+def strands_to_unf_data(unfFileData, thisStructure, strandsList, allStrandParts, areScaffolds, stapleStartToColor):
     resultingObjects = []
     r = lambda: random.randint(0, 230)
     global globalIdGenerator
@@ -209,6 +210,8 @@ def strands_to_unf_data(unfFileData, thisStructure, strandsList, allStrandParts,
         # Its next/prev nucleotides have neighboring IDs in the ntIds array
         ntIds = []
         ntPairs = []
+        
+        strandColor = ""
 
         for strandPart in strand:
             cellType = strandPart.get_unf_cell_type()
@@ -229,10 +232,20 @@ def strands_to_unf_data(unfFileData, thisStructure, strandsList, allStrandParts,
                 
                 ntIds += idsToAdd
                 ntPairs += pairsToAdd
+            
+            if cellType != "d" and not areScaffolds and len(strandColor) == 0:
+                vid = strandPart.vhelixId
+                bid = strandPart.baseId
+                colRec = stapleStartToColor[vid, bid]
+                if colRec != None:
+                    strandColor =  colRec
             # For deletion, "deletion" cell exists but it contains no nucleotides
             # and is thus ignored on the level of DNA data structure.
             # The resulting strand, therefore, simply "goes through that cell without stopping".
-            
+
+        if len(strandColor) == 0:
+            strandColor = "#0000FF" if areScaffolds else "#{:02x}{:02x}{:02x}".format(r(), r(), r())
+
         strandObject = {}
 
         strandObject['id'] = globalIdGenerator
@@ -240,7 +253,7 @@ def strands_to_unf_data(unfFileData, thisStructure, strandsList, allStrandParts,
         strandObject['name'] = "DNA_strand"
         strandObject['naType'] = "DNA"
         strandObject['chainName'] = "NULL"
-        strandObject['color'] = "#0000FF" if areScaffolds else "#{:02x}{:02x}{:02x}".format(r(), r(), r())
+        strandObject['color'] = strandColor
         strandObject['isScaffold'] = areScaffolds
         strandObject['pdbFileId'] = -1
         strandObject['fivePrimeId'] = ntIds[0]
@@ -286,6 +299,8 @@ def convert_data_to_unf_file(latticesData, latticesPositions):
         outputLattice['orientation'] = [0, 0, 0]  
         outputLattice['virtualHelices'] = []
 
+        stapleStartToColor = {}
+
         for vhelix in vhelices:
             outputVhelix = {}
             outputVhelix['id'] = globalIdGenerator
@@ -300,6 +315,9 @@ def convert_data_to_unf_file(latticesData, latticesPositions):
         
             outputLattice['type'] = vhelix.latticeType
 
+            for stapColPair in vhelix.stapColors:
+                stapleStartToColor[(vhelix.id, stapColPair[0])] = unfutils.dec_color_to_hex(stapColPair[1])
+
             cells = []
             for i in range(vhelix.lastActiveCell + 1):
                 newCell = {}
@@ -307,8 +325,8 @@ def convert_data_to_unf_file(latticesData, latticesPositions):
                 globalIdGenerator += 1
                 newCell['number'] = i
                 newCell['type'] = "n"
-                newCell['left'] = []
-                newCell['right'] = []
+                newCell['fiveToThreeNts'] = []
+                newCell['threeToFiveNts'] = []
 
                 # This is very computationally inoptimal.
                 # In any case, the purpose of this code is to
@@ -336,15 +354,15 @@ def convert_data_to_unf_file(latticesData, latticesPositions):
                                 # We can afford "and" instead of "or" because the start/end parts are initialized
                                 # with this strand part and the comparsion includes equality
                                 if strVhelixStartPart.baseId <= x.baseId and strVhelixEndPart.baseId >= x.baseId:
-                                    if len(newCell['left']) > 0:
+                                    if len(newCell['fiveToThreeNts']) > 0:
                                         print("Error! Rewriting content of a valid cell with a new value.", vhelix.row,
-                                         vhelix.col, i, newCell['left'], x.globalId)
-                                    newCell['left'] = [x.globalId] + x.insertedNuclIds
+                                         vhelix.col, i, newCell['fiveToThreeNts'], x.globalId)
+                                    newCell['fiveToThreeNts'] = [x.globalId] + x.insertedNuclIds
                                 elif strVhelixStartPart.baseId >= x.baseId and strVhelixEndPart.baseId <= x.baseId:
-                                    if len(newCell['right']) > 0:
+                                    if len(newCell['threeToFiveNts']) > 0:
                                         print("Error! Rewriting content of a valid cell with a new value.", vhelix.row, 
-                                        vhelix.col, i, newCell['right'], x.globalId)
-                                    newCell['right'] = [x.globalId] + x.insertedNuclIds
+                                        vhelix.col, i, newCell['threeToFiveNts'], x.globalId)
+                                    newCell['threeToFiveNts'] = [x.globalId] + x.insertedNuclIds
               
                 cells.append(newCell)
 
@@ -359,8 +377,8 @@ def convert_data_to_unf_file(latticesData, latticesPositions):
         newStructure['name'] = "Lattice-based structure"
         newStructure['naStrands'] = []
         newStructure['aaChains'] = []
-        strands_to_unf_data(unfFileData, newStructure, scaffoldStrands, allStrandParts, True)
-        strands_to_unf_data(unfFileData, newStructure, stapleStrands, allStrandParts, False)
+        strands_to_unf_data(unfFileData, newStructure, scaffoldStrands, allStrandParts, True, stapleStartToColor)
+        strands_to_unf_data(unfFileData, newStructure, stapleStrands, allStrandParts, False, stapleStartToColor)
         unfFileData['structures'].append(newStructure)
     
     unfFileData['idCounter'] = globalIdGenerator

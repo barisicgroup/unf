@@ -15,7 +15,7 @@ def initialize_unf_file_data_object(name, author, lenUnits = "A", angUnits = "de
     unfFileData = {}
 
     unfFileData['format'] = "unf"
-    unfFileData['version'] = 0.7
+    unfFileData['version'] = 0.71
     unfFileData['idCounter'] = 0
     unfFileData['lengthUnits'] = lenUnits
     unfFileData['angularUnits'] = angUnits
@@ -53,3 +53,12 @@ def is_drna_backbone(atomName):
 
 def normalize(np_vector):
     return np_vector / np.sqrt(np.sum(np_vector**2))
+
+def dec_color_to_hex(decimalColor):
+    result = "#"
+    hexRes = hex(decimalColor).replace("0x", "")
+    for i in range(0, 6 - len(hexRes)):
+        result += "0"
+    result += hexRes
+    return result
+    
