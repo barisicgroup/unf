@@ -278,7 +278,7 @@ def strands_to_unf_data(unfFileData, thisStructure, strandsList, allStrandParts,
 
     thisStructure['naStrands'] = thisStructure['naStrands'] + resultingObjects
 
-def convert_data_to_unf_file(latticesData, latticesPositions):
+def convert_data_to_unf_file(latticesData, latticesPositions, latticeOrientations):
     unfFileData = unfutils.initialize_unf_file_data_object("cadnano_converted_structure", "Cadnano to UNF Python Converter Script")
     global globalIdGenerator
     posId = 0
@@ -295,8 +295,8 @@ def convert_data_to_unf_file(latticesData, latticesPositions):
         globalIdGenerator += 1
         outputLattice['name'] = 'lattice_from_cadnano'
         outputLattice['position'] = [int(pos) for pos in latticesPositions[posId].split(",")]
+        outputLattice['orientation'] = [int(rot) for rot in latticeOrientations[posId].split(",")]
         posId += 1
-        outputLattice['orientation'] = [0, 0, 0]  
         outputLattice['virtualHelices'] = []
 
         stapleStartToColor = {}
@@ -390,25 +390,36 @@ def getInputFilesToProcess(argv):
     resPaths = []
     resTypes = []
     resPositions = []
+    resOrientations = []
 
     for i in range(1, len(argv)):
         thisArg = argv[i]
         splitArr = thisArg.split(':')
-        if len(splitArr) != 3:
+        if len(splitArr) < 2:
             print("Invalid argument!", thisArg, splitArr)
             sys.exit(1)
         else:
             resPaths.append(splitArr[0]) # Path to file
             resTypes.append(splitArr[1]) # Its lattice type
-            resPositions.append(splitArr[2]) # The lattice position
+            
+            if len(splitArr) > 2:
+                resPositions.append(splitArr[2]) # The lattice position
+            else:
+                resPositions.append("0,0,0")
+            
+            if len(splitArr) > 3:
+                resOrientations.append(splitArr[3]) # The lattice orientation
+            else:
+                resOrientations.append("0,0,0")
     
-    return (resPaths, resTypes, resPositions)
+    return (resPaths, resTypes, resPositions, resOrientations)
 
 def main():
     if len(sys.argv) < 2 or sys.argv[1] == "-h":
-        print("usage: cadnano_to_unf.py <file_1_path>:<lattice_type>:<position> <file_2_path>:<lattice_type>:<position> (...) <file_n_path>:<lattice_type>:<position>")
+        print("usage: cadnano_to_unf.py <file_1_path>:<lattice_type>:<position>:<orientation> <file_2_path>:<lattice_type>:<position>:<orientation> (...) <file_n_path>:<lattice_type>:<position>:<orientation>")
         print("lattice_type = square|honeycomb")
-        print("position = x,y,z (angstroms)")
+        print("position = x,y,z (angstroms) [default 0,0,0]")
+        print("rotation = x,y,z (degrees) [default 0,0,0]")
         print("")
         print("At least one input file is mandatory.")
         sys.exit(1)
@@ -419,7 +430,7 @@ def main():
     for i in range(0, len(filesToProcess[0])):
         processedFilesData.append(process_cadnano_file(filesToProcess[0][i], filesToProcess[1][i]))
 
-    convert_data_to_unf_file(processedFilesData, filesToProcess[2])
+    convert_data_to_unf_file(processedFilesData, filesToProcess[2], filesToProcess[3])
 
 if __name__ == '__main__':
   main()
