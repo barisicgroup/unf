@@ -35,7 +35,7 @@ ren %destDir%\output.unf 2jyh.unf
 SET srcDir=..\example-files\hextube_cuboid\cadnano
 SET destDir=..\example-files\hextube_cuboid\unf
 
-py -3 cadnano_to_unf.py %srcDir%\hc_hextube.json:honeycomb:270,320,0 %srcDir%\sq_cuboid_hole.json:square:0,500,0
+py -3 cadnano_to_unf.py %srcDir%\hc_hextube.json:honeycomb:100,100,0 %srcDir%\sq_cuboid_hole.json:square:100,100,0
 move output.unf %destDir%
 del %destDir%\hextube_cuboid.unf
 ren %destDir%\output.unf hextube_cuboid.unf
@@ -45,7 +45,7 @@ SET srcDir=..\example-files\smiley_6ji1\source_files
 SET destDir=..\example-files\smiley_6ji1\unf
 
 py -3 cadnano_to_unf.py %srcDir%\smileyFace.json:square:0,0,0
-py -3 ..\other_scripts\unf_add_pdb.py output.unf %srcDir%\6ji1.pdb 6ji1 500,0,300 0,0,0
+py -3 ..\other_scripts\unf_add_pdb.py output.unf %srcDir%\6ji1.pdb 6ji1 0,150,0 0,0,0
 move output.unf %destDir%
 del %destDir%\smiley_6ji1.unf
 ren %destDir%\output.unf smiley_6ji1.unf 

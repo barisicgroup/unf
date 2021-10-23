@@ -56,9 +56,11 @@ To mark fields as "not used"/containing invalid value:
   - `string` **type:** lattice type/layout name
     - *Allowed values: square, honeycomb*
     - *Other values may result in incompatibility between applications*
-  - `[number]` **position:** world position of the top-left corner (origin) of the lattice. 
+  - `[number]` **position:** world position of the lattice, corresponding to its center of mass
+    - center of mass of a lattice is computed as an average of world positions of non-empty lattice cells
     - z-axis goes "into" the lattice, y-axis goes from top to bottom and x-axis from left to right.
   - `[number]` **orientation:** orientation of the lattice in space
+    - the center of rotation equals to lattice's center of mass (and thus also lattice's *position*)
     - by default, lattice's z-axis is considered to be aligned with the world z-axis
   - `[object]` **virtualHelices:** array of virtual helices, i.e., lattice cells determining location and orientation of a possible double helix. Lattice may contain lots of empty cells/virtual helices (theoretically infinite), which should not be part of UNF as they carry no data.
     - `number` **id:** unique ID of this virtual helix

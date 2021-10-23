@@ -284,20 +284,29 @@ function processLattices(parsedJson, objectsParent) {
 
         cylinderTranspMaterial.color.offsetHSL(hslOffsetStep, 0, 0);
 
-        const latPos = UnfUtils.angsVec3(new THREE.Vector3().fromArray(lattice.position, 0));
-        const latRot = new THREE.Vector3(
-            UnfUtils.rad(lattice.orientation[0]),
-            UnfUtils.rad(lattice.orientation[1]),
-            UnfUtils.rad(lattice.orientation[2]));
+        let latticeCenterOfMass = new THREE.Vector3(0, 0, 0);
+        let totalActiveCellCount = 0;
 
         const lattOrigGeometry = new THREE.SphereGeometry(10, 2, 2);
         const lattOrigMaterial = new THREE.MeshPhongMaterial(cylinderTranspMaterial);
         lattOrigMaterial.wireframe = true;
         const lattOrigMesh = new THREE.Mesh(lattOrigGeometry, lattOrigMaterial);
 
-        lattOrigMesh.position.copy(latPos);
-        lattOrigMesh.rotation.set(latRot.x, latRot.y, latRot.z);
         objectsParent.add(lattOrigMesh);
+
+        // Compute lattice's center of mass during the first iteration
+        // to ofset individual cells afterwards based on that
+        lattice.virtualHelices.forEach(vhelix => {
+            vhelix.cells.forEach(cell => {
+                if (cell.fiveToThreeNts.length > 0 || cell.threeToFiveNts.length > 0) {
+                    latticeCenterOfMass.add(getLatticePositionForIndex(vhelix.latticePosition[0], vhelix.latticePosition[1], cell.number, lattice));
+                    ++totalActiveCellCount;
+                }
+            })
+        });
+
+        latticeCenterOfMass.divideScalar(totalActiveCellCount);
+        lattice["unfpars_com"] = latticeCenterOfMass;
 
         lattice.virtualHelices.forEach(vhelix => {
             // TODO virtual helix alt pos + orientation is ignored now
@@ -325,13 +334,25 @@ function processLattices(parsedJson, objectsParent) {
 
                 const newMesh = new THREE.Mesh((i === 0 || i === vhelix.lastCell - 1) ? cylinderGeometryCapped : cylinderGeometry,
                     new THREE.MeshPhongMaterial(thisMat));
-                newMesh.position.copy(getLatticePositionForIndex(vhelix.latticePosition[0], vhelix.latticePosition[1], i, lattice));
+                const thisCellPos = getLatticePositionForIndex(vhelix.latticePosition[0], vhelix.latticePosition[1], i, lattice);
+                newMesh.position.copy(thisCellPos);
+
                 newMesh.scale.set(1, ParserConstants.BasePairRise, 1);
                 newMesh.rotation.set(THREE.MathUtils.degToRad(90), 0, 0);
                 lattOrigMesh.add(newMesh);
             }
 
         });
+
+        const latPos = UnfUtils.angsVec3(new THREE.Vector3().fromArray(lattice.position, 0));
+
+        const latRot = new THREE.Vector3(
+            UnfUtils.rad(lattice.orientation[0]),
+            UnfUtils.rad(lattice.orientation[1]),
+            UnfUtils.rad(lattice.orientation[2]));
+
+        lattOrigMesh.position.copy(latPos);
+        lattOrigMesh.rotation.set(latRot.x, latRot.y, latRot.z);
     });
 
     return nuclToCellDict;
@@ -354,6 +375,10 @@ function getLatticePositionForIndex(row, col, z, lattice) {
             z * ParserConstants.BasePairRise);
     } else {
         throw new Error("Invalid grid type: " + lattice.type);
+    }
+
+    if (lattice["unfpars_com"]) {
+        pos.sub(lattice["unfpars_com"]);
     }
 
     return UnfUtils.angsVec3(pos);
@@ -472,15 +497,15 @@ function processSingleStrands(parsedJson, naStrands, objectsParent, fileIdToFile
                     const bbToNb = nucleobasePositions[i].clone().sub(nucleotidePositions[i]);
                     const bbToNbArrow = new THREE.ArrowHelper(bbToNb.clone().normalize(), nucleotidePositions[i],
                         bbToNb.length(), strand.color);
-                        strandParent.add(bbToNbArrow);
+                    strandParent.add(bbToNbArrow);
 
                     const baseNormArrow = new THREE.ArrowHelper(nucleobaseNormals[i].normalize(),
                         nucleobasePositions[i], 2, "#0000FF");
-                        strandParent.add(baseNormArrow);
+                    strandParent.add(baseNormArrow);
 
                     const baseHydrogFaceArrow = new THREE.ArrowHelper(nucleobaseHydrFacesDirs[i].normalize(),
                         nucleobasePositions[i], 2, "#00FF00");
-                        strandParent.add(baseHydrogFaceArrow);
+                    strandParent.add(baseHydrogFaceArrow);
                 }
             }
         }
