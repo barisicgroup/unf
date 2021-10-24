@@ -263,7 +263,7 @@ def strands_to_unf_data(unfFileData, thisStructure, strandsList, allStrandParts,
         for i in range(len(ntIds)):
             newNucl = {}
             newNucl['id'] = ntIds[i]
-            newNucl['nbAbbrev'] = "A" # TODO Sequence is hardcoded now
+            newNucl['nbAbbrev'] = "N"
             newNucl['pair'] = ntPairs[i]
             newNucl['prev'] = ntIds[i - 1] if i > 0 else -1
             newNucl['next'] = ntIds[i + 1] if i < len(ntIds) - 1 else - 1
@@ -310,8 +310,6 @@ def convert_data_to_unf_file(latticesData, latticesPositions, latticeOrientation
             outputVhelix['lastCell'] = vhelix.lastCell
             outputVhelix['latticePosition'] = [vhelix.row, vhelix.col]
             outputVhelix['initialAngle'] = 240 # TODO Should equal cadnano. Just a rough guess atm.
-            outputVhelix['altPosition'] = []
-            outputVhelix['altOrientation'] = []
         
             outputLattice['type'] = vhelix.latticeType
 

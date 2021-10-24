@@ -3,7 +3,7 @@ import * as PdbUtils from "./pdb_utils.js"
 import * as OxDnaUtils from "./oxdna_utils.js";
 
 let ParserConstants = {
-    SupportedFormatVersion: .71,
+    SupportedFormatVersion: "0.8.0",
     AngstromsPerUnit: 256,
     VHelixRadius: 10, //A
     BasePairRise: 3.32, // A
@@ -309,10 +309,6 @@ function processLattices(parsedJson, objectsParent) {
         lattice["unfpars_com"] = latticeCenterOfMass;
 
         lattice.virtualHelices.forEach(vhelix => {
-            // TODO virtual helix alt pos + orientation is ignored now
-            //const altVhelixPos = new THREE.Vector3().fromArray(vhelix.altPosition, 0);
-            //const altVhelixRot = new THREE.Vector3().fromArray(vhelix.altOrientation, 0);
-
             for (let i = 0; i <= vhelix.lastCell; ++i) {
                 let thisMat = cylinderTranspMaterial;
 

@@ -170,7 +170,7 @@ To mark fields as "not used"/containing invalid value:
   - `number` **id:** unique ID of the comment
   - `number` **objectId:** ID of the commented on object  
   - `string` **content:** the text content of the comment
-- `object` **misc:** object which is by default empty but should be used for storing any application-specific/domain-specific information which could not have been stored in the other fields. It can be also used for storing comments.
+- `object` **misc:** object which is by default empty but should be used for storing any application-specific/domain-specific information which could not have been stored in the other fields. 
 
 # Determining nucleotide position
 The position of a nucleotide can be defined by two elements:
