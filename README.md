@@ -4,7 +4,7 @@
 UNF aims to allow for storing of DNA nanotechnology data (for example, DNA origami lattice designs and individual free-form single strands) together with proteins and other molecules in one file.
 
 ## Version
-0.71
+0.8.0
 
 ## Format type
 JSON-based
@@ -26,7 +26,7 @@ To mark fields as "not used"/containing invalid value:
 ## Core structure
 <!--- *Note: :question: sign marks fields which are strongly "prototypical"* -->
 - `string` **format:** stores the file format identification (should be always "unf")
-- `number` **version:** format version number
+- `string` **version:** format version string (should match MAJOR.MINOR.PATCH pattern)
 - `number` **idCounter:** counter containing a value since which it is safe to assign new IDs
     - Since UNF requires most of the objects to have a unique global ID, it is important to ensure this holds when creating new data.
     - Therefore, this field is relevant mainly for design and simulation tools modifying the UNF file as it presents a safe starting point for assigning new IDs.
@@ -69,8 +69,6 @@ To mark fields as "not used"/containing invalid value:
     - `number` **lastActiveCell:** number of the last cell containing a nucleotide
     - `number` **lastCell:** number of the last cell, i.e., length of the virtual helix
     - `number` **initialAngle:** initial helical twist at the beginning of the virtual helix (used for generation of DNA helix inside this virtual helix)
-    - `[number]` **altPosition:** alternative world position of this particular virtual helix relative to the lattice origin; can be used to override position determined by the lattice
-    - `[number]` **altOrientation:** rotation of this particular virtual helix; can be used to override position determined by the lattice
     - `[object]` **cells:** array of nucleotide locations (one cell can contain up to two complementary nucleotides). Cells (cell numbers) which are not included are considered as empty.
       - `number` **id:** unique ID of this cell
       - `number` **number:** cell number (starting with zero; higher the number, the farther the cell is from the beginning of the virtual helix). Corresponds to base ID value of cadnano.<!-- - `[number]` **altPosition:** this field can determine the world position of this cell in space; can be used to override position determined by virtual helix & cell number-->
@@ -92,13 +90,14 @@ To mark fields as "not used"/containing invalid value:
     - `string` **color:** hex string storing the color for this strand
     - `number` **fivePrimeId:** ID of the 5' nucleotide
     - `number` **threePrimeId:** ID of the 3' nucleotide
+        - To define circular strands, make the *threePrimeId* nucleotide *next* equal *fivePrimeId* and  *fivePrimeId* nucleotide *prev* equal *threePrimeId*
     - `number` **pdbFileId:** ID of the relevant external PDB file (for loading atomic data)
     - `string` **chainName:** name of the chain in the referenced PDB
     - `[object]` **nucleotides:** array of nucleotides of this strand
         - `number` **id:** unique ID of this nucleotide
         - `number` **nbAbbrev:** nucleobase type
-          - *Allowed values: A, T, C, G, U*
-          - *Other values may result in application incompatibility*
+          - *Allowed values: A, T, C, G, U, N*
+          - N corresponds to "any base", i.e., type was not explicitly defined, following the IUPAC nucleic acid notation
         - `number` **pair:** ID of the complementary nucleotide
         - `number` **prev:** ID of the preceding nucleotide in the strand
         - `number` **next:** ID of the following nucleotide in the strand
@@ -166,7 +165,11 @@ To mark fields as "not used"/containing invalid value:
 - `[object]` **modifications:** array of modifications
   - `[number]` **location:** array of nucleotide/AA IDs to be modified
   - `[number]` **externalFileId:** ID of the relevant external structure file  
-  - `[number]` **idtText:** string describing type of modification  
+  - `string` **idtText:** string describing type of modification
+- `[object]` **comments:** array with arbitrary textual comments/annotations/labels/remarks pertaining a specific UNF-stored object. This is a free-form field without any specific structure, aimed primarily for notes during the design and structure analysis tasks.
+  - `number` **id:** unique ID of the comment
+  - `number` **objectId:** ID of the commented on object  
+  - `string` **content:** the text content of the comment
 - `object` **misc:** object which is by default empty but should be used for storing any application-specific/domain-specific information which could not have been stored in the other fields. It can be also used for storing comments.
 
 # Determining nucleotide position
@@ -253,7 +256,7 @@ The application serves mainly for UNF development purposes right now, it is, the
 
 # Converters documentation
 - **Cadnano to UNF converter (Python)**
-  - Converts given cadnano files to a single UNF file
+  - Converts given cadnano (< v2.5) files to a single UNF file
   - Circular scaffolds are processed by performing a cut at random location.
   - Loops are converted to an "insertion" cell referencing corresponding number of nucleotides.
   - Skips are converted to a "deletion" cell referencing no nucleotides.
