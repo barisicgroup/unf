@@ -19,7 +19,13 @@ def parse_args(argv):
 
 def modify_unf(unfFile, pdbFile, molName, molPos, molRot):
     file = open(unfFile, "r")
-    parsedData = json.loads(file.read())
+    fileContent = file.read()
+    jsonPartEndIdx = fileContent.find("#INCLUDED_FILE ")
+    if jsonPartEndIdx > -1:
+        jsonPart = fileContent[0:jsonPartEndIdx]
+    else:
+        jsonPart = fileContent
+    parsedData = json.loads(jsonPart)
 
     idCounter = parsedData["idCounter"]
     # Back slashes are replaced because they are escaped in JSON
@@ -53,6 +59,8 @@ def modify_unf(unfFile, pdbFile, molName, molPos, molRot):
 
     with open(OUTPUT_FILE_NAME, "w") as outfile:
         json.dump(parsedData, outfile)
+        if jsonPartEndIdx > -1:
+            outfile.write(fileContent[jsonPartEndIdx:])
 
     # After the JSON-based operations are finished, let's
     # append the PDB content to the end of the UNF file
