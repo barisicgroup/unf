@@ -4,10 +4,10 @@ While the official format repository contains also additional data, such as conv
 Finally, since this file was created later during the development of the format, it lists only changes since version 0.6 of the format. 
 
 ### Versioning explained
-Since version 0.8.0, UNF employs MAJOR.MINOR.PATCH versioning pattern.
-MAJOR.MINOR are gradually increased when potentially compatibility-breaking changes are introduced to the UNF structure.
-PATCH is increased in case of backwards-compatible changes. For example, when a new values is allowed to be assigned to a particular field.
-Therefore, if a particular application supports UNF vX.Y.Z, it should also automatically work with any UNF version starting on X.Y.
+Since version 0.8.0, UNF employs MAJOR.MINOR.PATCH versioning pattern.  
+MAJOR.MINOR are gradually increased when potentially compatibility-breaking changes are introduced to the UNF structure.  
+PATCH is increased in case of backwards-compatible changes. For example, when a new values is allowed to be assigned to a particular field.  
+Therefore, if a particular application supports UNF vX.Y.Z, it should also automatically work with any UNF version starting on X.Y. 
 
 ## Version 0.8.0
 ### Added
