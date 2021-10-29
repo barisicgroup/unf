@@ -3,13 +3,19 @@ This file contains a summary of changes in the structure of Unified Nanotechnolo
 While the official format repository contains also additional data, such as converters and UNF Viewer, this changelog pertains only the format itself.  
 Finally, since this file was created later during the development of the format, it lists only changes since version 0.6 of the format. 
 
+### Versioning explained
+Since version 0.8.0, UNF employs MAJOR.MINOR.PATCH versioning pattern.
+MAJOR.MINOR are gradually increased when potentially compatibility-breaking changes are introduced to the UNF structure.
+PATCH is increased in case of backwards-compatible changes. For example, when a new values is allowed to be assigned to a particular field.
+Therefore, if a particular application supports UNF vX.Y.Z, it should also automatically work with any UNF version starting on X.Y.
+
 ## Version 0.8.0
 ### Added
 - *comments* field to root for arbitrary textual notes referencing some UNF-stored objects
 
 ### Changed
 - *version* field was converted to a string type instead of a number (as it gives more freedom). Also, new MAJOR.MINOR.PATCH versioning was adopted.
-- *nbAbbrev* field, for storing the nucleobase type abvbreviation, now allows also *N* value for any base
+- *nbAbbrev* field, for storing the nucleobase type abbreviation, now allows also *N* value for any base
 - Fixed *modifications*.*idtText* data type from [number] to [string]
 
 ### Removed
