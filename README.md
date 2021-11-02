@@ -263,8 +263,7 @@ The application serves mainly for UNF development purposes right now, it is, the
 
 - **PDB to UNF converter (Python)**
   - Converts given PDB file to a single UNF file.
-  - The conversions takes all-atom details of (D)(R)NAs & proteins in PDB and converts them to a coarse-grained representation stored in the UNF.
-  - While UNF allows for storing ligands, these are not extracted from the PDB at the moment.
+  - The conversions takes all-atom details of (D)(R)NAs, proteins, and ligands in PDB and converts them to a coarse-grained representation stored in the UNF.
 
 # Other scripts documentation
 
