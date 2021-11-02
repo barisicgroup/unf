@@ -75,6 +75,28 @@ class NucleicAcid:
         self.prev = prevNa
         self.next = nextNa
 
+class Atom:
+    def __init__(self, atName, elName, position):
+        self.atName = atName
+        self.elName = elName
+        self.position = position
+
+class Ligand:
+    def __init__(self, id, name, atoms):
+        self.id = id
+        self.name = name
+        self.atoms = atoms
+
+        self.com = np.array([0.0, 0.0, 0.0])
+
+        for atom in atoms:
+            self.com = np.add(self.com, atom.position)
+        
+        self.com = np.true_divide(self.com, len(atoms))
+
+        for atom in atoms:
+            atom.position = np.subtract(atom.position, self.com)       
+             
 def get_hydr_face_dir(residue, atNamesMap):
     res_vector = np.array([0.0, 0.0, 0.0])
 
@@ -187,6 +209,19 @@ def process_aa_chain(chainName, residues):
     print("\tProcessing finished:", newChain.name, len(aminoAcids))
     return newChain
 
+def process_ligand(ligand):
+    global globalIdGenerator
+    atoms = []
+
+    for atom in ligand.atoms():
+        atLoc = np.asarray(atom.location)
+        atoms.append(Atom(atom.name, atom.element, atLoc))
+
+    newLigand = Ligand(globalIdGenerator, ligand.name, atoms)
+    globalIdGenerator += 1
+    print("Processed ligand", ligand.name, "with", len(atoms), "atoms.")
+    return newLigand
+
 def process_pdb(pdb_path):
     if os.path.isfile(pdb_path):
         pdb = atomium.open(pdb_path)
@@ -195,7 +230,8 @@ def process_pdb(pdb_path):
 
     aaChains = []
     naStrands = []
-
+    ligands = []
+    
     for chain in pdb.model.chains():
         residues = chain.residues()
         
@@ -208,10 +244,18 @@ def process_pdb(pdb_path):
                 naStrands.append(process_na_strand(chain.id, residues, "DNA"))
             elif(unfutils.is_rna_res(residues[0].name)):
                 naStrands.append(process_na_strand(chain.id, residues, "RNA"))
+            # We are probably processing ligands chain
+            # which is not detected as "ligand" by atomium for some reason
+            else:
+                for residue in residues:
+                    ligands.append(process_ligand(residue))
 
-    return (pdb, aaChains, naStrands)
+    for ligand in pdb.model.ligands():
+        ligands.append(process_ligand(ligand))
 
-def convert_data_to_unf_file(pdbFile, aaChains, naStrands):
+    return (pdb, aaChains, naStrands, ligands)
+
+def convert_data_to_unf_file(pdbFile, aaChains, naStrands, ligands):
     global globalIdGenerator
     
     unf_file_data = unfutils.initialize_unf_file_data_object(pdbFile.code + ", " + pdbFile.title,
@@ -294,7 +338,29 @@ def convert_data_to_unf_file(pdbFile, aaChains, naStrands):
 
         newStructure["aaChains"].append(newChainObj)
     
-    unf_file_data['structures'].append(newStructure)
+    unf_file_data["structures"].append(newStructure)
+
+    for ligand in ligands:
+        newLigandObj = {}
+        newLigandObj["id"] = ligand.id
+        newLigandObj["name"] = ligand.name
+        newLigandObj["externalFileId"] = -1
+        newLigandObj["bonds"] = []
+        newLigandObj["positions"] = [ligand.com.tolist()]
+        newLigandObj["orientations"] = [[0, 0, 0]]
+        
+        atoms = []
+
+        for atom in ligand.atoms:
+            newAtom = {}
+            newAtom["atomName"] = atom.atName
+            newAtom["elementName"] = atom.elName
+            newAtom["positions"] = [atom.position.tolist()]
+            atoms.append(newAtom)
+
+        newLigandObj["atoms"] = atoms
+        unf_file_data["molecules"]["ligands"].append(newLigandObj)
+
     unf_file_data["idCounter"] = globalIdGenerator
 
     with open(OUTPUT_FILE_NAME, 'w') as outfile:

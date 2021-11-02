@@ -4,7 +4,7 @@
 UNF aims to allow for storing of DNA nanotechnology data (for example, DNA origami lattice designs and individual free-form single strands) together with proteins and other molecules in one file.
 
 ## Version
-0.8.0
+1.0.0
 
 ## Format type
 JSON-based
@@ -126,20 +126,20 @@ To mark fields as "not used"/containing invalid value:
       - `[[number]]` **altPositions:** 2D array of alternative positions, corresponding to alpha carbon location, of this AA. By default, zeroth position is considered as a current one. More positions can be stored for dynamics/animation purposes.
       <!--- Note: amino acids store only position now, any orientation/backbone direction data are now omitted. -->    
 - `object` **molecules:** object containing molecules which have some position in space but we do not care about their modifications or individual parts (e.g., PDB is enough)
-  - `[object]` **ligands:** array of ligands. If there are molecules storing both proteins and ligands in one file (e.g., as a PDB), they should be referenced in field "other molecules" instead of this one.
+  - `[object]` **ligands:** array of ligands. If there are molecules storing both proteins and ligands in one file (e.g., as a PDB), they should be referenced in field *others* instead of this one.
     - `number` **id:** unique ID
     - `string` **name:** ligand name   
     - `number` **externalFileId:** ID of the relevant external file if there is any (e.g., SDF file)
     - `[object]` **atoms:** if no external file exists, the ligand can be described also as an array of atoms
       - `string` **atomName:** unique atom name
       - `string` **elementName:** element name
-      - `[[number]]` **positions:** 2D array of atom's positions. By default, zeroth position is considered as a current one. More positions can be stored for dynamics/animation purposes.
-    - `[object]` **bonds:** array of bonds between atoms
+      - `[[number]]` **positions:** 2D array of atom's positions (offsets from ligand's *position*). By default, zeroth position is considered as a current one. More positions can be stored for dynamics/animation purposes.
+    - `[object]` **bonds:** array of explicitly defined bonds between atoms
       - `string` **firstAtomName:** unique name of the first atom
       - `string` **secondAtomName:** unique name of the second atom
       - `number` **bondOrder:** bond order
       - `string` **bondType:** string identifying the type of bond
-    - `[[number]]` **positions:** 2D array storing positions in space (offsetting the atom positions). By default, zeroth position is considered as a current one. More positions can be stored for dynamics/animation purposes.
+    - `[[number]]` **positions:** 2D array storing positions in space (corresponding to the ligand's center of mass). By default, zeroth position is considered as a current one. More positions can be stored for dynamics/animation purposes.
     - `[[number]]` **orientations:** 2D array storing orientations in space
   - `[object]` **nanostructures:** array of nanostructures (e.g., gold nanoparticles)
     - `number` **id:** unique ID

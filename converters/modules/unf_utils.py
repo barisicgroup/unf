@@ -15,7 +15,7 @@ def initialize_unf_file_data_object(name, author, lenUnits = "A", angUnits = "de
     unfFileData = {}
 
     unfFileData['format'] = "unf"
-    unfFileData['version'] = "0.8.0"
+    unfFileData['version'] = "1.0.0"
     unfFileData['idCounter'] = 0
     unfFileData['lengthUnits'] = lenUnits
     unfFileData['angularUnits'] = angUnits

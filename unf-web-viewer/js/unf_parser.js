@@ -3,7 +3,7 @@ import * as PdbUtils from "./pdb_utils.js"
 import * as OxDnaUtils from "./oxdna_utils.js";
 
 let ParserConstants = {
-    SupportedFormatVersion: "0.8.0",
+    SupportedFormatVersion: "1.0.0", // Intentionally exactly major.minor.patch although major.minor should be enough for a check
     AngstromsPerUnit: 256,
     VHelixRadius: 10, //A
     BasePairRise: 3.32, // A
@@ -139,7 +139,7 @@ export function parseUNF(jsonTreeView, unfFileContent, relatedFilesList) {
     processExternalFiles(parsedJson, includedFileNameToContentMap, rescaledParent, relatedFilesList,
         function (fileIdToFileDataMap) {
             processStructures(parsedJson, rescaledParent, fileIdToFileDataMap, nuclToCellDict);
-            processMolecules(parsedJson, rescaledParent, fileIdToFileDataMap)
+            processMolecules(parsedJson, rescaledParent, fileIdToFileDataMap);
         });
 
     return result;
@@ -548,11 +548,41 @@ function processProteins(parsedJson, aaChains, objectsParent, fileIdToFileDataMa
                 aaMesh.position.copy(aminoAcidPositions[i]);
                 objectsParent.add(aaMesh);
             }
+
+            ParserUtils.getFileContentText().value += "amino acid chain " + chain.chainName + ": " +  aminoAcidPositions.length + " amino acids\n";
         }
     });
 }
 
 function processMolecules(parsedJson, objectsParent, fileIdToFileDataMap) {
+    const ligAtGeometry = new THREE.BoxGeometry(1, 1, 1);
+    const ligandMaterial = new THREE.MeshPhongMaterial({ color: "#00FF00" });
+
+    parsedJson.molecules.ligands.forEach(ligand => {
+        ParserUtils.getFileContentText().value += "molecule - ligand: " + ligand.name + "\n";
+
+        const ligandObject = new THREE.Object3D();
+
+        for (let i = 0; i < ligand.atoms.length; ++i) {
+            const atomMesh = new THREE.Mesh(ligAtGeometry, ligandMaterial);
+
+            atomMesh.position.copy(UnfUtils.angsVec3(
+                new THREE.Vector3().fromArray(ligand.atoms[i].positions[0])));
+
+            ligandObject.add(atomMesh);
+        }
+
+        ligandObject.position.copy(UnfUtils.angsVec3(
+            new THREE.Vector3().fromArray(ligand.positions[0])));
+
+        ligandObject.rotation.set(
+            UnfUtils.rad(ligand.orientations[0][0]),
+            UnfUtils.rad(ligand.orientations[0][1]),
+            UnfUtils.rad(ligand.orientations[0][2]));
+
+        objectsParent.add(ligandObject);
+    });
+
     parsedJson.molecules.others.forEach(molecule => {
         ParserUtils.getFileContentText().value += "molecule - other: " + molecule.name + "\n";
 
@@ -576,5 +606,5 @@ function processMolecules(parsedJson, objectsParent, fileIdToFileDataMap) {
         }
     });
 
-    // TODO molecules.ligands/nanostructures
+    // TODO molecules.nanostructures
 }
