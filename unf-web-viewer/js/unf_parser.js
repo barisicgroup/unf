@@ -361,13 +361,13 @@ function getLatticePositionForIndex(row, col, z, lattice) {
     if (lattice.type === ParserConstants.HoneycombGridName) {
         pos = new THREE.Vector3(
             col * ParserConstants.VHelixRadius * 1.7320508 + ParserConstants.VHelixRadius,
-            -((row + Math.floor((row + 1 - col % 2) / 2)) * vHelixDiameter + vHelixDiameter * (0.5 + (col % 2) * 0.5)),
+            (row + Math.floor((row + 1 - col % 2) / 2)) * vHelixDiameter + vHelixDiameter * (0.5 + (col % 2) * 0.5),
             z * ParserConstants.BasePairRise);
     }
     else if (lattice.type === ParserConstants.SquareGridName) {
         pos = new THREE.Vector3(
             col * vHelixDiameter + ParserConstants.VHelixRadius,
-            -(row * vHelixDiameter + ParserConstants.VHelixRadius),
+            row * vHelixDiameter + ParserConstants.VHelixRadius,
             z * ParserConstants.BasePairRise);
     } else {
         throw new Error("Invalid grid type: " + lattice.type);
