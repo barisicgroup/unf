@@ -5,6 +5,6 @@ The hextube is positioned inside the cuboid hole to test a multi-lattice assembl
 
 **Generating UNF file from source files:**
 ```
-cadnano_to_unf.py hc_hextube.json:honeycomb:270,320,0 sq_cuboid_hole.json:square:0,500,0
+cadnano_to_unf.py hc_hextube.json:honeycomb:100,100,0 sq_cuboid_hole.json:square:100,100,0
 ```
 

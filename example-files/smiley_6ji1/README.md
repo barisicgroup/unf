@@ -6,5 +6,5 @@ The location of 6JI1 is explicitly set in the UNF file to match the desired arra
 **Generating UNF file from source files:**
 ```
 cadnano_to_unf.py smileyFace.json:square:0,0,0
-unf_add_pdb.py output.unf 6ji1.pdb 6ji1 500,0,300 0,0,0 
+unf_add_pdb.py output.unf 6ji1.pdb 6ji1 0,150,0 0,0,0 
 ```

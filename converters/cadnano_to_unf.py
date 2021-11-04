@@ -11,6 +11,9 @@ LATTICE_SQUARE = "square"
 LATTICE_HONEYCOMB = "honeycomb"
 OUTPUT_FILE_NAME = "output.unf"
 
+LSQ_INIT_ANGLE = 15
+LHC_INIT_ANGLE = 160
+
 # Indices of the corresponding prev/next vstrand/base ids
 # in the cadnano's json file fields
 CADNANO_PREV_VID = 0
@@ -124,17 +127,28 @@ def create_strand_components(strandArray, checkCircularScaffold):
 
     for circComp in circScaffComps:
         # TODO Circular scaffolds are simply cut at some random location at the moment.
-        #      This is primarily to not break all the tools relying on existence of 5'/3'
-        #      detected by having no prev/next nucleotide. Is it an issue? 
+        #      This is primarily done to not break all the tools relying on existence of 5'/3'
+        #      detected by having no prev/next nucleotide. 
+        #      However, this behavior might be modified in the future to preserve the circularity of strands
+        #      and store them in accordance with UNF definition.
         print("Note: circular scaffold strand was found and processed by breaking it")
+        
+        # Starting index is just a number which seemed to be good enough to
+        # pass the condition below without any loop iteration
+        breakIdxStart = len(circComp) // 3
+        breakIdxEnd = breakIdxStart - 1
+        
+        while circComp[breakIdxStart].nextVid != circComp[breakIdxStart].vhelixId:
+            breakIdxStart += 1
+            breakIdxEnd += 1
+        
+        circComp[breakIdxStart].prevVid = -1
+        circComp[breakIdxStart].prevBid = -1
+        circComp[breakIdxStart].set_prev_next(None, circComp[breakIdxStart].nextPart)
 
-        circComp[0].prevVid = -1
-        circComp[0].prevBid = -1
-        circComp[0].set_prev_next(None, circComp[0].nextPart)
-
-        circComp[-1].nextVid = -1
-        circComp[-1].nextBid = -1
-        circComp[-1].set_prev_next(circComp[-1].prevPart, None)
+        circComp[breakIdxEnd].nextVid = -1
+        circComp[breakIdxEnd].nextBid = -1
+        circComp[breakIdxEnd].set_prev_next(circComp[breakIdxEnd].prevPart, None)
 
     return components
 
@@ -309,7 +323,7 @@ def convert_data_to_unf_file(latticesData, latticesPositions, latticeOrientation
             outputVhelix['lastActiveCell'] = vhelix.lastActiveCell
             outputVhelix['lastCell'] = vhelix.lastCell
             outputVhelix['latticePosition'] = [vhelix.row, vhelix.col]
-            outputVhelix['initialAngle'] = 240 # TODO Should equal cadnano. Just a rough guess atm.
+            outputVhelix['initialAngle'] = LSQ_INIT_ANGLE if vhelix.latticeType == LATTICE_SQUARE else LHC_INIT_ANGLE 
         
             outputLattice['type'] = vhelix.latticeType
 
@@ -344,23 +358,27 @@ def convert_data_to_unf_file(latticesData, latticesPositions, latticeOrientation
                                 while currPart.prevPart != None and currPart.prevPart.vhelixId == vhelix.id:
                                     currPart = currPart.prevPart
                                     strVhelixStartPart = currPart
-                            
+                
+                                currPart = x
+
                                 while currPart.nextPart != None and currPart.nextPart.vhelixId == vhelix.id:
                                     currPart = currPart.nextPart
                                     strVhelixEndPart = currPart
                                 
+                                currPart = x
+
                                 # We can afford "and" instead of "or" because the start/end parts are initialized
                                 # with this strand part and the comparsion includes equality
-                                if strVhelixStartPart.baseId <= x.baseId and strVhelixEndPart.baseId >= x.baseId:
+                                if strVhelixStartPart.baseId <= currPart.baseId and strVhelixEndPart.baseId >= currPart.baseId:
                                     if len(newCell['fiveToThreeNts']) > 0:
-                                        print("Error! Rewriting content of a valid cell with a new value.", vhelix.row,
-                                         vhelix.col, i, newCell['fiveToThreeNts'], x.globalId)
-                                    newCell['fiveToThreeNts'] = [x.globalId] + x.insertedNuclIds
-                                elif strVhelixStartPart.baseId >= x.baseId and strVhelixEndPart.baseId <= x.baseId:
+                                        print("Error! Rewriting content of a valid cell", vhelix.row,
+                                         vhelix.col, i, "with a new 5'3' value.", newCell['fiveToThreeNts'], "->", currPart.globalId)
+                                    newCell['fiveToThreeNts'] = [currPart.globalId] + currPart.insertedNuclIds
+                                elif strVhelixStartPart.baseId >= currPart.baseId and strVhelixEndPart.baseId <= currPart.baseId:
                                     if len(newCell['threeToFiveNts']) > 0:
-                                        print("Error! Rewriting content of a valid cell with a new value.", vhelix.row, 
-                                        vhelix.col, i, newCell['threeToFiveNts'], x.globalId)
-                                    newCell['threeToFiveNts'] = [x.globalId] + x.insertedNuclIds
+                                        print("Error! Rewriting content of a valid cell", vhelix.row, 
+                                        vhelix.col, i, "with a new 3'5' value.", newCell['threeToFiveNts'], "->", currPart.globalId)
+                                    newCell['threeToFiveNts'] = [currPart.globalId] + currPart.insertedNuclIds
               
                 cells.append(newCell)
 

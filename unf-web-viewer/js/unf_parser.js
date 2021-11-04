@@ -434,7 +434,7 @@ function processSingleStrands(parsedJson, naStrands, objectsParent, fileIdToFile
                 const helix = nuclRec[1];
                 const cell = nuclRec[2];
                 nucleotideParents.push(nuclRec[3]);
-
+                                
                 if (cell !== undefined) {
                     const inCellIdx = Math.max(cell.fiveToThreeNts.indexOf(currNucleotide.id), cell.threeToFiveNts.indexOf(currNucleotide.id));
                     const insertedNucleotidesVisualOffset = 3;
@@ -450,7 +450,7 @@ function processSingleStrands(parsedJson, naStrands, objectsParent, fileIdToFile
 
                     let rot = undefined;
 
-                    if (cell.fiveToThreeNts.includes(currNucleotide.id)) {
+                    if (cell.threeToFiveNts.includes(currNucleotide.id)) {
                         rot = xDir.clone().applyAxisAngle(zDir, UnfUtils.rad(helix.initialAngle) +
                             THREE.MathUtils.degToRad(ParserConstants.RotationPerBp * cell.number));
                     } else {
