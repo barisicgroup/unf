@@ -186,7 +186,7 @@ In case both of these fields are present (i.e., the nucleotide is referenced by 
 # Nucleobase vectors
 Apart from storing the position of a nucleotide, UNF also stores orientation of its nucleobase.   
 This information is represented by two vectors – *baseNormal* and *hydrogenFaceDir* – defining the directions along which the stacking and hydrogen bonding interactions happen. To foster compatibility with existing applications, it was opted for making these vectors correspond to the *a3* (&rarr; *baseNormal*) and *a1* (&rarr; *hydrogenFaceDir*) oxDNA vectors, as this model is already used in the field and experimentally validated [[1]](https://doi.org/10.1063/1.4921957), [[2]](https://doi.org/10.1063/1.4961398), [[3]](https://doi.org/10.1002/jcc.26029).  
-In this section, the relation of these vectors to nucleotide atoms will be described in a form of simple pseudocode (based on the conversion performed by [tacoxDNA](https://doi.org/10.1002/jcc.26029) scripts and the respective parts by Lorenzo Rovigatti).   
+In this section, the relation of these vectors to nucleotide atoms will be described in a form of simple pseudocode (based on the conversion performed by PDB to UNF converter following the [tacoxDNA](https://doi.org/10.1002/jcc.26029) scripts and the respective parts by Lorenzo Rovigatti).   
 For better imagination, atom names of DNA nucleobases are visualized in the figure below. As for uracil, its ring atoms carry the same name as thymine's atoms.
 
 | Adenine | Thymine  |
@@ -210,12 +210,11 @@ function baseNormal(nucleobase):
     
     foreach permutation (p,q,r) from ringAtoms:
         v1 = normalize(p - q)
-        v2 = normalize(p - r)
-        if v1•v2 > 0.01 or 1:
-            tmp = normalize(v1×v2)
-            if tmp•parallelDir < 0:
-                negate(tmp)
-            bn += tmp
+        v2 = normalize(p - r)        
+        tmp = normalize(v1×v2)
+        if tmp•parallelDir < 0:
+          negate(tmp)
+        bn += tmp
     
     return normalize(bn)
 ```

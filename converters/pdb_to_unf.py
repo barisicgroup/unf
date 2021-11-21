@@ -127,13 +127,12 @@ def get_base_normal(residue, atNamesMap, nbCenter):
         v2 = unfutils.normalize(
             np.subtract(np.asarray(p.location), np.asarray(r.location)))
 
-        if abs(np.dot(v1, v2)) > 0.01 or 1:
-            curr_res = unfutils.normalize(np.cross(v1, v2))
-            if np.dot(curr_res, parallel_to) < 0.0:
-                curr_res = -curr_res
-            res = np.add(res, curr_res)
+        curr_res = unfutils.normalize(np.cross(v1, v2))
+        if np.dot(curr_res, parallel_to) < 0.0:
+            curr_res = -curr_res
+        res = np.add(res, curr_res)    
         
-        return unfutils.normalize(res)
+    return unfutils.normalize(res)
 
 def get_nt_pos(residue):
     bbCenter = np.array([0.0, 0.0, 0.0])
