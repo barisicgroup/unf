@@ -105,7 +105,7 @@ To mark fields as "not used"/containing invalid value:
         - `[object]` **altPositions:**  An array of alternative positions of this nucleotide. By default, zeroth position is considered as the current one. More positions can be stored for dynamics/animation purposes.
           - `[number]` **nucleobaseCenter:** centroid location of the nucleobase
           - `[number]` **backboneCenter:** centroid location of the backbone 
-          - `[number]` **baseNormal:** normal vector of the nucleobase plane (facing in 5'3' direction). 
+          - `[number]` **baseNormal:** normal vector of the nucleobase plane (facing in the 5'3' direction). 
             - See *Nucleobase vectors* section of the documentation for additional information.
           - `[number]` **hydrogenFaceDir:** vector describing the direction of the face containing nucleobase's hydrogen bonds
             - See *Nucleobase vectors* section of the documentation for additional information.
@@ -185,8 +185,8 @@ In case both of these fields are present (i.e., the nucleotide is referenced by 
 
 # Nucleobase vectors
 Apart from storing the position of a nucleotide, UNF also stores orientation of its nucleobase.   
-This information is represented by two vectors – *baseNormal* and *hydrogenFaceDir* – defining the directions along which the stacking and hydrogen bonding interactions happen. To foster compatibility with existing applications, it was opted for making these vectors correspond to the *a3* (&rarr; *baseNormal*) and *a1* (&rarr; *hydrogenFaceDir*) oxDNA vectors, as this model is already used in the field and experimentally validated [[1]](https://doi.org/10.1063/1.4921957), [[2]](https://doi.org/10.1063/1.4961398), [[3]](https://doi.org/10.1002/jcc.26029).  
-In this section, the relation of these vectors to nucleotide atoms will be described in a form of simple pseudocode (based on the conversion performed by PDB to UNF converter following the [tacoxDNA](https://doi.org/10.1002/jcc.26029) scripts and the respective parts by Lorenzo Rovigatti).   
+This information is represented by two vectors – *baseNormal* and *hydrogenFaceDir* – defining the directions along which the stacking and hydrogen bonding interactions happen. To foster compatibility with existing applications, it was opted for making these vectors correspond to the *a3* (&rarr; *baseNormal*) and *a1* (&rarr; *hydrogenFaceDir*) oxDNA vectors, as this model is already used in the field and experimentally validated [[1]](https://doi.org/10.1063/1.4921957), [[2]](https://doi.org/10.1063/1.4961398), [[3]](https://doi.org/10.1002/jcc.26029).  **The only difference is that the vector *baseNormal* is inverted compared to the *a3* since the normal goes along the 5'3' direction, while the *a3* faces the other way round.**  
+In this section, the relation of these vectors to nucleotide atoms will be described in a form of a simple pseudocode (based on the conversion performed by PDB to UNF converter, which is following the [tacoxDNA](https://doi.org/10.1002/jcc.26029) scripts and the respective parts by Lorenzo Rovigatti).   
 For better imagination, atom names of DNA nucleobases are visualized in the figure below. As for uracil, its ring atoms carry the same name as thymine's atoms.
 
 | Adenine | Thymine  |
@@ -204,7 +204,7 @@ The computation of nucleobase normal exploits planarity of base atoms to compute
 ```matlab
 function baseNormal(nucleobase):
     baseCom = nucleobase.centerOfMass
-    parallelDir = "O4'" - baseCom
+    parallelDir = baseCom - "O4'"
     ringAtoms = ["C2", "C4", "C5", "C6", "N1", "N3"]
     bn = (0, 0, 0)
     
@@ -242,7 +242,7 @@ To compute this vector, a simple cross product of the two abovementioned ones is
 
 ```matlab
 function basePairShortAxis(nucleobase):
-    return baseNormal(nucleobase) × hydrogenFaceDir(nucleobase)
+    return hydrogenFaceDir(nucleobase) × baseNormal(nucleobase)
 ```
 
 # UNF Viewer documentation

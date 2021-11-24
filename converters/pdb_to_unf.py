@@ -114,7 +114,7 @@ def get_hydr_face_dir(residue, atNamesMap):
     return unfutils.normalize(res_vector)
 
 def get_base_normal(residue, atNamesMap, nbCenter):
-    parallel_to = np.subtract(np.asarray(atNamesMap["O4'"].location), nbCenter)
+    parallel_to = np.subtract(np.copy(nbCenter), np.asarray(atNamesMap["O4'"].location))
     res = np.array([0.0, 0.0, 0.0])
 
     for perm in itertools.permutations(unfutils.NUCLEOBASE_RING_COMMON_ATOMS, 3):
