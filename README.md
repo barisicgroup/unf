@@ -264,6 +264,11 @@ The application serves mainly for UNF development purposes right now, it is, the
   - Converts given PDB file to a single UNF file.
   - The conversions takes all-atom details of (D)(R)NAs, proteins, and ligands in PDB and converts them to a coarse-grained representation stored in the UNF.
 
+- **UNF to Cadnano converter (Python)**
+  - Converts given UNF file to one or more Cadnano files, one for each UNF-stored lattice.
+  - The conversion does not convert colors at the moment.
+  - Insertions are converted to Cadnano loops. Deletions are currently not converted to Cadnano skips (aka "red crosses") but the strands itself skip the corresponding cells in Cadnano so the information remains preserved.
+
 # Other scripts documentation
 
 - **Add PDB to UNF (Python)**
