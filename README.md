@@ -242,7 +242,7 @@ To compute this vector, a simple cross product of the two abovementioned ones is
 
 ```matlab
 function basePairShortAxis(nucleobase):
-    return hydrogenFaceDir(nucleobase) × baseNormal(nucleobase)
+    return normalize(hydrogenFaceDir(nucleobase) × baseNormal(nucleobase))
 ```
 
 # UNF Viewer documentation
