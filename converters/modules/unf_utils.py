@@ -62,4 +62,10 @@ def dec_color_to_hex(decimalColor):
         result += "0"
     result += hexRes
     return result
+
+# Expects hex string of form #RRGGBB
+def hex_color_to_dec(hexColor):
+    if len(hexColor) != 7:
+        return int("00FF00", 16)
+    return int(hexColor[1:], 16)
     

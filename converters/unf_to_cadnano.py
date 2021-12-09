@@ -3,6 +3,7 @@
 
 import sys
 import json
+import modules.unf_utils as unfutils
 
 OUTPUT_FILE_NAME_BASICS = "output"
 OUTPUT_FILE_NAME_EXTENSION = ".json"
@@ -36,15 +37,23 @@ def convert_unf_lattice_to_cadnano(lattice, counter, id_to_str_nucl_tuple):
     oddNum = 1
     
     for vhelix in lattice["virtualHelices"]:
+        stapColors = []
+        
         # Check for current num
         isScafFiveToThree = False
         for cell in vhelix["cells"]:
             for ftt in cell["fiveToThreeNts"]:
-                if id_to_str_nucl_tuple[ftt][0]["isScaffold"]:
+                strand = id_to_str_nucl_tuple[ftt][0]
+                if strand["isScaffold"]:
                     isScafFiveToThree = True
+                elif strand["fivePrimeId"] == ftt:
+                    stapColors.append([cell["number"], unfutils.hex_color_to_dec(strand["color"])])
             for ttf in cell["threeToFiveNts"]:
-                if id_to_str_nucl_tuple[ttf][0]["isScaffold"]:
+                strand = id_to_str_nucl_tuple[ttf][0]
+                if strand["isScaffold"]:
                     isScafFiveToThree = False
+                elif strand["fivePrimeId"] == ttf:
+                    stapColors.append([cell["number"], unfutils.hex_color_to_dec(strand["color"])])
 
         num = 0
         if isScafFiveToThree:
@@ -55,7 +64,8 @@ def convert_unf_lattice_to_cadnano(lattice, counter, id_to_str_nucl_tuple):
             oddNum += 2
 
         vstrData = init_vstrand(num, vhelix["latticePosition"][0], vhelix["latticePosition"][1], vhelix["lastCell"] + 1)
-        
+        vstrData["stap_colors"] = stapColors
+
         for cell in vhelix["cells"]:
             for ftt in cell["fiveToThreeNts"]:
                 nucl_id_to_cell_data[ftt] = (num, cell)
@@ -117,8 +127,6 @@ def convert_unf_lattice_to_cadnano(lattice, counter, id_to_str_nucl_tuple):
                         strArr = "scaf"
                     vstrand[strArr][cellNum][2] = nucl_id_to_cell_data[nextId][0]
                     vstrand[strArr][cellNum][3] = nucl_id_to_cell_data[nextId][1]["number"]
-
-
 
     with open(outputFileName, 'w') as outfile:
         print("Processed and outputed UNF lattice to a file: " + outputFileName)
