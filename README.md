@@ -1,7 +1,8 @@
 # Unified Nanotechnology Format (UNF) documentation
 
 ## Purpose
-UNF aims to allow for storing of DNA nanotechnology data (for example, DNA origami lattice designs and individual free-form single strands) together with proteins and other molecules in one file.
+UNF aims to allow for storing of DNA nanotechnology data (for example, DNA origami lattice designs and individual free-form single strands) together with proteins and other molecules in one file.  
+This documentation describes the format layout, its fields and conventions. To better understand its higher-level structure, we recommend you to have a look at the main UNF paper referenced in the [Citation](#citation) section.
 
 ## Version
 1.0.0
@@ -277,3 +278,15 @@ The application serves mainly for UNF development purposes right now, it is, the
 
 # Applications implementing UNF
   - oxView: [GitHub](https://github.com/sulcgroup/oxdna-viewer/) / [Application](https://sulcgroup.github.io/oxdna-viewer/) 
+
+# Contribution
+Feel free create new [GitHub Issues](https://github.com/barisicgroup/unf/issues) to suggest new fields/features, report bugs or provide any other kinds of comments.  
+Also, if your application implements UNF, we will gladly add you to the "Applications implementing UNF" section – just let us know!
+
+# Citation
+If you use UNF or any of its parts in your research, please cite:
+ 
+*Kuťák, David, Erik Poppleton, Haichao Miao, Petr Šulc, and Ivan Barišić. 2022. "Unified Nanotechnology Format: One Way to Store Them All" Molecules 27, no. 1: 63. https://doi.org/10.3390/molecules27010063*
+
+
+
