@@ -5,7 +5,7 @@ UNF aims to allow for storing of DNA nanotechnology data (for example, DNA origa
 This documentation describes the format layout, its fields and conventions. To better understand its higher-level structure, we recommend you to have a look at the main UNF paper referenced in the [Citation](#citation) section.
 
 ## Version
-1.0.0
+1.1.0
 
 ## Format type
 JSON-based
