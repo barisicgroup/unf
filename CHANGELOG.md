@@ -9,6 +9,19 @@ MAJOR.MINOR are gradually increased when potentially compatibility-breaking chan
 PATCH is increased in case of backwards-compatible changes. For example, when a new values is allowed to be assigned to a particular field.  
 Therefore, if a particular application supports UNF vX.Y.Z, it should also automatically work with any UNF version starting on X.Y. 
 
+## Version 1.1.0
+### Added
+- *modificationDate* field to root
+- *author* field to the *comment*
+
+### Changed
+- *doi* field data type modified from string to [string] to allow storage of multiple DOIs
+- renamed *chainName* in *naStrands* and *aaChains* to *pdbChainName* to make its purpose more clear
+- added *name* field to the *aaChains* to allow for different chain names in coarse-grained data and referenced PDB
+
+### Removed
+- None
+
 ## Version 1.0.0
 Fast-forward update. This version equals to version 0.8.0. It does not introduce any changes.  
 The purpose of doing this jump in versioning is to clarify that this version offers a sufficient feature set to be usable for various nanotechnology tasks.  

@@ -39,8 +39,9 @@ To mark fields as "not used"/containing invalid value:
     - *Default assumed value: deg*
 - `string` **name:** structure name
 - `string` **author:** structure author name  
-- `string` **creationDate:** structure creation date (stored in ISO 8601 standard, i.e., as YYYY-MM-DDThh:mm:ss) 
-- `string` **doi:** DOI of the publication related to the structure stored in the file  
+- `string` **creationDate:** file/structure creation date (stored in ISO 8601 standard, i.e., as YYYY-MM-DDThh:mm:ss).
+- `string` **modificationDate:** the date of the last modification of this file (stored in ISO 8601 standard, i.e., as YYYY-MM-DDThh:mm:ss). This field should be used by the UNF-modifying applications in case the *creationDate* is already set. 
+- `[string]` **doi:** DOIs of the publications related to the contents of the file  
 - `object` **simData:** object carrying data related to simulations
   - `[number]` **boxSize:** length of the box sides (x, y, z)
 - `[object]` **externalFiles:** array of files which are referenced throughout the UNF file's content
@@ -84,16 +85,16 @@ To mark fields as "not used"/containing invalid value:
   - `string` **name:** name/title of this structure
   - `[object]` **naStrands:** array of individual nucleic acid single strands and their nucleotides
     - `number` **id:** unique ID of this strand
-    - `string` **name:** name/title of this strand
+    - `string` **name:** name of this strand
     - `boolean` **isScaffold:** boolean determining whether this is a scaffold strand or a staple strand
     - `string` **naType:** nucleic acid type
       - *Allowed values: DNA, RNA, XNA*
     - `string` **color:** hex string storing the color for this strand
+    - `number` **pdbFileId:** ID of the relevant external PDB file (for loading atomic data)
+    - `string` **pdbChainName:** name of the chain in the referenced PDB
     - `number` **fivePrimeId:** ID of the 5' nucleotide
     - `number` **threePrimeId:** ID of the 3' nucleotide
         - To define circular strands, make the *threePrimeId* nucleotide *next* equal *fivePrimeId* and  *fivePrimeId* nucleotide *prev* equal *threePrimeId*
-    - `number` **pdbFileId:** ID of the relevant external PDB file (for loading atomic data)
-    - `string` **chainName:** name of the chain in the referenced PDB
     - `[object]` **nucleotides:** array of nucleotides of this strand
         - `number` **id:** unique ID of this nucleotide
         - `number` **nbAbbrev:** nucleobase type
@@ -112,9 +113,10 @@ To mark fields as "not used"/containing invalid value:
             - See *Nucleobase vectors* section of the documentation for additional information.
   - `[object]` **aaChains:** array of protein chains
     - `number` **id:** unique ID of this chain
-    - `string` **chainName:** chain name (used in the referenced PDB)
+    - `string` **name:** name of this strand
     - `string` **color:** hex string storing the color of this chain
     - `number` **pdbFileId:** ID of the relevant external PDB file
+    - `string` **pdbChainName:** chain name (used in the referenced PDB)
     - `number` **nTerm:** ID of the N-terminus amino acid
     - `number` **cTerm:** ID of the C-terminus amino acid
     - `[object]` **aminoAcids:** array of the amino acids of this chain
@@ -169,7 +171,8 @@ To mark fields as "not used"/containing invalid value:
   - `string` **idtText:** string describing type of modification
 - `[object]` **comments:** array with arbitrary textual comments/annotations/labels/remarks pertaining a specific UNF-stored object. This is a free-form field without any specific structure, aimed primarily for notes during the design and structure analysis tasks.
   - `number` **id:** unique ID of the comment
-  - `number` **objectId:** ID of the commented on object  
+  - `number` **objectId:** ID of the commented on object 
+  - `number` **author:** the name of the comment's author 
   - `string` **content:** the text content of the comment
 - `object` **misc:** object which is by default empty but should be used for storing any application-specific/domain-specific information which could not have been stored in the other fields. 
 
