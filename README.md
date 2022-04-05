@@ -184,9 +184,30 @@ which is in turn also determining the location of the nucleotide itself. The int
 
 In case both of these fields are present (i.e., the nucleotide is referenced by a lattice but also has a valid value in *altPositions*), **the *altPositions* field takes precedence for 3D visualization purposes**.
 
+## Note on two-position definition vs single center of mass
+As noted above, UNF uses two vectors to describe the position of a nucleotide – one for the nucleobase part and one for the backbone part – as this offers some advantages in comparison to single-position definition. However, there are variety of tools storing the position of a nucleotide using a single center of mass value. Various approaches can be chosen to convert such data representation to and from the UNF one. One possibility is to follow the oxDNA algorithm for the computation of the interaction sites [[1]](https://dna.physics.ox.ac.uk/index.php/Documentation#Geometry_of_the_Model), [[2]](https://doi.org/10.1063/1.4754132). The pseudocode below, based on the source code of the oxView application [[3]](https://github.com/sulcgroup/oxdna-viewer/), introduces this algorithm, which can be used to compute *backboneCenter* and *nucleobaseCenter* values based on a nucleotide's center of mass vector. 
+
+```matlab
+% NOTES:
+% - units are in Angstroms
+% - com refers to the center of mass of a nucleotide
+% - remaining arguments are explained in the UNF documentation
+
+function backboneCenter(com, hydrogenFaceDir, baseNormal, basePairShortAxis):
+    if DNA:
+        return com - (2.896 * hydrogenFaceDir + 2.903 * basePairShortAxis)
+    if RNA:
+        return com - (3.407 * hydrogenFaceDir - 1.704 * baseNormal) 
+        
+function nucleobaseCenter(com, hydrogenFaceDir):
+    return com + (3.407 * hydrogenFaceDir)
+```
+
+In case of the reverse procedure, the *backboneCenter* value should be used as a basis for the computation of the overall nucleotide's center of mass.
+
 # Nucleobase vectors
 Apart from storing the position of a nucleotide, UNF also stores orientation of its nucleobase.   
-This information is represented by two vectors – *baseNormal* and *hydrogenFaceDir* – defining the directions along which the stacking and hydrogen bonding interactions happen. To foster compatibility with existing applications, it was opted for making these vectors correspond to the *a3* (&rarr; *baseNormal*) and *a1* (&rarr; *hydrogenFaceDir*) oxDNA vectors, as this model is already used in the field and experimentally validated [[1]](https://doi.org/10.1063/1.4921957), [[2]](https://doi.org/10.1063/1.4961398), [[3]](https://doi.org/10.1002/jcc.26029).  **The only difference is that the vector *baseNormal* is inverted compared to the *a3* since the normal goes along the 5'3' direction, while the *a3* faces the other way round.**  
+This information is represented by two vectors – *baseNormal* and *hydrogenFaceDir* – defining the directions along which the stacking and hydrogen bonding interactions happen. To foster compatibility with existing applications, it was opted for making these vectors correspond to the *a3* (&rarr; *baseNormal*) and *a1* (&rarr; *hydrogenFaceDir*) oxDNA vectors, as this model is already used in the field and experimentally validated [[4]](https://doi.org/10.1063/1.4921957), [[5]](https://doi.org/10.1063/1.4961398), [[6]](https://doi.org/10.1002/jcc.26029).  **The only difference is that the vector *baseNormal* is inverted compared to the *a3* since the normal goes along the 5'3' direction, while the *a3* faces the other way round.**  
 In this section, the relation of these vectors to nucleotide atoms will be described in a form of a simple pseudocode (based on the conversion performed by PDB to UNF converter, which is following the [tacoxDNA](https://doi.org/10.1002/jcc.26029) scripts and the respective parts by Lorenzo Rovigatti).   
 For better imagination, atom names of DNA nucleobases are visualized in the figure below. As for uracil, its ring atoms carry the same name as thymine's atoms.
 
@@ -278,6 +299,7 @@ The application serves mainly for UNF development purposes right now, it is, the
 
 # Applications implementing UNF
   - oxView: [GitHub](https://github.com/sulcgroup/oxdna-viewer/) / [Application](https://sulcgroup.github.io/oxdna-viewer/) 
+  - Catana: [Application](http://catana.ait.ac.at/)
 
 # Contribution
 Feel free create new [GitHub Issues](https://github.com/barisicgroup/unf/issues) to suggest new fields/features, report bugs or provide any other kinds of comments.  
