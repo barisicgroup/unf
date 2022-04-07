@@ -38,6 +38,8 @@ class StrandPart:
         self.nuclToRepresent = nuclToRepresent
         self.insertedNuclIds = insIds
         self.set_prev_next(None, None)
+        self.set_prev_next_arr_pos(None, None)
+        self.set_arr_pos(None)
 
     def __repr__(self):
         return ("vid: " + str(self.vhelixId) + ", bid " + str(self.baseId) + ", type " + self.get_strand_type() + "\n\t prev: " +
@@ -48,6 +50,13 @@ class StrandPart:
         self.prevPart = prevPart
         self.nextPart = nextPart
     
+    def set_prev_next_arr_pos(self, prevPos, nextPos):
+        self.prevPartPos = prevPos
+        self.nextPartPos = nextPos
+    
+    def set_arr_pos(self, pos):
+        self.arrPos = pos
+
     def get_strand_type(self):
         if self.nuclToRepresent < 0:
             return "deletion"
@@ -80,80 +89,75 @@ class Vhelix:
          "] fac " + str(self.firstActiveCell) + ", lac " + 
          str(self.lastActiveCell) + ", lc " + str(self.lastCell))
 
-def create_strand_components(strandArray, checkCircularScaffold):
-    components = []
-    
+def generate_component(startPart, components, partsProcessed):
+    partsProcessed[startPart.arrPos] = True
+    newComponent = []
+    currPart = startPart
+    newComponent.append(currPart)
+    while currPart.nextPart != None:
+        currPart = currPart.nextPart
+        partsProcessed[currPart.arrPos] = True
+        newComponent.append(currPart)
+    components.append(newComponent)
+
+def create_strand_components(strandArray):
+    # Connect the parts together
+    i = 0
     for strandPart in strandArray:
-        prevPart = next((x for x in strandArray if x.vhelixId == strandPart.prevVid and x.baseId == strandPart.prevBid), None)
-        nextPart = next((x for x in strandArray if x.vhelixId == strandPart.nextVid and x.baseId == strandPart.nextBid), None)
+        prevIdx = next((i for i, x in enumerate(strandArray) if x.vhelixId == strandPart.prevVid and x.baseId == strandPart.prevBid), None)
+        nextIdx = next((i for i, x in enumerate(strandArray) if x.vhelixId == strandPart.nextVid and x.baseId == strandPart.nextBid), None)
+
+        prevPart = strandArray[prevIdx] if prevIdx != None else None
+        nextPart = strandArray[nextIdx] if nextIdx != None else None
+        
+        strandPart.set_prev_next_arr_pos(prevIdx, nextIdx)
         strandPart.set_prev_next(prevPart, nextPart)
+        strandPart.set_arr_pos(i)
+        i += 1
     
-    circScaffComps = []
+    i = 0
+    circCount = 0
+    components = []
+    partsProcessed = [False] * len(strandArray)
 
     for strandPart in strandArray:
+        if partsProcessed[strandPart.arrPos] == True:
+            continue
+
+        # If this part has no previous part, then it is 5' nucleotide
+        # and we can generate the whole strand component starting from it
         if strandPart.prevPart == None:
-            newComponent = []
-            currPart = strandPart
-            newComponent.append(currPart)
-            while currPart.nextPart != None:
-                currPart = currPart.nextPart
-                newComponent.append(currPart)
-            components.append(newComponent)
-        elif checkCircularScaffold:
-            # Test for circular scaffold
+            generate_component(strandPart, components, partsProcessed)
+        # If this part has a previous part, we need to check for circularity
+        else:
             start = strandPart
             currPart = start
             isCirc = False
-            while currPart.nextPart != None:
-                currPart = currPart.nextPart
+            while currPart.prevPart != None:
+                currPart = currPart.prevPart
                 if currPart == start:
                     isCirc = True
                     break
+                elif currPart.prevPart == None:
+                    generate_component(currPart, components, partsProcessed)
+            # If circularity was detected, we need to process this component separately
             if isCirc:
-                isAlreadyFound = False
                 newComponent = []
                 currPart = start
+                partsProcessed[currPart.arrPos] = True
                 newComponent.append(currPart)
                 while currPart.nextPart != start:
                     currPart = currPart.nextPart
+                    partsProcessed[currPart.arrPos] = True
                     newComponent.append(currPart)
-                for circComp in circScaffComps:
-                    if start in circComp:
-                        isAlreadyFound = True
-                        break
-                if not isAlreadyFound:
-                    circScaffComps.append(newComponent)
-                    components.append(newComponent)
+                components.append(newComponent)
+                circCount += 1                
+        i += 1
 
-    for circComp in circScaffComps:
-        # TODO Circular scaffolds are simply cut at some random location at the moment.
-        #      This is primarily done to not break all the tools relying on existence of 5'/3'
-        #      detected by having no prev/next nucleotide. 
-        #      However, this behavior might be modified in the future to preserve the circularity of strands
-        #      and store them in accordance with UNF definition.
-        print("Note: circular scaffold strand was found and processed by breaking it")
-        
-        # Starting index is just a number which seemed to be good enough to
-        # pass the condition below without any loop iteration
-        breakIdxStart = len(circComp) // 3
-        breakIdxEnd = breakIdxStart - 1
-        
-        while circComp[breakIdxStart].nextVid != circComp[breakIdxStart].vhelixId:
-            breakIdxStart += 1
-            breakIdxEnd += 1
-        
-        circComp[breakIdxStart].prevVid = -1
-        circComp[breakIdxStart].prevBid = -1
-        circComp[breakIdxStart].set_prev_next(None, circComp[breakIdxStart].nextPart)
-
-        circComp[breakIdxEnd].nextVid = -1
-        circComp[breakIdxEnd].nextBid = -1
-        circComp[breakIdxEnd].set_prev_next(circComp[breakIdxEnd].prevPart, None)
-
-    return components
+    return (components, circCount)
 
 def process_cadnano_file(file_path, lattice_type):
-    print("Loading structure '" + file_path + "' with " + lattice_type + " lattice.")
+    print("Loading structure '" + file_path + "' with " + lattice_type + " lattice.\n")
     
     file = open(file_path, "r")
     parsedData = json.loads(file.read())
@@ -192,21 +196,27 @@ def process_cadnano_file(file_path, lattice_type):
         
         processedVhelices.append(Vhelix(vstr['num'], vstr['row'], vstr['col'], lattice_type, firstActiveCell, lastActiveCell, lastCell, vstr['stap_colors']))
 
-    individualScaffoldStrands = create_strand_components(allScaffoldRecords, True)
-    individualStapleStrands = create_strand_components(allStapleRecords, False)
+    individualScaffoldStrands = create_strand_components(allScaffoldRecords)
+    individualStapleStrands = create_strand_components(allStapleRecords)
+
+    print("Found:", len(processedVhelices), "virtual helices,", len(individualScaffoldStrands[0]),
+    "scaffolds (", individualScaffoldStrands[1], " circular ),", len(individualStapleStrands[0]),
+     "staples (", individualStapleStrands[1], " circular ).")
 
     for vhelix in processedVhelices:
-        print("Virtual helix: ", str(vhelix))
+        print(" Virtual helix: ", str(vhelix))
     
-    for strandComp in individualScaffoldStrands:
-        print("Scaffold strand found, routed via", len(strandComp), "cells")
+    for strandComp in individualScaffoldStrands[0]:
+        print(" Scaffold strand routed via", len(strandComp), "cells")
 
-    for strandComp in individualStapleStrands:
-        print("Staple strand found, routed via", len(strandComp), "cells")     
+    for strandComp in individualStapleStrands[0]:
+        print(" Staple strand routed via", len(strandComp), "cells")     
     
+    print()
+
     file.close()
 
-    return (processedVhelices, individualScaffoldStrands, individualStapleStrands)
+    return (processedVhelices, individualScaffoldStrands[0], individualStapleStrands[0])
 
 def strands_to_unf_data(unfFileData, thisStructure, strandsList, allStrandParts, areScaffolds, stapleStartToColor):
     resultingObjects = []
@@ -247,12 +257,14 @@ def strands_to_unf_data(unfFileData, thisStructure, strandsList, allStrandParts,
                 ntIds += idsToAdd
                 ntPairs += pairsToAdd
             
+            # NOTE Cadnano does not seem to store color for circular staples
+            #      Therefore, random color is generated for them
             if cellType != "d" and not areScaffolds and len(strandColor) == 0:
                 vid = strandPart.vhelixId
                 bid = strandPart.baseId
-                colRec = stapleStartToColor[vid, bid]
+                colRec = stapleStartToColor[(vid, bid)] if (vid, bid) in stapleStartToColor else None
                 if colRec != None:
-                    strandColor =  colRec
+                    strandColor = colRec
             # For deletion, "deletion" cell exists but it contains no nucleotides
             # and is thus ignored on the level of DNA data structure.
             # The resulting strand, therefore, simply "goes through that cell without stopping".
@@ -286,9 +298,17 @@ def strands_to_unf_data(unfFileData, thisStructure, strandsList, allStrandParts,
 
             nucleotides.append(newNucl)
 
+        # Maintain circularity
+        circStr = "[acyclic]"
+        if strand[-1].nextPart == strand[0]:
+            nucleotides[0]['prev'] = ntIds[-1]
+            nucleotides[-1]['next'] = ntIds[0]
+            circStr = "[circular]"
+
         strandObject['nucleotides'] = nucleotides
         resultingObjects.append(strandObject)
-        print("Scaffold" if areScaffolds else "Staple", "strand object generated with", len(nucleotides), "nucleotides.")
+        print(circStr, "Scaffold" if areScaffolds else "Staple", "strand object generated with", len(nucleotides), "nucleotides.")
+        print(" Color:", strandColor)
 
     thisStructure['naStrands'] = thisStructure['naStrands'] + resultingObjects
 
@@ -340,10 +360,8 @@ def convert_data_to_unf_file(latticesData, latticesPositions, latticeOrientation
                 newCell['fiveToThreeNts'] = []
                 newCell['threeToFiveNts'] = []
 
-                # This is very computationally inoptimal.
-                # In any case, the purpose of this code is to
-                # find out the extent of a single strand in one given virtual helix
-                # to detect the strand directionality in that virtual helix.
+                # The purpose of this (computationally not ideal) code is to
+                # find out the directionality of this strand in this virtual helix.
                 for sp in allStrandParts:
                     for x in sp:
                         if x.vhelixId == vhelix.id and x.baseId == i:
@@ -352,21 +370,9 @@ def convert_data_to_unf_file(latticesData, latticesPositions, latticeOrientation
                             newCell['type'] = cellType        
                             
                             if cellType != "d":
-                                strVhelixStartPart = currPart
-                                strVhelixEndPart = currPart
+                                strVhelixStartPart = currPart.prevPart if currPart.prevPart != None and currPart.prevPart.vhelixId == vhelix.id else currPart
+                                strVhelixEndPart = currPart.nextPart if currPart.nextPart != None and currPart.nextPart.vhelixId == vhelix.id else currPart
                                 
-                                while currPart.prevPart != None and currPart.prevPart.vhelixId == vhelix.id:
-                                    currPart = currPart.prevPart
-                                    strVhelixStartPart = currPart
-                
-                                currPart = x
-
-                                while currPart.nextPart != None and currPart.nextPart.vhelixId == vhelix.id:
-                                    currPart = currPart.nextPart
-                                    strVhelixEndPart = currPart
-                                
-                                currPart = x
-
                                 # We can afford "and" instead of "or" because the start/end parts are initialized
                                 # with this strand part and the comparsion includes equality
                                 if strVhelixStartPart.baseId <= currPart.baseId and strVhelixEndPart.baseId >= currPart.baseId:
@@ -379,6 +385,8 @@ def convert_data_to_unf_file(latticesData, latticesPositions, latticeOrientation
                                         print("Error! Rewriting content of a valid cell", vhelix.row, 
                                         vhelix.col, i, "with a new 3'5' value.", newCell['threeToFiveNts'], "->", currPart.globalId)
                                     newCell['threeToFiveNts'] = [currPart.globalId] + currPart.insertedNuclIds
+                    if len(newCell['fiveToThreeNts']) > 0 and len(newCell['threeToFiveNts']) > 0:
+                        break
               
                 cells.append(newCell)
 
@@ -390,7 +398,7 @@ def convert_data_to_unf_file(latticesData, latticesPositions, latticeOrientation
         newStructure = {}
         newStructure['id'] = globalIdGenerator
         globalIdGenerator += 1
-        newStructure['name'] = "Lattice-based structure"
+        newStructure['name'] = "Multilayer structure"
         newStructure['naStrands'] = []
         newStructure['aaChains'] = []
         strands_to_unf_data(unfFileData, newStructure, scaffoldStrands, allStrandParts, True, stapleStartToColor)
