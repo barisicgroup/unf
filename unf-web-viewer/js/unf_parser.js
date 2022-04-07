@@ -404,6 +404,7 @@ function processSingleStrands(parsedJson, naStrands, objectsParent, fileIdToFile
             (strand.isScaffold === true ? "scaf" : "stap") + ") with " + strand.nucleotides.length + " nts.\n";
 
         let currNucleotide = strand.nucleotides.find(x => x.id === strand.fivePrimeId);
+        const startNucleotide = currNucleotide;
         do {
             // If nucleotide has an alternative position defined, use it as a primary source of position
             if (currNucleotide.altPositions.length > 0) {
@@ -471,14 +472,15 @@ function processSingleStrands(parsedJson, naStrands, objectsParent, fileIdToFile
 
             currNucleotide = strand.nucleotides.find(x => x.id === currNucleotide.next);
         }
-        while (currNucleotide !== undefined);
+        while (currNucleotide !== undefined && currNucleotide !== startNucleotide);
 
         const strandParent = new THREE.Object3D();
         objectsParent.add(strandParent);
 
         if (nucleotidePositions.length > 0) {
             const geometry = new THREE.BufferGeometry().setFromPoints(nucleotidePositions);
-            const strandLine = new THREE.Line(geometry, lineMaterial);
+            const LineClass = startNucleotide === currNucleotide ? THREE.LineLoop : THREE.Line;
+            const strandLine = new LineClass(geometry, lineMaterial);
             (nucleotideParents.length > 0 ? nucleotideParents[0] : strandParent).add(strandLine);
 
             for (let i = 0; i < nucleotidePositions.length; ++i) {
