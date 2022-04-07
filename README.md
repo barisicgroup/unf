@@ -281,7 +281,6 @@ The application serves mainly for UNF development purposes right now, it is, the
 # Converters documentation
 - **Cadnano to UNF converter (Python)**
   - Converts given cadnano (< v2.5) files to a single UNF file
-  - Circular scaffolds are processed by performing a cut at predefined location.
   - Loops are converted to an "insertion" cell referencing corresponding number of nucleotides.
   - Skips are converted to a "deletion" cell referencing no nucleotides.
 
