@@ -25,6 +25,9 @@ def process_unf_file(unf_path):
         convert_unf_lattice_to_cadnano(lattice, counter, id_to_str_nucl_tuple)
         counter += 1
 
+    if counter == 1:
+        print("No lattices were found. Thus, no data were converted.")
+
 def convert_unf_lattice_to_cadnano(lattice, counter, id_to_str_nucl_tuple):
     outputFileName = OUTPUT_FILE_NAME_BASICS + str(counter) + OUTPUT_FILE_NAME_EXTENSION 
     outputFileData = init_cadnano_file_structure(outputFileName)
