@@ -1,5 +1,8 @@
 # Unified Nanotechnology Format (UNF) documentation
 
+> [!WARNING]  
+> This version of UNF is work-in-progress and not yet finalized to be implemented.
+
 ## Purpose
 UNF aims to allow for storing of DNA nanotechnology data (for example, DNA origami lattice designs and individual free-form single strands) together with proteins and other molecules in one file.  
 This documentation describes the format layout, its fields and conventions. To better understand its higher-level structure, we recommend you to have a look at the main UNF paper referenced in the [Citation](#citation) section.
